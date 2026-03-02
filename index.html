@@ -928,9 +928,9 @@ function loadLiveData(){
         document.getElementById("plan").innerText = stateRow[0];
         document.getElementById("actual").innerText = stateRow[1];
         document.getElementById("balance").innerText = stateRow[2];
-        document.getElementById("downtime").innerText = stateRow[4];
-        document.getElementById("countdown").innerText = stateRow[5];
-
+        document.getElementById("downtime").innerText = String(stateRow[4]);
+        document.getElementById("countdown").innerText = String(stateRow[5]);
+        
         if(stateRow[3] === "DOWN TIME"){
           setStatus("DOWN TIME","status-red blink");
         } else {
@@ -991,6 +991,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

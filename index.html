@@ -472,7 +472,7 @@ let lot=document.getElementById("lotInput").value||"-";
 
 pendingChassis="";
 scannedChassis.add(chassis);
-sendToSheet(chassis, lot, "OK");   // <<< TAMBAH SINI
+sendToSheet(chassis, model);   // <<< TAMBAH SINI
 
 const now=new Date();
 const cycleTimeSec=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
@@ -942,6 +942,7 @@ function loadData(){
 </script>
 </body>
 </html>
+
 
 
 

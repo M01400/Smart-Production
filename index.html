@@ -496,25 +496,38 @@ if(diffSec>cycleTimeSec){downtimeEvent=format(diffSec-cycleTimeSec);}
 
 let plan=parseInt(document.getElementById("dailyPlanTarget").value)||0;
 
+let statusValue = "";
+let downtimeValue = "";  
+  
 if(actualCount>=plan && plan>0){
-statusCell.innerText="-";
-downtimeCell.innerText="";
+    statusCell.innerText="-";
+    downtimeCell.innerText="";
+
+    statusValue = "-";
+    downtimeValue = "";
 }
 else if(downtimeEvent){
-statusCell.innerText="DOWN TIME";
-statusCell.classList.add("status-red");
-downtimeCell.innerText=downtimeEvent;
-downtimeCell.classList.add("status-red");
+    statusCell.innerText="DOWN TIME";
+    statusCell.classList.add("status-red");
+    downtimeCell.innerText=downtimeEvent;
+    downtimeCell.classList.add("status-red");
+
+    statusValue = "DOWN TIME";
+    downtimeValue = downtimeEvent;
 }
 else{
-statusCell.innerText="SCANNED";
-statusCell.classList.add("status-green");
-}
+    statusCell.innerText="SCANNED";
+    statusCell.classList.add("status-green");
 
+    statusValue = "SCANNED";
+    downtimeValue = "";
+}
+  
 actualCount++;
 countdownValue=cycleTimeSec;
 isDowntime=false;
 lastScanTime=now;
+sendToSheet(chassis, model, lot, statusValue, downtimeValue);
 
 updateDisplay();
 this.value="";
@@ -879,22 +892,25 @@ window.onload = function(){ // <<< Sementara
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyYD3UX0cv4DxEHEdpf31OJI3hUA-UuhqfqB6ZkDysfsWnsSh3MxB3FraU0TRij89Ew6A/exec";
 
-function sendToSheet(chassis, model) {
+function sendToSheet(chassis, model, lot, status, downtime) {
 
   fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({
-      lot: document.getElementById("lotInput").value || "-",
+      lot: lot,
       model: model,
       chassis: chassis,
-      status: "OK",
-      plan: document.getElementById("dailyPlanTarget").value || 0,
-      actual: actualCount || 0,
-      downtime: document.getElementById("downtime").innerText || "00:00"
+      status: status,
+      plan: parseInt(document.getElementById("dailyPlanTarget").value)||0,
+      actual: actualCount,
+      downtime: downtime
+    })
+  });
 
 }
         
 </script>
 </body>
 </html>
+
 

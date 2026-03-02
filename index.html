@@ -891,8 +891,7 @@ function sendToSheet(chassis, model, lot, status, downtime) {
   const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
   const actual = actualCount;
   const balance = actual - plan;
-  const countdown = format(countdownValue);
-
+  const countdown = countdownValue;
   fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({
@@ -912,8 +911,6 @@ function sendToSheet(chassis, model, lot, status, downtime) {
   .catch(error => console.log("Sheet error:", error));
 
 }
-  let monitorCountdown = 0;
-let monitorTimer = null;
 
 function startMonitorCountdown(seconds) {
 
@@ -1010,6 +1007,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

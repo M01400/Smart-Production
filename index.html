@@ -916,10 +916,20 @@ function loadData(){
 };
 
 setInterval(loadData, 3000);
+
+  newRow.insertCell(0).innerText =
+  new Date(row[0]).toLocaleTimeString();  // Time
+
+newRow.insertCell(1).innerText = row[1];  // Lot
+newRow.insertCell(2).innerText = row[2];  // Model
+newRow.insertCell(3).innerText = row[3];  // Chassis
+newRow.insertCell(4).innerText = row[4];  // Status
+newRow.insertCell(5).innerText = row[7];  // Downtime
   
 </script>
 </body>
 </html>
+
 
 
 

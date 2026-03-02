@@ -878,15 +878,21 @@ window.onload = function(){
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyYD3UX0cv4DxEHEdpf31OJI3hUA-UuhqfqB6ZkDysfsWnsSh3MxB3FraU0TRij89Ew6A/exec";
 
-function sendToSheet(chassis, lot, status){
+function sendToSheet(chassis, model) {
+
   fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({
+      lot: document.getElementById("lotInput").value || "-",
+      model: model,
       chassis: chassis,
-      lot: lot,
-      status: status
+      status: "OK",
+      plan: document.getElementById("dailyPlanTarget").value || 0,
+      actual: actualCount || 0,
+      downtime: document.getElementById("downtime").innerText || "00:00"
     })
   });
+
 }
 
 function loadData(){
@@ -936,6 +942,7 @@ function loadData(){
 </script>
 </body>
 </html>
+
 
 
 

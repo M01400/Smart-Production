@@ -895,25 +895,19 @@ function loadData(){
     .then(data => {
 
       const rows = data.slice(1);
-      const table = document.getElementById("scanTable");
-      table.innerHTML = "";
+      if(rows.length === 0) return;
 
-      rows.reverse().forEach(row => {
-
-        let newRow = table.insertRow();
-
-        newRow.insertCell(0).innerText =
-          new Date(row[0]).toLocaleTimeString();
-
-        newRow.insertCell(1).innerText = row[1]; // Lot
-        newRow.insertCell(2).innerText = row[2]; // Model
-        newRow.insertCell(3).innerText = row[3]; // Chassis
-        newRow.insertCell(4).innerText = row[4]; // Status
-        newRow.insertCell(5).innerText = row[7]; // Downtime
-
-      });
+      const lastRow = rows[rows.length - 1];
 
       document.getElementById("actual").innerText = rows.length;
+      document.getElementById("plan").innerText = lastRow[5];
+      document.getElementById("status").innerText = lastRow[4];
+      document.getElementById("downtime").innerText = lastRow[7];
+
+      const balance =
+        parseInt(lastRow[5] || 0) - rows.length;
+
+      document.getElementById("balance").innerText = balance;
 
     });
 }
@@ -926,6 +920,7 @@ setInterval(loadData, 3000);
 </script>
 </body>
 </html>
+
 
 
 

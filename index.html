@@ -472,6 +472,7 @@ let lot=document.getElementById("lotInput").value||"-";
 
 pendingChassis="";
 scannedChassis.add(chassis);
+sendToSheet(chassis, lot, "OK");   // <<< TAMBAH SINI
 
 const now=new Date();
 const cycleTimeSec=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
@@ -873,7 +874,29 @@ window.onload = function(){
   setInterval(updateDateTime,1000);
 
 };
+/* ===== GOOGLE SHEET API ===== */
 
+const API_URL = "https://script.google.com/macros/s/AKfycbz9P9L4LV4-X-8hnopQTarhNdVPg7WmiVwb0Piwh3Vs548_LO1Oy16ubUNeQcD4fX16XQ/exec";
+
+function sendToSheet(chassis, lot, status){
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      chassis: chassis,
+      lot: lot,
+      status: status
+    })
+  });
+}
+
+function loadData(){
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+      console.log(data);
+    });
+}
 </script>
 </body>
 </html>
+

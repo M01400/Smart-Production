@@ -967,16 +967,22 @@ startMonitorCountdown(seconds);
 
       scanRows.reverse().forEach(row => {
 
-        let newRow = table.insertRow();
+    let newRow = table.insertRow();
 
-        newRow.insertCell(0).innerText =
-          new Date(row[0]).toLocaleTimeString();
+    newRow.insertCell(0).innerText = new Date(row[0]).toLocaleTimeString();
+    newRow.insertCell(1).innerText = row[1];
+    newRow.insertCell(2).innerText = row[2];
+    newRow.insertCell(3).innerText = row[3];
+    newRow.insertCell(4).innerText = row[4];
+    newRow.insertCell(5).innerText = row[7];
 
-        newRow.insertCell(1).innerText = row[1];
-        newRow.insertCell(2).innerText = row[2];
-        newRow.insertCell(3).innerText = row[3];
-        newRow.insertCell(4).innerText = row[4];
-        newRow.insertCell(5).innerText = row[7];
+});
+
+}) // ✅ tutup .then(data => {
+
+.catch(err => console.log("Live load error:", err));
+
+} // ✅ tutup function loadLiveData()
 
 
 // ================= INITIALIZE =================
@@ -1007,6 +1013,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

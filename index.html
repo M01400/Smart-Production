@@ -930,6 +930,7 @@ function sendToSheet(chassis, model, lot, status, downtime) {
   .then(data => console.log("Sheet:", data))
   .catch(error => console.log("Sheet error:", error));
 
+const isMonitor = window.location.search.includes("monitor");    
 function loadLiveData(){
 
   fetch(API_URL)
@@ -959,10 +960,14 @@ function loadLiveData(){
         setStatus("RUNNING","status-green");
       }
 
-    const isMonitor = window.location.search.includes("monitor");    
+    });
+
+}   // ✅ WAJIB ADA
+    
 </script>
 </body>
 </html>
+
 
 
 

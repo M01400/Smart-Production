@@ -905,11 +905,17 @@ function sendToSheet(chassis, model, lot, status, downtime) {
       plan: parseInt(document.getElementById("dailyPlanTarget").value)||0,
       actual: actualCount,
       downtime: downtime
+    })
+  })
+  .catch(err => console.log("Sheet error:", err));
+
+}
  
         
 </script>
 </body>
 </html>
+
 
 
 

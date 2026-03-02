@@ -884,10 +884,12 @@ function toggleRamadan(){
 
 /* ===== INITIALIZE SYSTEM ===== */
 
-window.onload = function(){ // <<< Sementara
+window.onload = function(){
 
-  updateDisplay();
   updateDateTime();
+
+  loadLiveData();              // ✅ load awal
+  setInterval(loadLiveData,3000);  // ✅ refresh 3 saat
 
   setInterval(updateDateTime,1000);
 
@@ -914,11 +916,43 @@ function sendToSheet(chassis, model, lot, status, downtime) {
   .then(data => console.log("Sheet:", data))
   .catch(error => console.log("Sheet error:", error));
 
+function loadLiveData(){
+
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+
+      const rows = data.slice(1);
+      if(rows.length === 0) return;
+
+      const lastRow = rows[rows.length-1];
+
+      const plan = parseInt(lastRow[5]||0);
+      const actual = rows.length;
+      const downtime = lastRow[7]||"00:00";
+      const status = lastRow[4]||"RUNNING";
+
+      document.getElementById("plan").innerText = plan;
+      document.getElementById("actual").innerText = actual;
+      document.getElementById("downtime").innerText = downtime;
+
+      const balance = actual - plan;
+      document.getElementById("balance").innerText = balance;
+
+      if(status==="DOWN TIME"){
+        setStatus("DOWN TIME","status-red blink");
+      } else {
+        setStatus("RUNNING","status-green");
+      }
+
+    });
+
 }
         
 </script>
 </body>
 </html>
+
 
 
 

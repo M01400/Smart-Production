@@ -888,6 +888,11 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyYD3UX0cv4DxEHEdpf31OJ
 
 function sendToSheet(chassis, model, lot, status, downtime) {
 
+  const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+  const actual = actualCount;
+  const balance = actual - plan;
+  const countdown = format(countdownValue);
+
   fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({
@@ -895,14 +900,17 @@ function sendToSheet(chassis, model, lot, status, downtime) {
       model: model,
       chassis: chassis,
       status: status,
-      plan: parseInt(document.getElementById("dailyPlanTarget").value) || 0,
-      actual: actualCount,
-      downtime: downtime
+      plan: plan,
+      actual: actual,
+      balance: balance,
+      downtime: downtime,
+      countdown: countdown
     })
   })
   .then(response => response.text())
   .then(data => console.log("Sheet:", data))
   .catch(error => console.log("Sheet error:", error));
+
 }
 // ================= MONITOR MODE =================
 
@@ -911,40 +919,48 @@ const isMonitor = window.location.search.includes("monitor");
 function loadLiveData(){
 
   fetch(API_URL)
-    .then(function(res){
-      return res.json();
-    })
-    .then(function(data){
+    .then(res => res.json())
+    .then(data => {
 
-      const rows = data.slice(1);
-      if(rows.length === 0) return;
+      const scanRows = data.scan.slice(1);
+      const stateRow = data.state[1];
 
-      const lastRow = rows[rows.length-1];
+      if(stateRow){
 
-      const plan = parseInt(lastRow[5] || 0);
-      const actual = rows.length;
-      const downtime = lastRow[7] || "00:00";
-      const status = lastRow[4] || "RUNNING";
+        document.getElementById("plan").innerText = stateRow[0];
+        document.getElementById("actual").innerText = stateRow[1];
+        document.getElementById("balance").innerText = stateRow[2];
+        document.getElementById("downtime").innerText = stateRow[4];
+        document.getElementById("countdown").innerText = stateRow[5];
 
-      document.getElementById("plan").innerText = plan;
-      document.getElementById("actual").innerText = actual;
-      document.getElementById("downtime").innerText = downtime;
+        if(stateRow[3] === "DOWN TIME"){
+          setStatus("DOWN TIME","status-red blink");
+        } else {
+          setStatus(stateRow[3],"status-green");
+        }
 
-      const balance = actual - plan;
-      document.getElementById("balance").innerText = balance;
-
-      if(status === "DOWN TIME"){
-        setStatus("DOWN TIME","status-red blink");
-      } else {
-        setStatus("RUNNING","status-green");
       }
 
-    })
-    .catch(function(err){
-      console.log("Live load error:", err);
-    });
+      // ===== Update Table =====
+      const table = document.getElementById("scanTable");
+      table.innerHTML = "";
 
-}
+      scanRows.reverse().forEach(row => {
+
+        let newRow = table.insertRow();
+
+        newRow.insertCell(0).innerText =
+          new Date(row[0]).toLocaleTimeString();
+
+        newRow.insertCell(1).innerText = row[1];
+        newRow.insertCell(2).innerText = row[2];
+        newRow.insertCell(3).innerText = row[3];
+        newRow.insertCell(4).innerText = row[4];
+        newRow.insertCell(5).innerText = row[7];
+
+      });
+
+    })
     .catch(err => console.log("Live load error:", err));
 
 }

@@ -888,8 +888,22 @@ window.onload = function(){
 
   updateDateTime();
 
-  loadLiveData();              // ✅ load awal
-  setInterval(loadLiveData,3000);  // ✅ refresh 3 saat
+  if(isMonitor){
+
+    // 🔒 Disable scan
+    document.getElementById("chassisInput").style.display="none";
+    document.getElementById("modelInput").style.display="none";
+
+    // 🔄 Live update dari sheet
+    loadLiveData();
+    setInterval(loadLiveData,3000);
+
+  } else {
+
+    // 🖥 Main PC guna logic asal
+    updateDisplay();
+
+  }
 
   setInterval(updateDateTime,1000);
 
@@ -948,10 +962,11 @@ function loadLiveData(){
     });
 
 }
-        
+    const isMonitor = window.location.search.includes("monitor");    
 </script>
 </body>
 </html>
+
 
 
 

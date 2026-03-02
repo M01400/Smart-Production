@@ -912,6 +912,26 @@ function sendToSheet(chassis, model, lot, status, downtime) {
   .catch(error => console.log("Sheet error:", error));
 
 }
+  let monitorCountdown = 0;
+let monitorTimer = null;
+
+function startMonitorCountdown(seconds) {
+
+  if (monitorCountdown === seconds) return;
+
+  clearInterval(monitorTimer);
+
+  monitorCountdown = seconds;
+
+  monitorTimer = setInterval(() => {
+
+    if (monitorCountdown > 0) {
+      monitorCountdown--;
+      document.getElementById("countdown").innerText = format(monitorCountdown);
+    }
+
+  }, 1000);
+}
 // ================= MONITOR MODE =================
 
 const isMonitor = window.location.search.includes("monitor");
@@ -933,11 +953,14 @@ function loadLiveData(){
         document.getElementById("downtime").innerText = String(stateRow[4]);
         document.getElementById("countdown").innerText = String(stateRow[5]);
         
+        
         if(stateRow[3] === "DOWN TIME"){
           setStatus("DOWN TIME","status-red blink");
         } else {
           setStatus(stateRow[3],"status-green");
         }
+        const seconds = parseInt(stateRow[5] || 0);
+startMonitorCountdown(seconds);
 
       }
 
@@ -958,12 +981,6 @@ function loadLiveData(){
         newRow.insertCell(4).innerText = row[4];
         newRow.insertCell(5).innerText = row[7];
 
-      });
-
-    })
-    .catch(err => console.log("Live load error:", err));
-
-}
 
 // ================= INITIALIZE =================
 
@@ -993,6 +1010,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

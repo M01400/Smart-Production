@@ -882,32 +882,6 @@ function toggleRamadan(){
   updateDisplay();
 }
 
-/* ===== INITIALIZE SYSTEM ===== */
-
-window.onload = function(){
-
-  updateDateTime();
-
-  if(isMonitor){
-
-    // 🔒 Disable scan
-    document.getElementById("chassisInput").style.display="none";
-    document.getElementById("modelInput").style.display="none";
-
-    // 🔄 Live update dari sheet
-    loadLiveData();
-    setInterval(loadLiveData,3000);
-
-  } else {
-
-    // 🖥 Main PC guna logic asal
-    updateDisplay();
-
-  }
-
-  setInterval(updateDateTime,1000);
-
-};
 /* ===== GOOGLE SHEET API ===== */
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyYD3UX0cv4DxEHEdpf31OJI3hUA-UuhqfqB6ZkDysfsWnsSh3MxB3FraU0TRij89Ew6A/exec";
@@ -930,7 +904,10 @@ function sendToSheet(chassis, model, lot, status, downtime) {
   .then(data => console.log("Sheet:", data))
   .catch(error => console.log("Sheet error:", error));
 
-const isMonitor = window.location.search.includes("monitor");    
+// ================= MONITOR MODE =================
+
+const isMonitor = window.location.search.includes("monitor");
+
 function loadLiveData(){
 
   fetch(API_URL)
@@ -960,13 +937,40 @@ function loadLiveData(){
         setStatus("RUNNING","status-green");
       }
 
-    })   // ✅ tutup .then(data => { })
-    .catch(err => console.log("Live load error:", err)); // optional tapi bagus
+    })
+    .catch(err => console.log("Live load error:", err));
 
-}   // ✅ tutup function
+}
+
+// ================= INITIALIZE =================
+
+window.onload = function(){
+
+  updateDateTime();
+
+  if(isMonitor){
+
+    // hide scan input
+    document.getElementById("chassisInput").style.display="none";
+    document.getElementById("modelInput").style.display="none";
+
+    loadLiveData();
+    setInterval(loadLiveData,3000);
+
+  } else {
+
+    // main PC normal behaviour
+    updateDisplay();
+
+  }
+
+  setInterval(updateDateTime,1000);
+
+};
 </script>
 </body>
 </html>
+
 
 
 

@@ -529,8 +529,10 @@ isDowntime=false;
 lastScanTime=now;
 
 updateDisplay();
-console.log("CHECK VAR:", lot, model, chassis, statusValue, downtimeValue);
-sendToSheet(lot, model, chassis, statusValue, downtimeValue);
+
+console.log("CHECK VAR:", chassis, model, lot, statusValue, downtimeValue);
+
+sendToSheet(chassis, model, lot, statusValue, downtimeValue);
   
 this.value="";
 document.getElementById("chassisInput").focus();
@@ -917,6 +919,7 @@ function sendToSheet(chassis, model, lot, status, downtime) {
 </script>
 </body>
 </html>
+
 
 
 

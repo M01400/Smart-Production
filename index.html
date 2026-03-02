@@ -893,18 +893,16 @@ function sendToSheet(chassis, model, lot, status, downtime) {
   const balance = actual - plan;
   const countdown = format(countdownValue);
 
-  fetch(API_URL, {
+fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({
       lot: lot,
       model: model,
       chassis: chassis,
       status: status,
-      plan: plan,
-      actual: actual,
-      balance: balance,
-      downtime: downtime,
-      countdown: countdown
+      plan: parseInt(document.getElementById("dailyPlanTarget").value) || 0,
+      actual: actualCount,
+      downtime: downtime
     })
   })
   .then(response => response.text())
@@ -993,6 +991,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

@@ -493,7 +493,6 @@ let diffSec=Math.floor((now-referenceTime)/1000);
 if(diffSec>cycleTimeSec){downtimeEvent=format(diffSec-cycleTimeSec);}
 }
 
-let statusCell=row.insertCell(4);
 let downtimeCell=row.insertCell(5);
 
 let plan=parseInt(document.getElementById("dailyPlanTarget").value)||0;
@@ -929,6 +928,7 @@ function sendToSheet(chassis, model) {
 </script>
 </body>
 </html>
+
 
 
 

@@ -895,50 +895,7 @@ function sendToSheet(chassis, model) {
   });
 
 }
-      // ===== UPDATE DASHBOARD =====
-      document.getElementById("actual").innerText = rows.length;
-      document.getElementById("plan").innerText = lastRow[5];
-      document.getElementById("status").innerText = lastRow[4];
-      document.getElementById("downtime").innerText = lastRow[7];
-
-      const balance =
-        parseInt(lastRow[5] || 0) - rows.length;
-
-      document.getElementById("balance").innerText = balance;
-
-      // ===== UPDATE TABLE =====
-      const table = document.getElementById("scanTable");
-      table.innerHTML = "";
-
-      rows.reverse().forEach(row => {
-
-        let newRow = table.insertRow();
-
-        newRow.insertCell(0).innerText =
-          new Date(row[0]).toLocaleTimeString();
-
-        newRow.insertCell(1).innerText = row[1];
-        newRow.insertCell(2).innerText = row[2];
-        newRow.insertCell(3).innerText = row[3];
-        newRow.insertCell(4).innerText = row[4];
-        newRow.insertCell(5).innerText = row[7];
-        
         
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

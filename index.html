@@ -527,7 +527,6 @@ actualCount++;
 countdownValue=cycleTimeSec;
 isDowntime=false;
 lastScanTime=now;
-sendToSheet(chassis, model, lot, statusValue, downtimeValue);
 
 updateDisplay();
 this.value="";
@@ -909,5 +908,6 @@ function sendToSheet(chassis, model, lot, status, downtime) {
 </script>
 </body>
 </html>
+
 
 

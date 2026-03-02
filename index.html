@@ -902,19 +902,21 @@ function sendToSheet(chassis, model, lot, status, downtime) {
       model: model,
       chassis: chassis,
       status: status,
-      plan: parseInt(document.getElementById("dailyPlanTarget").value)||0,
+      plan: parseInt(document.getElementById("dailyPlanTarget").value) || 0,
       actual: actualCount,
       downtime: downtime
     })
   })
-  .catch(err => console.log("Sheet error:", err));
+  .then(response => response.text())
+  .then(data => console.log("Sheet:", data))
+  .catch(error => console.log("Sheet error:", error));
 
 }
- 
         
 </script>
 </body>
 </html>
+
 
 
 

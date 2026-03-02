@@ -893,11 +893,23 @@ function loadData(){
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
-      console.log(data);
+
+      const rows = data.slice(1); // buang header
+      actualCount = rows.length;
+
+      document.getElementById("actual").innerText = actualCount;
+
     });
 }
+  window.onload = function(){
+  loadData();
+};
+
+setInterval(loadData, 3000);
+  
 </script>
 </body>
 </html>
+
 
 

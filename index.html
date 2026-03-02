@@ -958,13 +958,16 @@ function loadLiveData(){
         setStatus("DOWN TIME","status-red blink");
       } else {
         setStatus("RUNNING","status-green");
-    }
-  }
+      }
 
-};
+    })   // ✅ tutup .then(data => { })
+    .catch(err => console.log("Live load error:", err)); // optional tapi bagus
+
+}   // ✅ tutup function
 </script>
 </body>
 </html>
+
 
 
 

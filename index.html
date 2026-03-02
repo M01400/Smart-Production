@@ -482,7 +482,7 @@ let downtimeCell = row.insertCell(5);
 
 pendingChassis="";
 scannedChassis.add(chassis);
-sendToSheet(chassis, model);   // <<< TAMBAH SINI
+
 
 const now=new Date();
 const cycleTimeSec=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
@@ -529,6 +529,8 @@ isDowntime=false;
 lastScanTime=now;
 
 updateDisplay();
+sendToSheet(chassis, model, lot, statusValue, downtimeValue);
+  
 this.value="";
 document.getElementById("chassisInput").focus();
 }

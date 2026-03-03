@@ -1028,7 +1028,7 @@ function loadLiveData(){
 
      // 👉 FIX BALANCE DI SINI
 const balanceEl = document.getElementById("balance");
-let balance = parseInt(stateRow[2]) || 0;
+balance = parseInt(stateRow[2]) || 0;
 
 if(balance < 0){
   balanceEl.className = "big-number status-red";
@@ -1181,6 +1181,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

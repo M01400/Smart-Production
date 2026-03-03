@@ -404,14 +404,25 @@ countdownValue=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
 startTime=new Date();
 }
 timer=setInterval(()=>{
-if(isBreakTime()){
-setStatus("BREAK TIME","status-orange");
-updateDisplay();
-return;
-}
-if(countdownValue>0){countdownValue--;}
-else{downtimeSeconds++;isDowntime=true;}
-updateDisplay();
+
+  if(isBreakTime()){
+    setStatus("BREAK TIME","status-orange");
+    updateDisplay();
+    updateLiveStateOnly();
+    return;
+  }
+
+  if(countdownValue>0){
+    countdownValue--;
+  }
+  else{
+    downtimeSeconds++;
+    isDowntime=true;
+  }
+
+  updateDisplay();
+  updateLiveStateOnly();   // 🔥 TAMBAH BARIS INI SAHAJA
+
 },1000);
 }
 
@@ -912,6 +923,31 @@ function sendToSheet(chassis, model, lot, status, downtimeEvent, totalDowntime){
   .catch(error => console.log("Sheet error:", error));
 
 }
+  
+  function updateLiveStateOnly(){
+
+  const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+  const actual = actualCount;
+  const balance = actual - plan;
+  const status = document.getElementById("status").innerText;
+
+  fetch(API_URL,{
+    method:"POST",
+    body: JSON.stringify({
+      lot: "",
+      model: "",
+      chassis: "",
+      status: status,
+      plan: plan,
+      actual: actual,
+      balance: balance,
+      totalDowntime: downtimeSeconds,
+      countdown: countdownValue,
+      liveOnly: true
+    })
+  }).catch(err => console.log("Live state error:", err));
+
+}
 
 // ================= MONITOR MODE =================
 
@@ -931,7 +967,7 @@ function loadLiveData(){
         document.getElementById("plan").innerText = stateRow[0];
         document.getElementById("actual").innerText = stateRow[1];
         document.getElementById("balance").innerText = stateRow[2];
-        document.getElementById("downtime").innerText = String(stateRow[4]);
+        document.getElementById("downtime").innerText = format(stateRow[4] || 0);
         document.getElementById("countdown").innerText = format(stateRow[5] || 0);
         
         
@@ -940,7 +976,7 @@ function loadLiveData(){
         } else {
           setStatus(stateRow[3],"status-green");
         }
-     
+     updateStateOnly();
 
       }
 
@@ -952,7 +988,7 @@ function loadLiveData(){
 
     let newRow = table.insertRow();
 
-    newRow.insertCell(0).innerText = new Date(row[0]).toLocaleTimeString();
+    newRow.insertCell(0).innerText = row[0];
     newRow.insertCell(1).innerText = row[1];
     newRow.insertCell(2).innerText = row[2];
     newRow.insertCell(3).innerText = row[3];
@@ -996,6 +1032,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

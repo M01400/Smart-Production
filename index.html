@@ -1018,6 +1018,22 @@ else{
 }
         document.getElementById("downtime").innerText = format(stateRow[4] || 0);
         document.getElementById("countdown").innerText = format(stateRow[5] || 0);
+        
+const downtimeCard = document.getElementById("downtimeCard");
+const downtimeText = document.getElementById("downtime");
+
+let totalDowntime = parseInt(stateRow[4]) || 0;
+document.getElementById("downtime").innerText = format(totalDowntime);
+
+
+if(status === "DOWN TIME"){
+  downtimeCard.classList.add("downtime-alert","blink");
+  downtimeText.classList.add("status-red","blink");
+}
+else{
+  downtimeCard.classList.remove("downtime-alert","blink");
+  downtimeText.classList.remove("status-red","blink");
+}
 
         const status = stateRow[3] || "READY";
 
@@ -1120,7 +1136,7 @@ window.onload = function(){
     document.getElementById("modelInput").style.display="none";
 
     loadLiveData();
-    setInterval(loadLiveData,1000);
+    setInterval(loadLiveData, 800);
 
   } else {
 
@@ -1129,12 +1145,13 @@ window.onload = function(){
 
   }
 
-  setInterval(updateDateTime,1000);
+  setInterval(loadLiveData, 800);
 
 };
 </script>
 </body>
 </html>
+
 
 
 

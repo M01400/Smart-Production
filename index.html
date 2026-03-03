@@ -316,6 +316,7 @@ let timer=null;
 let countdownValue=0;
 let actualCount=0;
 let downtimeSeconds=0;
+let totalDowntime = 0;
 let lastScanTime=null;
 let startTime=null;
 let isDowntime=false;
@@ -417,6 +418,7 @@ timer=setInterval(()=>{
   }
   else{
     downtimeSeconds++;
+    totalDowntime++; 
     isDowntime=true;
   }
 
@@ -535,10 +537,25 @@ else{
     downtimeValue = "";
 }
   
+let downtimeEvent = downtimeSeconds;   // 👈 AMBIL EVENT DOWNTIME DULU
+
 actualCount++;
-countdownValue=cycleTimeSec;
-isDowntime=false;
-lastScanTime=now;
+countdownValue = cycleTimeSec;
+isDowntime = false;
+lastScanTime = now;
+
+downtimeSeconds = 0;   // 👈 RESET LEPAS SIMPAN EVENT
+
+updateDisplay();
+
+sendToSheet(
+    chassis,
+    model,
+    lot,
+    statusValue,
+    downtimeEvent,      // 👈 HANTAR EVENT
+    totalDowntime       // 👈 HANTAR TOTAL
+);
 
 updateDisplay();
 
@@ -1164,6 +1181,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

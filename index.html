@@ -1048,27 +1048,27 @@ else{
 
       }
 
-      const table = document.getElementById("scanTable");
+const table = document.getElementById("scanTable");
 table.innerHTML = "";
 
 scanRows.reverse().forEach(row => {
 
   let newRow = table.insertRow();
 
-  // ===== TIME =====
+  // TIME
   let timeValue = row[0] ? new Date(row[0]).toLocaleTimeString("en-MY") : "";
   newRow.insertCell(0).innerText = timeValue;
 
-  // ===== LOT =====
+  // LOT
   newRow.insertCell(1).innerText = row[1];
 
-  // ===== MODEL =====
+  // MODEL
   newRow.insertCell(2).innerText = row[2];
 
-  // ===== CHASSIS =====
+  // CHASSIS
   newRow.insertCell(3).innerText = row[3];
 
-  // ===== STATUS =====
+  // STATUS
   let statusCell = newRow.insertCell(4);
   statusCell.innerText = row[4];
 
@@ -1079,19 +1079,18 @@ scanRows.reverse().forEach(row => {
     statusCell.classList.add("status-green");
   }
 
-  // ===== DOWNTIME (INDEX 7) =====
+  // 🔥 DOWNTIME (WAJIB row[7])
   let downtimeCell = newRow.insertCell(5);
 
-  let downtimeRaw = row[7];
+  let downtimeValue = row[7];
 
-  if(downtimeRaw && downtimeRaw !== "0:00" && downtimeRaw !== 0){
-    downtimeCell.innerText = downtimeRaw;
+  if(downtimeValue && downtimeValue !== "" && downtimeValue !== 0){
+    downtimeCell.innerText = downtimeValue;
 
     if(row[4] === "DOWN TIME"){
       downtimeCell.classList.add("status-red");
     }
-  }
-  else{
+  } else {
     downtimeCell.innerText = "";
   }
 
@@ -1129,6 +1128,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

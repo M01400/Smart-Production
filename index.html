@@ -1034,18 +1034,24 @@ function loadLiveData(){
       const table = document.getElementById("scanTable");
       table.innerHTML = "";
 
-      scanRows.reverse().forEach(row => {
+    scanRows.reverse().forEach(row => {
 
-        let newRow = table.insertRow();
+  let newRow = table.insertRow();
 
-        newRow.insertCell(0).innerText = row[0];
-        newRow.insertCell(1).innerText = row[1];
-        newRow.insertCell(2).innerText = row[2];
-        newRow.insertCell(3).innerText = row[3];
-        newRow.insertCell(4).innerText = row[4];
-        newRow.insertCell(5).innerText = row[7];
+  // FORMAT TIME
+  let timeValue = row[0] ? new Date(row[0]).toLocaleTimeString("en-MY") : "";
+  newRow.insertCell(0).innerText = timeValue;
 
-      });
+  newRow.insertCell(1).innerText = row[1];
+  newRow.insertCell(2).innerText = row[2];
+  newRow.insertCell(3).innerText = row[3];
+  newRow.insertCell(4).innerText = row[4];
+
+  // FORMAT DOWNTIME (seconds → mm:ss)
+  let downtimeValue = row[7] ? format(row[7]) : "";
+  newRow.insertCell(5).innerText = downtimeValue;
+
+});
 
     })
     .catch(err => console.log("Live load error:", err));
@@ -1080,6 +1086,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

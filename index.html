@@ -978,7 +978,7 @@ function sendToSheet(chassis, model, lot, status, downtimeEvent, totalDowntime){
   const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
   const actual = actualCount;
   const balance = actual - plan;
-  const status = document.getElementById("status").innerText;
+  const status = document.getElementById("status").innerText.trim();
 
   fetch(API_URL,{
     method:"POST",
@@ -990,7 +990,7 @@ function sendToSheet(chassis, model, lot, status, downtimeEvent, totalDowntime){
       plan: plan,
       actual: actual,
       balance: balance,
-      totalDowntime: downtimeSeconds,
+      totalDowntime: totalDowntime,
       countdown: countdownValue,
       liveOnly: true
     })
@@ -1155,6 +1155,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

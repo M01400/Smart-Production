@@ -1049,52 +1049,53 @@ else{
       }
 
       const table = document.getElementById("scanTable");
-      table.innerHTML = "";
+table.innerHTML = "";
 
 scanRows.reverse().forEach(row => {
 
   let newRow = table.insertRow();
 
-  // FORMAT TIME
+  // ===== TIME =====
   let timeValue = row[0] ? new Date(row[0]).toLocaleTimeString("en-MY") : "";
   newRow.insertCell(0).innerText = timeValue;
 
+  // ===== LOT =====
   newRow.insertCell(1).innerText = row[1];
+
+  // ===== MODEL =====
   newRow.insertCell(2).innerText = row[2];
+
+  // ===== CHASSIS =====
   newRow.insertCell(3).innerText = row[3];
-  newRow.insertCell(4).innerText = row[4];
 
-// ===== STATUS =====
+  // ===== STATUS =====
   let statusCell = newRow.insertCell(4);
-statusCell.innerText = row[4];
+  statusCell.innerText = row[4];
 
-if(row[4] === "DOWN TIME"){
-  statusCell.classList.add("status-red");
-}
-else if(row[4] === "SCANNED"){
-  statusCell.classList.add("status-green");
-}
+  if(row[4] === "DOWN TIME"){
+    statusCell.classList.add("status-red");
+  }
+  else if(row[4] === "SCANNED"){
+    statusCell.classList.add("status-green");
+  }
 
-  // ===== DOWNTIME =====
+  // ===== DOWNTIME (INDEX 7) =====
   let downtimeCell = newRow.insertCell(5);
 
-let downtimeRaw = row[7];
+  let downtimeRaw = row[7];
 
-// pastikan value nombor
-let downtimeSeconds = Number(downtimeRaw);
+  if(downtimeRaw && downtimeRaw !== "0:00" && downtimeRaw !== 0){
+    downtimeCell.innerText = downtimeRaw;
 
-if(!isNaN(downtimeSeconds) && downtimeSeconds > 0){
-  downtimeCell.innerText = format(downtimeSeconds);
-}else{
-  downtimeCell.innerText = "";
-}
-
-if(row[4] === "DOWN TIME"){
-  downtimeCell.classList.add("status-red");
-}
+    if(row[4] === "DOWN TIME"){
+      downtimeCell.classList.add("status-red");
+    }
+  }
+  else{
+    downtimeCell.innerText = "";
+  }
 
 });
-
     })
     .catch(err => console.log("Live load error:", err));
 
@@ -1128,6 +1129,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

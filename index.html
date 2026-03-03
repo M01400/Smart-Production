@@ -1009,6 +1009,23 @@ function loadLiveData(){
     document.getElementById("countdown").innerText = format(countdown);
     document.getElementById("downtime").innerText = format(totalDowntime);
 
+     // 👉 FIX BALANCE DI SINI
+const balanceEl = document.getElementById("balance");
+let balance = parseInt(stateRow[2]) || 0;
+
+if(balance < 0){
+  balanceEl.className = "big-number status-red";
+  balanceEl.innerText = balance;
+}
+else if(balance > 0){
+  balanceEl.className = "big-number status-green";
+  balanceEl.innerText = "+" + balance;
+}
+else{
+  balanceEl.className = "big-number status-blue";
+  balanceEl.innerText = "0";
+}
+
     // STATUS CARD
     if(status === "DOWN TIME"){
         setStatus("DOWN TIME","status-red blink");
@@ -1147,6 +1164,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

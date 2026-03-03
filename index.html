@@ -449,6 +449,7 @@ duplicateLock=false;
 document.getElementById("scanTable").innerHTML="";
 setStatus("READY","status-blue");
 updateDisplay();
+updateLiveStateOnly();
 }
 
 /* ===== SCAN CHASSIS ===== */
@@ -1064,7 +1065,7 @@ window.onload = function(){
     document.getElementById("modelInput").style.display="none";
 
     loadLiveData();
-    setInterval(loadLiveData,3000);
+    setInterval(loadLiveData,1000);
 
   } else {
 
@@ -1079,6 +1080,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

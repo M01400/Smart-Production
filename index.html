@@ -577,18 +577,24 @@ setStatus("TARGET ACHIEVED","status-green");
 }
 else if(isDowntime){setStatus("DOWN TIME","status-red blink");}
 else if(pendingChassis!==""){setStatus("WAITING MODEL","status-orange");}
-else{setStatus("RUNNING","status-green pulse");}
-updateLiveStateOnly();
+else{
+  setStatus("RUNNING","status-green pulse");
 }
+
 const downtimeCard=document.getElementById("downtimeCard");
 const downtimeText=document.getElementById("downtime");
+
 if(isDowntime){
-downtimeCard.classList.add("downtime-alert","blink");
-downtimeText.classList.add("status-red","blink");
+  downtimeCard.classList.add("downtime-alert","blink");
+  downtimeText.classList.add("status-red","blink");
 }else{
-downtimeCard.classList.remove("downtime-alert","blink");
-downtimeText.classList.remove("status-red","blink");
+  downtimeCard.classList.remove("downtime-alert","blink");
+  downtimeText.classList.remove("status-red","blink");
 }
+
+// 🔥 LETAK DI SINI
+updateLiveStateOnly();
+
 }
 
 /* ===== DAILY SUMMARY ===== */
@@ -1051,6 +1057,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

@@ -1034,7 +1034,7 @@ function loadLiveData(){
       const table = document.getElementById("scanTable");
       table.innerHTML = "";
 
-    scanRows.reverse().forEach(row => {
+scanRows.reverse().forEach(row => {
 
   let newRow = table.insertRow();
 
@@ -1047,9 +1047,25 @@ function loadLiveData(){
   newRow.insertCell(3).innerText = row[3];
   newRow.insertCell(4).innerText = row[4];
 
-  // FORMAT DOWNTIME (seconds → mm:ss)
+// ===== STATUS =====
+  let statusCell = newRow.insertCell(4);
+  statusCell.innerText = row[4];
+
+  if(row[4] === "DOWN TIME"){
+    statusCell.classList.add("status-red");
+  }
+  else if(row[4] === "SCANNED"){
+    statusCell.classList.add("status-green");
+  }
+
+  // ===== DOWNTIME =====
+  let downtimeCell = newRow.insertCell(5);
   let downtimeValue = row[7] ? format(row[7]) : "";
-  newRow.insertCell(5).innerText = downtimeValue;
+  downtimeCell.innerText = downtimeValue;
+
+  if(row[4] === "DOWN TIME"){
+    downtimeCell.classList.add("status-red");
+  }
 
 });
 
@@ -1086,6 +1102,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

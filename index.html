@@ -572,11 +572,30 @@ if(isBreakTime()){setStatus("BREAK TIME","status-orange");}
 else if(duplicateLock){setStatus("DUPLICATE CHASSIS","status-red blink");}
 else if(actualCount===0 && !timer){setStatus("READY","status-blue");}
 else if(actualCount>=plan && plan>0){
-clearInterval(timer);timer=null;countdownValue=0;isDowntime=false;
-setStatus("TARGET ACHIEVED","status-green");
+  clearInterval(timer);
+  timer=null;
+  countdownValue=0;
+  isDowntime=false;
 
-updateLiveStateOnly();
+  setStatus("TARGET ACHIEVED","status-green");
+  updateLiveStateOnly();
 
+  // 🔥 FORCE override state
+  fetch(API_URL,{
+    method:"POST",
+    body: JSON.stringify({
+      lot:"",
+      model:"",
+      chassis:"",
+      status:"TARGET ACHIEVED",
+      plan:plan,
+      actual:actualCount,
+      balance:actualCount-plan,
+      totalDowntime:downtimeSeconds,
+      countdown:0,
+      liveOnly:true
+    })
+  });
 }
 else if(isDowntime){setStatus("DOWN TIME","status-red blink");}
 else if(pendingChassis!==""){setStatus("WAITING MODEL","status-orange");}
@@ -1058,6 +1077,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

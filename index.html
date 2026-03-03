@@ -574,6 +574,7 @@ else if(actualCount===0 && !timer){setStatus("READY","status-blue");}
 else if(actualCount>=plan && plan>0){
 clearInterval(timer);timer=null;countdownValue=0;isDowntime=false;
 setStatus("TARGET ACHIEVED","status-green");
+updateLiveStateOnly();
 }
 else if(isDowntime){setStatus("DOWN TIME","status-red blink");}
 else if(pendingChassis!==""){setStatus("WAITING MODEL","status-orange");}
@@ -1050,6 +1051,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

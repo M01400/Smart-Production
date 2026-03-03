@@ -1001,10 +1001,12 @@ function loadLiveData(){
         let balance = parseInt(stateRow[2]) || 0;
 let balanceEl = document.getElementById("balance");
 
+// tambah simbol +
 let displayBalance = balance > 0 ? "+" + balance : balance;
 
 balanceEl.innerText = displayBalance;
 
+// warna ikut main PC
 if(balance < 0){
   balanceEl.className = "big-number status-red";
 }
@@ -1064,23 +1066,32 @@ scanRows.reverse().forEach(row => {
 
 // ===== STATUS =====
   let statusCell = newRow.insertCell(4);
-  statusCell.innerText = row[4];
+statusCell.innerText = row[4];
 
-  if(row[4] === "DOWN TIME"){
-    statusCell.classList.add("status-red");
-  }
-  else if(row[4] === "SCANNED"){
-    statusCell.classList.add("status-green");
-  }
+if(row[4] === "DOWN TIME"){
+  statusCell.classList.add("status-red");
+}
+else if(row[4] === "SCANNED"){
+  statusCell.classList.add("status-green");
+}
 
   // ===== DOWNTIME =====
   let downtimeCell = newRow.insertCell(5);
-  let downtimeSeconds = parseInt(row[5]) || 0;   // 🔥 TUKAR INDEX
-  downtimeCell.innerText = downtimeSeconds > 0 ? format(downtimeSeconds) : "";
 
-  if(row[4] === "DOWN TIME"){
-    downtimeCell.classList.add("status-red");
-  }
+let downtimeRaw = row[7];
+
+// pastikan value nombor
+let downtimeSeconds = Number(downtimeRaw);
+
+if(!isNaN(downtimeSeconds) && downtimeSeconds > 0){
+  downtimeCell.innerText = format(downtimeSeconds);
+}else{
+  downtimeCell.innerText = "";
+}
+
+if(row[4] === "DOWN TIME"){
+  downtimeCell.classList.add("status-red");
+}
 
 });
 
@@ -1117,6 +1128,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

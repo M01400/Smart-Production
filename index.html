@@ -1052,7 +1052,8 @@ const table = document.getElementById("scanTable");
 table.innerHTML = "";
 
 scanRows.reverse().forEach(row => {
-
+console.log("ROW DEBUG:", row);
+  
   let newRow = table.insertRow();
 
   // TIME
@@ -1134,6 +1135,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

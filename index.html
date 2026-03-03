@@ -1069,32 +1069,6 @@ else{
         downtimeText.classList.remove("status-red","blink");
     }
 }      
-        const status = stateRow[3] || "READY";
-
-        if(status === "DOWN TIME"){
-          setStatus("DOWN TIME","status-red blink");
-        }
-        else if(status === "TARGET ACHIEVED"){
-          setStatus("TARGET ACHIEVED","status-green");
-        }
-        else if(status === "BREAK TIME"){
-          setStatus("BREAK TIME","status-orange");
-        }
-        else if(status === "PAUSED"){
-          setStatus("PAUSED","status-orange");
-        }
-        else if(status === "WAITING MODEL"){
-          setStatus("WAITING MODEL","status-orange");
-        }
-        else if(status === "DUPLICATE CHASSIS"){
-          setStatus("DUPLICATE CHASSIS","status-red blink");
-        }
-        else if(status === "RUNNING"){
-          setStatus("RUNNING","status-green pulse");
-        }
-        else{
-          setStatus(status,"status-blue");
-        }
 
 const table = document.getElementById("scanTable");
 table.innerHTML = "";
@@ -1181,6 +1155,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

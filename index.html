@@ -992,49 +992,48 @@ function loadLiveData(){
     .then(data => {
 
       const scanRows = data.scan.slice(1);
-      const stateRow = data.state[1];
+const stateRow = data.state[1];
 
-      if(stateRow){
+if(stateRow){
 
-        document.getElementById("plan").innerText = stateRow[0];
-        document.getElementById("actual").innerText = stateRow[1];
-        let balance = parseInt(stateRow[2]) || 0;
-let balanceEl = document.getElementById("balance");
+  const plan = stateRow[0] || 0;
+  const actual = stateRow[1] || 0;
+  const balance = stateRow[2] || 0;
+  const status = (stateRow[3] || "READY").trim();
+  const totalDowntime = parseInt(stateRow[4]) || 0;
+  const countdown = parseInt(stateRow[5]) || 0;
 
-// tambah simbol +
-let displayBalance = balance > 0 ? "+" + balance : balance;
+  // ===== Update Numbers =====
+  document.getElementById("plan").innerText = plan;
+  document.getElementById("actual").innerText = actual;
+  document.getElementById("countdown").innerText = format(countdown);
+  document.getElementById("downtime").innerText = format(totalDowntime);
 
-balanceEl.innerText = displayBalance;
+  // ===== Status Display =====
+  if(status === "DOWN TIME"){
+    setStatus("DOWN TIME","status-red blink");
+  }
+  else if(status === "TARGET ACHIEVED"){
+    setStatus("TARGET ACHIEVED","status-green");
+  }
+  else if(status === "RUNNING"){
+    setStatus("RUNNING","status-green pulse");
+  }
+  else{
+    setStatus(status,"status-blue");
+  }
 
-// warna ikut main PC
-if(balance < 0){
-  balanceEl.className = "big-number status-red";
-}
-else if(balance > 0){
-  balanceEl.className = "big-number status-green";
-}
-else{
-  balanceEl.className = "big-number status-blue";
-}
-        document.getElementById("downtime").innerText = format(stateRow[4] || 0);
-        document.getElementById("countdown").innerText = format(stateRow[5] || 0);
-        
-const downtimeCard = document.getElementById("downtimeCard");
-const downtimeText = document.getElementById("downtime");
+  // ===== Downtime Card Blink (LETak PALING BAWAH) =====
+  const downtimeCard = document.getElementById("downtimeCard");
+  const downtimeText = document.getElementById("downtime");
 
-let totalDowntime = parseInt(stateRow[4]) || 0;
-document.getElementById("downtime").innerText = format(totalDowntime);
-
-
-if(status === "DOWN TIME"){
-  downtimeCard.classList.add("downtime-alert","blink");
-  downtimeText.classList.add("status-red","blink");
-}
-else{
-  downtimeCard.classList.remove("downtime-alert","blink");
-  downtimeText.classList.remove("status-red","blink");
-}
-
+  if(status === "DOWN TIME"){
+    downtimeCard.classList.add("downtime-alert","blink");
+    downtimeText.classList.add("status-red","blink");
+  } else {
+    downtimeCard.classList.remove("downtime-alert","blink");
+    downtimeText.classList.remove("status-red","blink");
+  }
         const status = stateRow[3] || "READY";
 
         if(status === "DOWN TIME"){
@@ -1151,6 +1150,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

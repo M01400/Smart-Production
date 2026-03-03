@@ -532,7 +532,7 @@ updateDisplay();
 
 console.log("CHECK VAR:", chassis, model, lot, statusValue, downtimeValue);
 
-sendToSheet(chassis, model, lot, statusValue, downtimeValue);
+sendToSheet(chassis, model, lot, statusValue, downtimeValue, downtimeSeconds);
   
 this.value="";
 document.getElementById("chassisInput").focus();
@@ -886,7 +886,7 @@ function toggleRamadan(){
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyYD3UX0cv4DxEHEdpf31OJI3hUA-UuhqfqB6ZkDysfsWnsSh3MxB3FraU0TRij89Ew6A/exec";
 
-function sendToSheet(chassis, model, lot, status, downtime) {
+function sendToSheet(chassis, model, lot, status, downtimeEvent, totalDowntime){
 
   const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
   const actual = actualCount;
@@ -895,16 +895,17 @@ function sendToSheet(chassis, model, lot, status, downtime) {
   fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({
-      lot: lot,
-      model: model,
-      chassis: chassis,
-      status: status,
-      plan: plan,
-      actual: actual,
-      balance: balance,
-      downtime: downtime,
-      countdown: countdown
-    })
+  lot: lot,
+  model: model,
+  chassis: chassis,
+  status: status,
+  plan: plan,
+  actual: actual,
+  balance: balance,
+  downtimeEvent: downtimeEvent,
+  totalDowntime: totalDowntime,
+  countdown: countdown
+})
   })
   .then(response => response.text())
   .then(data => console.log("Sheet:", data))
@@ -912,23 +913,6 @@ function sendToSheet(chassis, model, lot, status, downtime) {
 
 }
 
-function startMonitorCountdown(seconds) {
-
-  if (monitorCountdown === seconds) return;
-
-  clearInterval(monitorTimer);
-
-  monitorCountdown = seconds;
-
-  monitorTimer = setInterval(() => {
-
-    if (monitorCountdown > 0) {
-      monitorCountdown--;
-      document.getElementById("countdown").innerText = format(monitorCountdown);
-    }
-
-  }, 1000);
-}
 // ================= MONITOR MODE =================
 
 const isMonitor = window.location.search.includes("monitor");
@@ -948,7 +932,7 @@ function loadLiveData(){
         document.getElementById("actual").innerText = stateRow[1];
         document.getElementById("balance").innerText = stateRow[2];
         document.getElementById("downtime").innerText = String(stateRow[4]);
-        document.getElementById("countdown").innerText = String(stateRow[5]);
+        document.getElementById("countdown").innerText = format(stateRow[5] || 0);
         
         
         if(stateRow[3] === "DOWN TIME"){
@@ -956,8 +940,7 @@ function loadLiveData(){
         } else {
           setStatus(stateRow[3],"status-green");
         }
-        const seconds = parseInt(stateRow[5] || 0);
-startMonitorCountdown(seconds);
+     
 
       }
 
@@ -1013,6 +996,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

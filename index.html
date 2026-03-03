@@ -974,57 +974,56 @@ function loadLiveData(){
         document.getElementById("balance").innerText = stateRow[2];
         document.getElementById("downtime").innerText = format(stateRow[4] || 0);
         document.getElementById("countdown").innerText = format(stateRow[5] || 0);
-        
+
         const status = stateRow[3] || "READY";
 
-if(status === "DOWN TIME"){
-  setStatus("DOWN TIME","status-red blink");
-}
-else if(status === "TARGET ACHIEVED"){
-  setStatus("TARGET ACHIEVED","status-green");
-}
-else if(status === "BREAK TIME"){
-  setStatus("BREAK TIME","status-orange");
-}
-else if(status === "PAUSED"){
-  setStatus("PAUSED","status-orange");
-}
-else if(status === "WAITING MODEL"){
-  setStatus("WAITING MODEL","status-orange");
-}
-else if(status === "DUPLICATE CHASSIS"){
-  setStatus("DUPLICATE CHASSIS","status-red blink");
-}
-else if(status === "RUNNING"){
-  setStatus("RUNNING","status-green pulse");
-}
-else{
-  setStatus(status,"status-blue");
-}
-        
+        if(status === "DOWN TIME"){
+          setStatus("DOWN TIME","status-red blink");
+        }
+        else if(status === "TARGET ACHIEVED"){
+          setStatus("TARGET ACHIEVED","status-green");
+        }
+        else if(status === "BREAK TIME"){
+          setStatus("BREAK TIME","status-orange");
+        }
+        else if(status === "PAUSED"){
+          setStatus("PAUSED","status-orange");
+        }
+        else if(status === "WAITING MODEL"){
+          setStatus("WAITING MODEL","status-orange");
+        }
+        else if(status === "DUPLICATE CHASSIS"){
+          setStatus("DUPLICATE CHASSIS","status-red blink");
+        }
+        else if(status === "RUNNING"){
+          setStatus("RUNNING","status-green pulse");
+        }
+        else{
+          setStatus(status,"status-blue");
+        }
 
-      // ===== Update Table =====
+      }
+
       const table = document.getElementById("scanTable");
       table.innerHTML = "";
 
       scanRows.reverse().forEach(row => {
 
-    let newRow = table.insertRow();
+        let newRow = table.insertRow();
 
-    newRow.insertCell(0).innerText = row[0];
-    newRow.insertCell(1).innerText = row[1];
-    newRow.insertCell(2).innerText = row[2];
-    newRow.insertCell(3).innerText = row[3];
-    newRow.insertCell(4).innerText = row[4];
-    newRow.insertCell(5).innerText = row[7];
+        newRow.insertCell(0).innerText = row[0];
+        newRow.insertCell(1).innerText = row[1];
+        newRow.insertCell(2).innerText = row[2];
+        newRow.insertCell(3).innerText = row[3];
+        newRow.insertCell(4).innerText = row[4];
+        newRow.insertCell(5).innerText = row[7];
 
-});
+      });
 
-}) // ✅ tutup .then(data => {
+    })
+    .catch(err => console.log("Live load error:", err));
 
-.catch(err => console.log("Live load error:", err));
-
-} // ✅ tutup function loadLiveData()
+}
 
 
 // ================= INITIALIZE =================
@@ -1055,6 +1054,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

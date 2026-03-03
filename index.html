@@ -998,7 +998,22 @@ function loadLiveData(){
 
         document.getElementById("plan").innerText = stateRow[0];
         document.getElementById("actual").innerText = stateRow[1];
-        document.getElementById("balance").innerText = stateRow[2];
+        let balance = parseInt(stateRow[2]) || 0;
+let balanceEl = document.getElementById("balance");
+
+let displayBalance = balance > 0 ? "+" + balance : balance;
+
+balanceEl.innerText = displayBalance;
+
+if(balance < 0){
+  balanceEl.className = "big-number status-red";
+}
+else if(balance > 0){
+  balanceEl.className = "big-number status-green";
+}
+else{
+  balanceEl.className = "big-number status-blue";
+}
         document.getElementById("downtime").innerText = format(stateRow[4] || 0);
         document.getElementById("countdown").innerText = format(stateRow[5] || 0);
 
@@ -1060,8 +1075,8 @@ scanRows.reverse().forEach(row => {
 
   // ===== DOWNTIME =====
   let downtimeCell = newRow.insertCell(5);
-  let downtimeValue = row[7] ? format(row[7]) : "";
-  downtimeCell.innerText = downtimeValue;
+  let downtimeSeconds = parseInt(row[5]) || 0;   // 🔥 TUKAR INDEX
+  downtimeCell.innerText = downtimeSeconds > 0 ? format(downtimeSeconds) : "";
 
   if(row[4] === "DOWN TIME"){
     downtimeCell.classList.add("status-red");
@@ -1102,6 +1117,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

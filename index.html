@@ -1079,26 +1079,27 @@ scanRows.reverse().forEach(row => {
     statusCell.classList.add("status-green");
   }
 
-  // 🔥 DOWNTIME (WAJIB row[7])
-  let downtimeCell = newRow.insertCell(5);
+  //  DOWNTIME 
+let downtimeCell = newRow.insertCell(5);
 
-let rawValue = row[7];
+let downtimeValue = row[7];
 
-if(rawValue instanceof Date){
+if(downtimeValue && downtimeValue !== "0:00" && downtimeValue !== "0"){
+  
+  let parts = downtimeValue.split(":");
+  let minutes = parts[0].padStart(2,'0');
+  let seconds = parts[1].padStart(2,'0');
 
-  // convert date object ke mm:ss
-  let seconds = rawValue.getMinutes() * 60 + rawValue.getSeconds();
-  downtimeCell.innerText = format(seconds);
+  downtimeCell.innerText = minutes + ":" + seconds;
 
   if(row[4] === "DOWN TIME"){
     downtimeCell.classList.add("status-red");
   }
 
-}
-else{
+} else {
   downtimeCell.innerText = "";
 }
-
+  
 });
     })
     .catch(err => console.log("Live load error:", err));
@@ -1133,6 +1134,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

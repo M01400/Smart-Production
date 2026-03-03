@@ -541,9 +541,11 @@ lastScanTime=now;
 
 updateDisplay();
 
+sendToSheet(chassis, model, lot, statusValue, downtimeValue, downtimeSeconds);
+
 console.log("CHECK VAR:", chassis, model, lot, statusValue, downtimeValue);
 
-sendToSheet(chassis, model, lot, statusValue, downtimeValue, downtimeSeconds);
+updateLiveStateOnly();
   
 this.value="";
 document.getElementById("chassisInput").focus();
@@ -1077,6 +1079,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

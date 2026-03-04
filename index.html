@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -942,412 +941,216 @@ function toggleRamadan(){
   updateDisplay();
 }
 
-/* ===========================
-   SMART PRODUCTION MONITORING
-   VERSION 1.0 – FACTORY READY
-=========================== */
+/* ===== GOOGLE SHEET API ===== */
 
 const API_URL = "https://script.google.com/macros/s/AKfycbyYD3UX0cv4DxEHEdpf31OJI3hUA-UuhqfqB6ZkDysfsWnsSh3MxB3FraU0TRij89Ew6A/exec";
 
-/* ================= VARIABLES ================= */
+function sendToSheet(chassis, model, lot, status, downtimeEvent, totalDowntime){
 
-let ramadanMode = false;
-let timer = null;
-let countdownValue = 0;
-let actualCount = 0
-let downtimeSeconds = 0;
-let totalDowntime = 0;
-let lastScanTime = null;
-let startTime = null;
-let isDowntime = false;
-let pendingChassis = "";
-let scannedChassis = new Set();
-let duplicateLock = false;
+  const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+  const actual = actualCount;
+  const balance = actual - plan;
+  const countdown = countdownValue;
+  fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+  lot: lot,
+  model: model,
+  chassis: chassis,
+  status: status,
+  plan: plan,
+  actual: actual,
+  balance: balance,
+  downtimeEvent: downtimeEvent,
+  totalDowntime: totalDowntime,
+  countdown: countdown
+})
+  })
+  .then(response => response.text())
+  .then(data => console.log("Sheet:", data))
+  .catch(error => console.log("Sheet error:", error));
 
-/* ================= FORMAT ================= */
-
-function format(s){
-  const m = Math.floor(s/60);
-  const sec = s%60;
-  return (m<10?"0"+m:m)+":"+(sec<10?"0"+sec:sec);
 }
+  
+  function updateLiveStateOnly(){
 
-/* ================= STATUS ================= */
-
-function setStatus(text,color){
-  const el = document.getElementById("status");
-  el.innerText = text;
-  el.className = "big-number " + color;
-}
-
-/* ================= START ================= */
-
-function startProduction(){
-
-  if(timer) return;
-
-  if(countdownValue === 0){
-    countdownValue = (parseFloat(document.getElementById("cycleTarget").value)||1)*60;
-    startTime = new Date();
-  }
-
-  timer = setInterval(()=>{
-
-    if(countdownValue > 0){
-      countdownValue--;
-    }else{
-      downtimeSeconds++;
-      totalDowntime++;
-      isDowntime = true;
-    }
-
-    updateDisplay();
-    updateLiveStateOnly();
-
-  },1000);
-}
-
-/* ================= STOP ================= */
-
-function stopProduction(){
-  clearInterval(timer);
-  timer = null;
-  setStatus("PAUSED","status-orange");
-}
-
-/* ================= RESET ================= */
-
-function resetProduction(){
-
-  clearInterval(timer);
-  timer = null;
-
-  countdownValue = 0;
-  actualCount = 0;
-  downtimeSeconds = 0;
-  totalDowntime = 0;
-  lastScanTime = null;
-  startTime = null;
-  pendingChassis = "";
-  scannedChassis.clear();
-  isDowntime = false;
-  duplicateLock = false;
-
-  document.getElementById("scanTable").innerHTML="";
-  setStatus("READY","status-blue");
-
-  updateDisplay();
-}
-
-/* ================= SCAN CHASSIS ================= */
-
-document.getElementById("chassisInput")
-.addEventListener("keydown",function(e){
-
-  if(e.key==="Enter" && this.value.trim()!==""){
-
-    let value = this.value.trim();
-
-    if(pendingChassis===value || scannedChassis.has(value)){
-      duplicateLock = true;
-      setStatus("DUPLICATE CHASSIS","status-red blink");
-      this.value="";
-      return;
-    }
-
-    duplicateLock = false;
-    pendingChassis = value;
-    this.value="";
-
-    if(!timer) startProduction();
-
-    setStatus("WAITING MODEL","status-orange");
-    document.getElementById("modelInput").focus();
-  }
-});
-
-/* ================= SCAN MODEL ================= */
-
-document.getElementById("modelInput")
-.addEventListener("keydown",function(e){
-
-  if(e.key==="Enter" && this.value.trim()!=="" && pendingChassis!==""){
-
-    let model = this.value.trim();
-    let chassis = pendingChassis;
-    let lot = document.getElementById("lotInput").value || "-";
-
-    pendingChassis="";
-    scannedChassis.add(chassis);
-
-    const now = new Date();
-    const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value)||1)*60;
-
-    let downtimeEvent = 0;
-
-    if(lastScanTime){
-      let diffSec = Math.floor((now-lastScanTime)/1000);
-      if(diffSec>cycleTimeSec){
-        downtimeEvent = diffSec-cycleTimeSec;
-      }
-    }
-
-    actualCount++;
-    countdownValue = cycleTimeSec;
-    isDowntime = false;
-    lastScanTime = now;
-    downtimeSeconds = 0;
-
-    insertRow(lot,model,chassis,downtimeEvent);
-
-    sendToSheet(
-      chassis,
-      model,
-      lot,
-      downtimeEvent>0?"DOWN TIME":"SCANNED",
-      downtimeEvent,
-      totalDowntime
-    );
-
-    updateDisplay();
-    updateLiveStateOnly();
-
-    this.value="";
-    document.getElementById("chassisInput").focus();
-  }
-});
-
-/* ================= INSERT TABLE ROW ================= */
-
-function insertRow(lot,model,chassis,downtimeEvent){
-
-  let row = document.getElementById("scanTable").insertRow(0);
-
-  row.insertCell(0).innerText = new Date().toLocaleTimeString();
-  row.insertCell(1).innerText = lot;
-  row.insertCell(2).innerText = model;
-  row.insertCell(3).innerText = chassis;
-
-  let statusCell = row.insertCell(4);
-  let downtimeCell = row.insertCell(5);
-
-  if(downtimeEvent>0){
-    statusCell.innerText="DOWN TIME";
-    statusCell.classList.add("status-red");
-    downtimeCell.innerText=format(downtimeEvent);
-    downtimeCell.classList.add("status-red");
-  }else{
-    statusCell.innerText="SCANNED";
-    statusCell.classList.add("status-green");
-    downtimeCell.innerText="";
-  }
-}
-
-/* ================= UPDATE DISPLAY ================= */
-
-function updateDisplay(){
-
-  let plan = parseInt(document.getElementById("dailyPlanTarget").value)||0;
-  let balance = actualCount-plan;
-
-  document.getElementById("plan").innerText=plan;
-  document.getElementById("actual").innerText=actualCount;
-  document.getElementById("countdown").innerText=format(countdownValue);
-  document.getElementById("downtime").innerText=format(totalDowntime);
-
-  let balanceEl=document.getElementById("balance");
-
-  if(balance<0){
-    balanceEl.className="big-number status-red";
-  }else if(balance>0){
-    balanceEl.className="big-number status-green";
-  }else{
-    balanceEl.className="big-number status-blue";
-  }
-
-  balanceEl.innerText=balance>0?("+"+balance):balance;
-
-  if(actualCount>=plan && plan>0){
-    setStatus("TARGET ACHIEVED","status-green");
-    stopProduction();
-  }
-  else if(isDowntime){
-    setStatus("DOWN TIME","status-red blink");
-  }
-  else{
-    setStatus("RUNNING","status-green pulse");
-  }
-}
-
-/* ================= SEND TO SHEET ================= */
-
-function sendToSheet(chassis,model,lot,status,downtimeEvent,totalDowntime){
-
-  const plan = parseInt(document.getElementById("dailyPlanTarget").value)||0;
-  const balance = actualCount-plan;
+  const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+  const actual = actualCount;
+  const balance = actual - plan;
+  const status = document.getElementById("status").innerText.trim();
 
   fetch(API_URL,{
     method:"POST",
-    body:JSON.stringify({
-      lot:lot,
-      model:model,
-      chassis:chassis,
-      status:status,
-      plan:plan,
-      actual:actualCount,
-      balance:balance,
-      downtimeEvent:downtimeEvent,
-      totalDowntime:totalDowntime,
-      countdown:countdownValue
+    body: JSON.stringify({
+      lot: "",
+      model: "",
+      chassis: "",
+      status: status,
+      plan: plan,
+      actual: actual,
+      balance: balance,
+      totalDowntime: totalDowntime,
+      countdown: countdownValue,
+      liveOnly: true
     })
-  }).catch(()=>{});
+  }).catch(err => console.log("Live state error:", err));
+
 }
 
-/* ================= LIVE STATE ONLY ================= */
-
-function updateLiveStateOnly(){
-
-  const plan = parseInt(document.getElementById("dailyPlanTarget").value)||0;
-  const balance = actualCount-plan;
-
-  fetch(API_URL,{
-    method:"POST",
-    body:JSON.stringify({
-      liveOnly:true,
-      plan:plan,
-      actual:actualCount,
-      balance:balance,
-      status:document.getElementById("status").innerText,
-      totalDowntime:totalDowntime,
-      countdown:countdownValue
-    })
-  }).catch(()=>{});
-}
-
-/* ================= MONITOR MODE ================= */
+// ================= MONITOR MODE =================
 
 const isMonitor = window.location.search.includes("monitor");
 
 function loadLiveData(){
 
-  fetch(API_URL + "?t=" + new Date().getTime())
-  .then(res=>res.json())
-  .then(data=>{
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
 
-    const scanRows = data.scan.slice(1);
-    const stateRow = data.state[1];
+      const scanRows = data.scan.slice(1);
+      const stateRow = data.state[1];
 
-    if(stateRow){
+      if(stateRow){
 
-      document.getElementById("plan").innerText = stateRow[0];
-      document.getElementById("actual").innerText = stateRow[1];
-      document.getElementById("balance").innerText = stateRow[2];
-      document.getElementById("downtime").innerText = format(parseInt(stateRow[4])||0);
-      document.getElementById("countdown").innerText = format(parseInt(stateRow[5])||0);
+ const plan = stateRow[0] || 0;
+    const actual = stateRow[1] || 0;
+    const balance = stateRow[2] || 0;
+    const status = (stateRow[3] || "READY").trim();
+    const totalDowntime = parseInt(stateRow[4]) || 0;
+    const countdown = parseInt(stateRow[5]) || 0;
 
-      setStatus(stateRow[3],"status-blue");
-    }
+    // UPDATE NUMBER
+    document.getElementById("plan").innerText = plan;
+    document.getElementById("actual").innerText = actual;
+    document.getElementById("countdown").innerText = format(countdown);
+    document.getElementById("downtime").innerText = format(totalDowntime);
 
-    const table = document.getElementById("scanTable");
-    table.innerHTML="";
+     // 👉 FIX BALANCE DI SINI
+const balanceEl = document.getElementById("balance");
+balance = parseInt(stateRow[2]) || 0;
 
-    scanRows.reverse().forEach(row=>{
-      let newRow = table.insertRow();
-
-      newRow.insertCell(0).innerText = new Date(row[0]).toLocaleTimeString();
-      newRow.insertCell(1).innerText = row[1];
-      newRow.insertCell(2).innerText = row[2];
-      newRow.insertCell(3).innerText = row[3];
-      newRow.insertCell(4).innerText = row[4];
-      newRow.insertCell(5).innerText = row[7]?format(parseInt(row[7])):"";
-    });
-
-  }).catch(()=>{});
+if(balance < 0){
+  balanceEl.className = "big-number status-red";
+  balanceEl.innerText = balance;
+}
+else if(balance > 0){
+  balanceEl.className = "big-number status-green";
+  balanceEl.innerText = "+" + balance;
+}
+else{
+  balanceEl.className = "big-number status-blue";
+  balanceEl.innerText = "0";
 }
 
-/* ================= INIT ================= */
+    // STATUS CARD
+    if(status === "DOWN TIME"){
+        setStatus("DOWN TIME","status-red blink");
+    }
+    else if(status === "TARGET ACHIEVED"){
+        setStatus("TARGET ACHIEVED","status-green");
+    }
+    else if(status === "RUNNING"){
+        setStatus("RUNNING","status-green pulse");
+    }
+    else{
+        setStatus(status,"status-blue");
+    }
 
-window.onload=function(){
+    // DOWNTIME BLINK CARD
+    const downtimeCard = document.getElementById("downtimeCard");
+    const downtimeText = document.getElementById("downtime");
+
+    if(status === "DOWN TIME"){
+        downtimeCard.classList.add("downtime-alert","blink");
+        downtimeText.classList.add("status-red","blink");
+    } else {
+        downtimeCard.classList.remove("downtime-alert","blink");
+        downtimeText.classList.remove("status-red","blink");
+    }
+}      
+
+const table = document.getElementById("scanTable");
+table.innerHTML = "";
+
+scanRows.reverse().forEach(row => {
+console.log("ROW DEBUG:", row);
+  
+  let newRow = table.insertRow();
+
+  // TIME
+  let timeValue = row[0] ? new Date(row[0]).toLocaleTimeString("en-MY") : "";
+  newRow.insertCell(0).innerText = timeValue;
+
+  // LOT
+  newRow.insertCell(1).innerText = row[1];
+
+  // MODEL
+  newRow.insertCell(2).innerText = row[2];
+
+  // CHASSIS
+  newRow.insertCell(3).innerText = row[3];
+
+  // STATUS
+  let statusCell = newRow.insertCell(4);
+  statusCell.innerText = row[4];
+
+  if(row[4] === "DOWN TIME"){
+    statusCell.classList.add("status-red");
+  }
+  else if(row[4] === "SCANNED"){
+    statusCell.classList.add("status-green");
+  }
+
+  //  DOWNTIME 
+let downtimeCell = newRow.insertCell(5);
+
+let downtimeValue = row[7];
+
+if(downtimeValue && downtimeValue !== "0:00" && downtimeValue !== "0"){
+  
+  let parts = downtimeValue.split(":");
+  let minutes = parts[0].padStart(2,'0');
+  let seconds = parts[1].padStart(2,'0');
+
+  downtimeCell.innerText = minutes + ":" + seconds;
+
+  if(row[4] === "DOWN TIME"){
+    downtimeCell.classList.add("status-red");
+  }
+
+} else {
+  downtimeCell.innerText = "";
+}
+  
+});
+    })
+    .catch(err => console.log("Live load error:", err));
+
+}
+
+// ================= INITIALIZE =================
+
+window.onload = function(){
+
+  updateDateTime();
 
   if(isMonitor){
 
+    // hide scan input
     document.getElementById("chassisInput").style.display="none";
     document.getElementById("modelInput").style.display="none";
 
     loadLiveData();
-    setInterval(loadLiveData,1000);
+    setInterval(loadLiveData, 1000);
 
-  }else{
+  } else {
+
+    // main PC normal behaviour
     updateDisplay();
+
   }
+
 };
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

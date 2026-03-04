@@ -971,7 +971,19 @@ statusCell.classList.add("status-green");
 
 let downtimeCell = newRow.insertCell(5);
 if(row[7]){
-downtimeCell.innerText = row[7];
+
+let dt = row[7];
+
+if(typeof dt === "string" && dt.includes("T")){
+  let dateObj = new Date(dt);
+  let m = dateObj.getMinutes();
+  let s = dateObj.getSeconds();
+  downtimeCell.innerText = format(m*60+s);
+}
+else{
+  downtimeCell.innerText = dt;
+}
+
 }else{
 downtimeCell.innerText="";
 }
@@ -992,10 +1004,8 @@ downtimeCell.innerText="";
       document.getElementById("plan").innerText = plan;
       document.getElementById("actual").innerText = actual;
       
-const countdownEl = document.getElementById("countdown");
-
 countdownValue = countdown;
-countdownEl.innerText = format(countdownValue);
+document.getElementById("countdown").innerText = format(countdownValue);
     
       document.getElementById("downtime").innerText = format(totalDowntime);
 
@@ -1086,6 +1096,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

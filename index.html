@@ -967,6 +967,7 @@ statusCell.innerText = row[4];
 
 if(row[4] === "DOWN TIME"){
 statusCell.classList.add("status-red");
+downtimeCell.classList.add("status-red");
 }
 if(row[4] === "SCANNED"){
 statusCell.classList.add("status-green");
@@ -982,8 +983,8 @@ let d = new Date(dt);
 
 if(!isNaN(d)){
 
-let m = d.getMinutes();
-let s = d.getSeconds();
+let m = d.getHours();   // tukar sini
+let s = d.getMinutes(); // tukar sini
 
 downtimeCell.innerText =
 (m<10?"0"+m:m)+":"+(s<10?"0"+s:s);
@@ -996,7 +997,7 @@ downtimeCell.innerText = dt;
 
 }else{
 
-downtimeCell.innerText = "";
+downtimeCell.innerText="";
 
 }
 });
@@ -1110,6 +1111,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

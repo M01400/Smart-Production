@@ -971,7 +971,10 @@ statusCell.classList.add("status-green");
 
 let downtimeCell = newRow.insertCell(5);
 downtimeCell.innerText = row[7] || "";
-  
+
+if(row[4] === "DOWN TIME"){
+downtimeCell.classList.add("status-red");
+}  
 });
 
       const state = data.state[1];
@@ -1080,6 +1083,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

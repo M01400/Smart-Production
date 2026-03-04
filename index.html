@@ -970,29 +970,8 @@ statusCell.classList.add("status-green");
 }
 
 let downtimeCell = newRow.insertCell(5);
-
-if(row[7]){
-
-let value = row[7];
-
-if(typeof value === "string" && value.includes("T")){
-
-let d = new Date(value);
-
-let minutes = d.getUTCMinutes();
-let seconds = d.getUTCSeconds();
-
-downtimeCell.innerText = format(minutes*60 + seconds);
-
-}else{
-
-downtimeCell.innerText = value;
-
-}
-
-}else{
-downtimeCell.innerText="";
-}
+downtimeCell.innerText = row[7] || "";
+  
 });
 
       const state = data.state[1];
@@ -1101,6 +1080,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

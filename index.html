@@ -977,7 +977,7 @@ downtimeCell.classList.add("status-red");
 }  
 });
 
-      const state = data.state[1];
+      const state = data.state[0];
       if(!state) return;
 
       const plan = parseInt(state[0]) || 0;
@@ -991,8 +991,8 @@ downtimeCell.classList.add("status-red");
       document.getElementById("plan").innerText = plan;
       document.getElementById("actual").innerText = actual;
       
-countdownValue = countdown;
-document.getElementById("countdown").innerText = format(countdownValue);
+      countdownValue = countdown;
+      document.getElementById("countdown").innerText = format(countdownValue);
     
       document.getElementById("downtime").innerText = format(totalDowntime);
 
@@ -1083,6 +1083,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

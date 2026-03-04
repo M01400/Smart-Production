@@ -410,8 +410,9 @@ return;
 }
 if(countdownValue>0){countdownValue--;}
 else{downtimeSeconds++;isDowntime=true;}
+  
 updateDisplay();
-updateLiveStateOnly();
+
 },1000);
 }
 
@@ -994,9 +995,8 @@ downtimeCell.innerText="";
       
 const countdownEl = document.getElementById("countdown");
 
-let current = countdownValue || countdown;
-countdownEl.innerText = format(current);
 countdownValue = countdown;
+countdownEl.innerText = format(countdownValue);
     
       document.getElementById("downtime").innerText = format(totalDowntime);
 
@@ -1074,7 +1074,7 @@ window.onload = function(){
     document.getElementById("modelInput").style.display="none";
 
     loadLiveData();
-    setInterval(loadLiveData,1000);
+    setInterval(loadLiveData,1500);
 
   } else {
 
@@ -1087,5 +1087,6 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 

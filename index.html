@@ -986,7 +986,6 @@ function loadLiveData(){
 
  const plan = stateRow[0] || 0;
     const actual = stateRow[1] || 0;
-    const balance = stateRow[2] || 0;
     const status = (stateRow[3] || "READY").trim();
     const totalDowntime = parseInt(stateRow[4]) || 0;
     const countdown = parseInt(stateRow[5]) || 0;
@@ -1126,5 +1125,6 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 

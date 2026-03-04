@@ -1004,7 +1004,7 @@ downtimeCell.innerText="";
 }
 });
 
-      const state = data.state[1];
+      const state = data.state[data.state.length - 1];
       if(!state) return;
 
       const plan = parseInt(state[0]) || 0;
@@ -1113,6 +1113,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

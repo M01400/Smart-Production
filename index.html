@@ -975,7 +975,7 @@ statusCell.classList.add("status-green");
 }
 
 let downtimeCell = newRow.insertCell(5);
-downtimeCell.innerText = row[7] || "";
+downtimeCell.innerText = row[7] ? row[7] : "";
   
 let dt = row[7];
 
@@ -1113,6 +1113,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

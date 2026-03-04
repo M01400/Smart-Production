@@ -478,10 +478,9 @@ const now=new Date();
 const cycleTimeSec=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
 
 let downtimeEvent="";
-let referenceTime=lastScanTime?lastScanTime:startTime;
-if(referenceTime){
-let diffSec=Math.floor((now-referenceTime)/1000);
-if(diffSec>cycleTimeSec){downtimeEvent=format(diffSec-cycleTimeSec);}
+
+if(isDowntime){
+downtimeEvent = format(downtimeSeconds);
 }
 
 let row=document.getElementById("scanTable").insertRow(0);
@@ -528,7 +527,7 @@ sendToSheet(
   model,
   lot,
   statusCell.innerText,
-  downtimeEvent
+  downtimeSend
 );
 
 updateLiveStateOnly();
@@ -1087,6 +1086,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

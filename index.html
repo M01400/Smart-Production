@@ -946,11 +946,11 @@ function loadLiveData(){
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
-      const scanRows = data.scan.slice(1);
+const scanRows = data.scan.filter((row,index)=>index>0);
 const table = document.getElementById("scanTable");
 table.innerHTML="";
 
-scanRows.reverse().forEach(row=>{
+[...scanRows].reverse().forEach(row=>{
 
 let newRow = table.insertRow();
 
@@ -958,6 +958,7 @@ let timeValue = new Date(row[0]);
 
 newRow.insertCell(0).innerText =
 timeValue.toLocaleTimeString("en-MY",{hour12:false});
+  
 newRow.insertCell(1).innerText = row[1];
 newRow.insertCell(2).innerText = row[2];
 newRow.insertCell(3).innerText = row[3];
@@ -974,7 +975,8 @@ statusCell.classList.add("status-green");
 }
 
 let downtimeCell = newRow.insertCell(5);
-
+downtimeCell.innerText = row[7] || "";
+  
 let dt = row[7];
 
 if(dt){
@@ -1111,6 +1113,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

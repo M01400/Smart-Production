@@ -519,6 +519,12 @@ lastScanTime=now;
 
 updateDisplay();
 
+let downtimeSend = "";
+
+if(statusCell.innerText === "DOWN TIME"){
+  downtimeSend = downtimeEvent;
+}
+  
 sendToSheet(
   chassis,
   model,
@@ -948,7 +954,8 @@ scanRows.reverse().forEach(row=>{
 
 let newRow = table.insertRow();
 
-newRow.insertCell(0).innerText = row[0];
+newRow.insertCell(0).innerText =
+new Date(row[0]).toLocaleTimeString("en-MY",{hour12:false});
 newRow.insertCell(1).innerText = row[1];
 newRow.insertCell(2).innerText = row[2];
 newRow.insertCell(3).innerText = row[3];
@@ -964,7 +971,11 @@ statusCell.classList.add("status-green");
 }
 
 let downtimeCell = newRow.insertCell(5);
-downtimeCell.innerText = row[7] || "";
+if(row[7]){
+downtimeCell.innerText = row[7];
+}else{
+downtimeCell.innerText="";
+}
 
 });
 
@@ -1077,6 +1088,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

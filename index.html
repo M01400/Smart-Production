@@ -976,20 +976,29 @@ let downtimeCell = newRow.insertCell(5);
 
 let dt = row[7];
 
-if(dt instanceof Date){
+if(dt){
 
-let m = dt.getMinutes();
-let s = dt.getSeconds();
+let d = new Date(dt);
+
+if(!isNaN(d)){
+
+let m = d.getMinutes();
+let s = d.getSeconds();
 
 downtimeCell.innerText =
 (m<10?"0"+m:m)+":"+(s<10?"0"+s:s);
 
 }else{
 
-downtimeCell.innerText = dt || "";
+downtimeCell.innerText = dt;
 
 }
 
+}else{
+
+downtimeCell.innerText = "";
+
+}
 });
 
       const state = data.state[1];
@@ -1101,6 +1110,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

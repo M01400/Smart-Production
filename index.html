@@ -414,6 +414,7 @@ return;
 if(countdownValue>0){countdownValue--;}
 else{downtimeSeconds++;isDowntime=true;}
 updateDisplay();
+updateLiveStateOnly();
 },1000);
 }
 
@@ -517,6 +518,7 @@ isDowntime=false;
 lastScanTime=now;
 
 updateDisplay();
+updateLiveStateOnly();
 this.value="";
 document.getElementById("chassisInput").focus();
 }
@@ -904,6 +906,27 @@ function loadLiveData(){
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
+      const scanRows = data.scan.slice(1);
+const table = document.getElementById("scanTable");
+table.innerHTML="";
+
+scanRows.reverse().forEach(row=>{
+let newRow = table.insertRow();
+
+newRow.insertCell(0).innerText = new Date(row[0]).toLocaleTimeString();
+newRow.insertCell(1).innerText = row[1];
+newRow.insertCell(2).innerText = row[2];
+newRow.insertCell(3).innerText = row[3];
+
+let statusCell=newRow.insertCell(4);
+statusCell.innerText=row[4];
+
+if(row[4]==="DOWN TIME"){statusCell.classList.add("status-red");}
+if(row[4]==="SCANNED"){statusCell.classList.add("status-green");}
+
+let downtimeCell=newRow.insertCell(5);
+downtimeCell.innerText=row[7]||"";
+});
 
       const state = data.state[1];
       if(!state) return;
@@ -982,3 +1005,4 @@ window.onload = function(){
 </script>
 </body>
 </html>
+

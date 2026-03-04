@@ -954,8 +954,10 @@ scanRows.reverse().forEach(row=>{
 
 let newRow = table.insertRow();
 
+let timeValue = new Date(row[0]);
+
 newRow.insertCell(0).innerText =
-new Date(row[0]).toLocaleTimeString("en-MY",{hour12:false});
+timeValue.toLocaleTimeString("en-MY",{hour12:false});
 newRow.insertCell(1).innerText = row[1];
 newRow.insertCell(2).innerText = row[2];
 newRow.insertCell(3).innerText = row[3];
@@ -971,10 +973,21 @@ statusCell.classList.add("status-green");
 }
 
 let downtimeCell = newRow.insertCell(5);
-if(row[7]){
-downtimeCell.innerText = row[7];
+
+let dt = row[7];
+
+if(dt instanceof Date){
+
+let m = dt.getMinutes();
+let s = dt.getSeconds();
+
+downtimeCell.innerText =
+(m<10?"0"+m:m)+":"+(s<10?"0"+s:s);
+
 }else{
-downtimeCell.innerText="";
+
+downtimeCell.innerText = dt || "";
+
 }
 
 });
@@ -1088,6 +1101,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

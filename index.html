@@ -581,9 +581,9 @@ downtimeText.classList.remove("status-red","blink");
 
 function openSummary(){
 
-let plan=parseInt(document.getElementById("dailyPlanTarget").value)||0;
-let actual=actualCount;
-let downtime=format(downtimeSeconds);
+let plan = parseInt(document.getElementById("plan").innerText) || 0;
+let actual = parseInt(document.getElementById("actual").innerText) || 0;
+let downtime=document.getElementById("downtime").innerText;
 let diff=actual-plan;
 let diffDisplay=diff>0?("+"+diff):diff;
 
@@ -1083,6 +1083,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

@@ -551,7 +551,7 @@ let displayBalance=balance>0?("+"+balance):balance;
 document.getElementById("plan").innerText=plan;
 document.getElementById("actual").innerText=actualCount;
 document.getElementById("countdown").innerText=format(countdownValue);
-document.getElementById("downtime").innerText=format(downtimeSeconds);
+document.getElementById("downtime").innerText = format(totalDowntime);
 
 let balanceEl=document.getElementById("balance");
 if(balance<0){balanceEl.className="big-number status-red";}
@@ -1126,4 +1126,5 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 

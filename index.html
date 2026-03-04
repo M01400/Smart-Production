@@ -286,6 +286,27 @@ const SETTINGS = {
 document.getElementById("cycleTarget").value = SETTINGS.defaultCycle;
 document.getElementById("dailyPlanTarget").value = SETTINGS.defaultPlan;
 
+/* ===== ORIGINAL LOGIC BELOW (UNCHANGED) ===== */
+
+function updateDateTime(){
+
+  const now = new Date();
+
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
+
+  const dateEl = document.getElementById("dateDisplay");
+  const clockEl = document.getElementById("clock");
+
+  if(dateEl && clockEl){
+    dateEl.innerText = now.toLocaleDateString("en-MY", options);
+    clockEl.innerText = now.toLocaleTimeString("en-MY");
+  }
+}
 
 /* ===== VARIABLES ===== */
 
@@ -399,7 +420,9 @@ timer=setInterval(()=>{
     totalDowntime++; 
     isDowntime=true;
   }
-  
+
+  updateDisplay();
+  updateLiveStateOnly();   // 🔥 TAMBAH BARIS INI SAHAJA
 
 },1000);
 }
@@ -520,8 +543,7 @@ countdownValue = cycleTimeSec;
 isDowntime = false;
 lastScanTime = now;
 
-let downtimeToSend = downtimeSeconds;   // simpan dulu
-downtimeSeconds = 0;                    // reset selepas simpan
+downtimeSeconds = 0;   // 👈 RESET LEPAS SIMPAN EVENT
 
 updateDisplay();
 
@@ -530,12 +552,18 @@ sendToSheet(
     model,
     lot,
     statusValue,
-    downtimeToSend,
-    totalDowntime
+    downtimeEvent,      // 👈 HANTAR EVENT
+    totalDowntime       // 👈 HANTAR TOTAL
 );
 
-updateLiveStateOnly();
+updateDisplay();
 
+sendToSheet(chassis, model, lot, statusValue, downtimeValue, downtimeSeconds);
+
+console.log("CHECK VAR:", chassis, model, lot, statusValue, downtimeValue);
+
+updateLiveStateOnly();
+  
 this.value="";
 document.getElementById("chassisInput").focus();
 }
@@ -551,7 +579,7 @@ let displayBalance=balance>0?("+"+balance):balance;
 document.getElementById("plan").innerText=plan;
 document.getElementById("actual").innerText=actualCount;
 document.getElementById("countdown").innerText=format(countdownValue);
-document.getElementById("downtime").innerText = format(totalDowntime);
+document.getElementById("downtime").innerText=format(downtimeSeconds);
 
 let balanceEl=document.getElementById("balance");
 if(balance<0){balanceEl.className="big-number status-red";}
@@ -986,6 +1014,7 @@ function loadLiveData(){
 
  const plan = stateRow[0] || 0;
     const actual = stateRow[1] || 0;
+    const balance = stateRow[2] || 0;
     const status = (stateRow[3] || "READY").trim();
     const totalDowntime = parseInt(stateRow[4]) || 0;
     const countdown = parseInt(stateRow[5]) || 0;
@@ -997,9 +1026,8 @@ function loadLiveData(){
     document.getElementById("downtime").innerText = format(totalDowntime);
 
      // 👉 FIX BALANCE DI SINI
-let balance = parseInt(stateRow[2]) || 0;
-
 const balanceEl = document.getElementById("balance");
+balance = parseInt(stateRow[2]) || 0;
 
 if(balance < 0){
   balanceEl.className = "big-number status-red";
@@ -1104,11 +1132,11 @@ if(downtimeValue && downtimeValue !== "0:00" && downtimeValue !== "0"){
 
 window.onload = function(){
 
-  updateDateTime();                  // jalan sekali
-  setInterval(updateDateTime,1000);  // refresh setiap 1 saat
+  updateDateTime();
 
   if(isMonitor){
 
+    // hide scan input
     document.getElementById("chassisInput").style.display="none";
     document.getElementById("modelInput").style.display="none";
 
@@ -1117,6 +1145,7 @@ window.onload = function(){
 
   } else {
 
+    // main PC normal behaviour
     updateDisplay();
 
   }
@@ -1125,6 +1154,3 @@ window.onload = function(){
 </script>
 </body>
 </html>
-
-
-

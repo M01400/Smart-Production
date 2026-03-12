@@ -215,7 +215,6 @@ Lot:
 <button class="reset" onclick="resetProduction()">Reset</button>
 <button class="summary" onclick="openSummary()">Daily Summary</button>
 <button class="summary" onclick="downloadExcel()">Download Excel</button>
-<button class="summary" onclick="unlockSettings()">PIC Setting</button>  
 
 <button class="summary" id="ramadanToggle" onclick="toggleRamadan()">
 🌙 Ramadhan : OFF
@@ -251,13 +250,9 @@ Lot:
 
 <script>
 
-
-const PIC_PASSWORD = "PIC123"; // Password PIC
-let settingsUnlocked = false;
-  
 /* ================= SYSTEM SETTINGS ================= */
 
-const SETTINGS = { 
+const SETTINGS = {
 
   defaultCycle: 1,
   defaultPlan: 2,
@@ -290,10 +285,6 @@ const SETTINGS = {
 /* Apply defaults */
 document.getElementById("cycleTarget").value = SETTINGS.defaultCycle;
 document.getElementById("dailyPlanTarget").value = SETTINGS.defaultPlan;
-
- // Lock setting by default
-document.getElementById("cycleTarget").disabled = true;
-document.getElementById("dailyPlanTarget").disabled = true; 
 
 /* ===== ORIGINAL LOGIC BELOW (UNCHANGED) ===== */
 
@@ -1064,40 +1055,6 @@ else{
     .catch(err => console.log("Monitor load error:", err));
 }
 
-/* ===== Function Password ===== */
-
-  function unlockSettings(){
-
-  const password = prompt("Enter PIC password");
-
-  if(password === PIC_PASSWORD){
-
-    settingsUnlocked = true;
-
-    document.getElementById("cycleTarget").disabled = false;
-    document.getElementById("dailyPlanTarget").disabled = false;
-
-    alert("PIC access granted.");
-
-    setTimeout(()=>{
-      settingsUnlocked=false;
-
-      document.getElementById("cycleTarget").disabled = true;
-      document.getElementById("dailyPlanTarget").disabled = true;
-
-      alert("Settings locked again.");
-
-    },30000);
-
-  }
-  else{
-
-    alert("Wrong password! Access denied.");
-
-  }
-
-}
-  
 /* ===== INITIALIZE SYSTEM ===== */
 
 window.onload = function(){
@@ -1117,7 +1074,7 @@ window.onload = function(){
 
   } else {
 
-    // MAIN PC Push Live State Every 1 sec
+    // MAIN PC push live state setiap 1 saat
     setInterval(updateLiveStateOnly,1000);
 
   }
@@ -1126,19 +1083,3 @@ window.onload = function(){
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

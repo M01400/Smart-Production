@@ -341,6 +341,11 @@ let pendingChassis="";
 let scannedChassis=new Set();
 let duplicateLock=false;
 
+const chassisInput = document.getElementById("chassisInput");
+const modelInput = document.getElementById("modelInput");
+const engineInput = document.getElementById("engineInput");
+const keyInput = document.getElementById("keyInput");
+
 /* ===== DATE TIME ===== */
 
 function updateDateTime(){
@@ -462,7 +467,7 @@ updateDisplay();
 
 /* ===== SCAN CHASSIS ===== */
 
-document.getElementById("chassisInput").addEventListener("keydown",function(e){
+chassisInput.addEventListener("keydown",function(e){
 
 if(e.key==="Enter" && this.value.trim()!==""){
 
@@ -486,12 +491,12 @@ startProduction();
 
 setStatus("SCAN MODEL","status-orange");
 
-document.getElementById("modelInput").focus();
+modelInput.focus();
 
 }
 
 });
-
+  
 /* ===== SCAN MODEL ===== */
 
 document.getElementById("modelInput").addEventListener("keydown",function(e){
@@ -634,7 +639,7 @@ else if(isDowntime){setStatus("DOWN TIME","status-red blink");}
 else if(pendingChassis!==""){setStatus("WAITING MODEL","status-orange");}
 else{setStatus("RUNNING","status-green pulse");}
 
-const downtimeCard=document.getElementById("downtimeCard");
+const downtimeCard=document.getElementById("downtimeCard"); 
 const downtimeText=document.getElementById("downtime");
 if(isDowntime){
 downtimeCard.classList.add("downtime-alert","blink");
@@ -648,7 +653,7 @@ downtimeText.classList.remove("status-red","blink");
 /* ===== DAILY SUMMARY ===== */
 
 function openSummary(){
-
+let plan p
 let plan = parseInt(document.getElementById("plan").innerText) || 0;
 let actual = parseInt(document.getElementById("actual").innerText) || 0;
 let downtime=document.getElementById("downtime").innerText;
@@ -1169,4 +1174,5 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 

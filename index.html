@@ -651,19 +651,20 @@ let diff=actual-plan;
 let diffDisplay=diff>0?("+"+diff):diff;
 
 let rows=document.querySelectorAll("#scanTable tr");
-let tableRows="";
+let tableRows = "";
 
 rows.forEach(row=>{
 let cells=row.querySelectorAll("td");
+
 if(cells.length>0){
 
 let statusText=cells[7].innerText;
 let downtimeText=cells[8].innerText;
-  
+
 let statusClass=statusText==="DOWN TIME"?"status-red":
 (statusText==="SCANNED"?"status-green":"");
 
-tableRows+=`
+tableRows += `
 <tr>
 <td>${cells[0].innerText}</td>
 <td>${cells[1].innerText}</td>
@@ -675,7 +676,9 @@ tableRows+=`
 <td class="${statusClass}">${statusText}</td>
 <td class="${statusClass}">${downtimeText}</td>
 </tr>`;
+
 }
+
 });
 
 let htmlContent=`
@@ -1164,6 +1167,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

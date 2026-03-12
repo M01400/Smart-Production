@@ -518,9 +518,48 @@ let downtimeEvent="";
 if(isDowntime){
 downtimeEvent = format(downtimeSeconds);
 }
+modelInput.addEventListener("keydown",function(e){
 
-let engine=document.getElementById("engineInput").value || "-";
-let key=document.getElementById("keyInput").value || "-";
+if(e.key==="Enter" && this.value.trim()!==""){
+
+if(pendingChassis==="") return;
+
+engineInput.focus();
+
+}
+
+});
+  
+/* ===== SCAN ENGINE ===== */
+
+engineInput.addEventListener("keydown",function(e){
+
+if(e.key==="Enter" && this.value.trim()!==""){
+
+keyInput.focus();
+
+}
+
+});
+  
+/* ===== SCAN KEY ===== */
+
+keyInput.addEventListener("keydown",function(e){
+
+if(e.key==="Enter" && this.value.trim()!==""){
+
+if(pendingChassis==="") return;
+
+let model=modelInput.value.trim();
+let engine=engineInput.value.trim();
+let key=this.value.trim();
+let chassis=pendingChassis;
+let lot=document.getElementById("lotInput").value || "-";
+
+pendingChassis="";
+scannedChassis.add(chassis);
+
+const now=new Date();
 
 let row=document.getElementById("scanTable").insertRow(0);
 
@@ -535,76 +574,27 @@ row.insertCell(6).innerText=key;
 let statusCell=row.insertCell(7);
 let downtimeCell=row.insertCell(8);
 
-let plan=parseInt(document.getElementById("dailyPlanTarget").value)||0;
-
-if(actualCount>=plan && plan>0){
-statusCell.innerText="-";
-downtimeCell.innerText="";
-}
-else if(downtimeEvent){
-statusCell.innerText="DOWN TIME";
-statusCell.classList.add("status-red");
-downtimeCell.innerText=downtimeEvent;
-downtimeCell.classList.add("status-red");
-}
-else{
 statusCell.innerText="SCANNED";
 statusCell.classList.add("status-green");
-}
 
 actualCount++;
-countdownValue=cycleTimeSec;
-isDowntime=false;
-lastScanTime=now;
 
 updateDisplay();
 
-let downtimeSend = "";
-
-if(statusCell.innerText === "DOWN TIME"){
-  downtimeSend = downtimeEvent;
-}
-  
 sendToSheet(
-  chassis,
-  model,
-  lot,
-  engine,
-  key,
-  statusCell.innerText,
-  downtimeSend
+chassis,
+model,
+lot,
+engine,
+key,
+statusCell.innerText,
+""
 );
-updateLiveStateOnly();
 
-this.value="";
-document.getElementById("engineInput").value="";
-document.getElementById("keyInput").value="";
-document.getElementById("chassisInput").focus();
-}
-});
-  
-/* ===== SCAN ENGINE ===== */
-
-document.getElementById("engineInput").addEventListener("keydown",function(e){
-
-if(e.key==="Enter" && this.value.trim()!==""){
-
-document.getElementById("keyInput").focus();
-
-}
-
-});
-
-/* ===== SCAN KEY ===== */
-
-document.getElementById("keyInput").addEventListener("keydown",function(e){
-
-if(e.key==="Enter" && this.value.trim()!==""){
-
-// submit production scan
-document.getElementById("modelInput").dispatchEvent(
-new KeyboardEvent("keydown",{key:"Enter"})
-);
+modelInput.value="";
+engineInput.value="";
+keyInput.value="";
+chassisInput.focus();
 
 }
 
@@ -1174,5 +1164,6 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 

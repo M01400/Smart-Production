@@ -235,14 +235,33 @@ Lot:
 </div>
 
 <div class="scan-container">
-<input type="text" id="chassisInput" class="scan-box" placeholder="Scan Chassis First" autofocus>
-<input type="text" id="modelInput" class="scan-box" placeholder="Scan Model After Chassis">
-</div>
 
+<input type="text" id="chassisInput" class="scan-box" 
+placeholder="Scan Chassis" autofocus>
+
+<input type="text" id="modelInput" class="scan-box" 
+placeholder="Scan Model">
+
+<input type="text" id="engineInput" class="scan-box" 
+placeholder="Scan Engine No">
+
+<input type="text" id="keyInput" class="scan-box" 
+placeholder="Scan Key No">
+
+</div>
+  
 <table>
 <thead>
 <tr>
-<th>Time</th><th>Lot</th><th>Model</th><th>Chassis</th><th>Status</th><th>Downtime</th>
+<th>Date</th>
+<th>Time</th>
+<th>Model</th>
+<th>Lot</th>
+<th>Chassis</th>
+<th>Engine No</th>
+<th>Key No</th>
+<th>Status</th>
+<th>Downtime</th>
 </tr>
 </thead>
 <tbody id="scanTable"></tbody>
@@ -444,21 +463,33 @@ updateDisplay();
 /* ===== SCAN CHASSIS ===== */
 
 document.getElementById("chassisInput").addEventListener("keydown",function(e){
+
 if(e.key==="Enter" && this.value.trim()!==""){
+
 let value=this.value.trim();
+
 if(pendingChassis===value || scannedChassis.has(value)){
 duplicateLock=true;
 setStatus("DUPLICATE CHASSIS","status-red blink");
 this.value="";
 return;
 }
+
 duplicateLock=false;
 pendingChassis=value;
+
 this.value="";
-if(!timer){startProduction();}
-setStatus("WAITING MODEL","status-orange");
-document.getElementById("modelInput").focus();
+
+if(!timer){
+startProduction();
 }
+
+setStatus("SCAN MODEL","status-orange");
+
+document.getElementById("modelInput").focus();
+
+}
+
 });
 
 /* ===== SCAN MODEL ===== */
@@ -483,14 +514,21 @@ if(isDowntime){
 downtimeEvent = format(downtimeSeconds);
 }
 
-let row=document.getElementById("scanTable").insertRow(0);
-row.insertCell(0).innerText=now.toLocaleTimeString();
-row.insertCell(1).innerText=lot;
-row.insertCell(2).innerText=model;
-row.insertCell(3).innerText=chassis;
+let engine=document.getElementById("engineInput").value || "-";
+let key=document.getElementById("keyInput").value || "-";
 
-let statusCell=row.insertCell(4);
-let downtimeCell=row.insertCell(5);
+let row=document.getElementById("scanTable").insertRow(0);
+
+row.insertCell(0).innerText=now.toLocaleDateString();
+row.insertCell(1).innerText=now.toLocaleTimeString();
+row.insertCell(2).innerText=model;
+row.insertCell(3).innerText=lot;
+row.insertCell(4).innerText=chassis;
+row.insertCell(5).innerText=engine;
+row.insertCell(6).innerText=key;
+
+let statusCell=row.insertCell(7);
+let downtimeCell=row.insertCell(8);
 
 let plan=parseInt(document.getElementById("dailyPlanTarget").value)||0;
 
@@ -526,15 +564,45 @@ sendToSheet(
   chassis,
   model,
   lot,
+  engine,
+  key,
   statusCell.innerText,
   downtimeSend
 );
-
 updateLiveStateOnly();
 
 this.value="";
+document.getElementById("engineInput").value="";
+document.getElementById("keyInput").value="";
 document.getElementById("chassisInput").focus();
 }
+});
+  
+/* ===== SCAN ENGINE ===== */
+
+document.getElementById("engineInput").addEventListener("keydown",function(e){
+
+if(e.key==="Enter" && this.value.trim()!==""){
+
+document.getElementById("keyInput").focus();
+
+}
+
+});
+
+/* ===== SCAN KEY ===== */
+
+document.getElementById("keyInput").addEventListener("keydown",function(e){
+
+if(e.key==="Enter" && this.value.trim()!==""){
+
+// submit production scan
+document.getElementById("modelInput").dispatchEvent(
+new KeyboardEvent("keydown",{key:"Enter"})
+);
+
+}
+
 });
 
 /* ===== UPDATE DISPLAY ===== */
@@ -594,9 +662,9 @@ rows.forEach(row=>{
 let cells=row.querySelectorAll("td");
 if(cells.length>0){
 
-let statusText=cells[4].innerText;
-let downtimeText=cells[5].innerText;
-
+let statusText=cells[7].innerText;
+let downtimeText=cells[8].innerText;
+  
 let statusClass=statusText==="DOWN TIME"?"status-red":
 (statusText==="SCANNED"?"status-green":"");
 
@@ -606,6 +674,9 @@ tableRows+=`
 <td>${cells[1].innerText}</td>
 <td>${cells[2].innerText}</td>
 <td>${cells[3].innerText}</td>
+<td>${cells[4].innerText}</td>
+<td>${cells[5].innerText}</td>
+<td>${cells[6].innerText}</td>
 <td class="${statusClass}">${statusText}</td>
 <td class="${statusClass}">${downtimeText}</td>
 </tr>`;
@@ -785,10 +856,13 @@ display:none !important;
 <table>
 <thead>
 <tr>
+<th>Date</th>
 <th>Time</th>
-<th>Lot</th>
 <th>Model</th>
+<th>Lot</th>
 <th>Chassis</th>
+<th>Engine No</th>
+<th>Key No</th>
 <th>Status</th>
 <th>Downtime</th>
 </tr>
@@ -816,7 +890,7 @@ newWindow.document.close();
 
 function downloadExcel(){
 let wb=XLSX.utils.book_new();
-let data=[["Time","Lot","Model","Chassis","Status","Downtime"]];
+let data=[["Date","Time","Model","Lot","Chassis","Engine No","Key No","Status","Downtime"]];
 
 document.querySelectorAll("#scanTable tr").forEach(row=>{
 let cells=row.querySelectorAll("td");
@@ -827,7 +901,10 @@ cells[1].innerText,
 cells[2].innerText,
 cells[3].innerText,
 cells[4].innerText,
-cells[5].innerText
+cells[5].innerText,
+cells[6].innerText,
+cells[7].innerText,
+cells[8].innerText
 ]);
 }
 });
@@ -835,7 +912,7 @@ cells[5].innerText
 let ws=XLSX.utils.aoa_to_sheet(data);
 
 for(let i=1;i<data.length;i++){
-let cell="E"+(i+1);
+let cell="H"+(i+1);
 if(ws[cell]){
 if(ws[cell].v==="DOWN TIME"){
 ws[cell].s={font:{color:{rgb:"FF0000"},bold:true}};
@@ -913,7 +990,7 @@ function updateLiveStateOnly(){
 
 }
   
-function sendToSheet(chassis, model, lot, status, downtimeEvent){
+function sendToSheet(chassis, model, lot, engine, key, status, downtimeEvent){
 
   const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
   const actual = actualCount;
@@ -925,6 +1002,8 @@ function sendToSheet(chassis, model, lot, status, downtimeEvent){
       lot: lot,
       model: model,
       chassis: chassis,
+      engine: engine,
+      key: key,
       status: status,
       plan: plan,
       actual: actual,
@@ -954,27 +1033,34 @@ let newRow = table.insertRow();
 let timeValue = new Date(row[0]);
 
 newRow.insertCell(0).innerText =
-timeValue.toLocaleTimeString("en-MY",{hour12:false});
-newRow.insertCell(1).innerText = row[1];
-newRow.insertCell(2).innerText = row[2];
-newRow.insertCell(3).innerText = row[3];
+timeValue.toLocaleDateString("en-MY");
 
-let statusCell = newRow.insertCell(4);
+newRow.insertCell(1).innerText =
+timeValue.toLocaleTimeString("en-MY",{hour12:false});
+
+newRow.insertCell(2).innerText = row[2]; // Model
+newRow.insertCell(3).innerText = row[1]; // Lot
+newRow.insertCell(4).innerText = row[3]; // Chassis
+newRow.insertCell(5).innerText = row[5] || "-"; // Engine
+newRow.insertCell(6).innerText = row[6] || "-"; // Key
+
+let statusCell = newRow.insertCell(7);
 statusCell.innerText = row[4];
 
 if(row[4] === "DOWN TIME"){
 statusCell.classList.add("status-red");
 }
+
 if(row[4] === "SCANNED"){
 statusCell.classList.add("status-green");
 }
 
-let downtimeCell = newRow.insertCell(5);
+let downtimeCell = newRow.insertCell(8);
 downtimeCell.innerText = row[7] || "";
 
 if(row[4] === "DOWN TIME"){
 downtimeCell.classList.add("status-red");
-}  
+}
 });
 
       const state = data.state[data.state.length - 1];
@@ -1083,3 +1169,4 @@ window.onload = function(){
 </script>
 </body>
 </html>
+

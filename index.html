@@ -244,7 +244,15 @@ Lot:
 <table>
 <thead>
 <tr>
-<th>Time</th><th>Lot</th><th>Model</th><th>Chassis</th><th>Status</th><th>Downtime</th>
+<th>Date</th>
+<th>Time</th>
+<th>Lot</th>
+<th>Model</th>
+<th>Chassis</th>
+<th>Engine No</th>
+<th>Key No</th>
+<th>Status</th>
+<th>Downtime</th>
 </tr>
 </thead>
 <tbody id="scanTable"></tbody>
@@ -495,14 +503,22 @@ if(isDowntime){
 downtimeEvent = format(downtimeSeconds);
 }
 
-let row=document.getElementById("scanTable").insertRow(0);
-row.insertCell(0).innerText=now.toLocaleTimeString();
-row.insertCell(1).innerText=lot;
-row.insertCell(2).innerText=model;
-row.insertCell(3).innerText=chassis;
+let engine = pendingEngine || "-";
+let key = pendingKey || "-";
 
-let statusCell=row.insertCell(4);
-let downtimeCell=row.insertCell(5);
+let row=document.getElementById("scanTable").insertRow(0);
+
+row.insertCell(0).innerText=now.toLocaleDateString();
+row.insertCell(1).innerText=now.toLocaleTimeString();
+row.insertCell(2).innerText=lot;
+row.insertCell(3).innerText=model;
+row.insertCell(4).innerText=chassis;
+row.insertCell(5).innerText=engine;
+row.insertCell(6).innerText=key;
+
+let statusCell=row.insertCell(7);
+let downtimeCell=row.insertCell(8);
+
 
 let plan=parseInt(document.getElementById("dailyPlanTarget").value)||0;
 
@@ -527,7 +543,10 @@ isDowntime=false;
 lastScanTime=now;
 
 updateDisplay();
-
+  
+pendingEngine="";
+pendingKey="";
+  
 let downtimeSend = "";
 
 if(statusCell.innerText === "DOWN TIME"){
@@ -537,6 +556,8 @@ if(statusCell.innerText === "DOWN TIME"){
 sendToSheet(
   chassis,
   model,
+  engine,
+  key,
   lot,
   statusCell.innerText,
   downtimeSend
@@ -909,7 +930,7 @@ newWindow.document.close();
 
 function downloadExcel(){
 let wb=XLSX.utils.book_new();
-let data=[["Time","Lot","Model","Chassis","Status","Downtime"]];
+let data=[["Date","Time","Lot","Model","Chassis","Engine No","Key No","Status","Downtime"]];
 
 document.querySelectorAll("#scanTable tr").forEach(row=>{
 let cells=row.querySelectorAll("td");
@@ -920,7 +941,10 @@ cells[1].innerText,
 cells[2].innerText,
 cells[3].innerText,
 cells[4].innerText,
-cells[5].innerText
+cells[5].innerText,
+cells[6].innerText,
+cells[7].innerText,
+cells[8].innerText
 ]);
 }
 });
@@ -1018,6 +1042,8 @@ function sendToSheet(chassis, model, lot, status, downtimeEvent){
       lot: lot,
       model: model,
       chassis: chassis,
+      engine: engine,
+      key: key,
       status: status,
       plan: plan,
       actual: actual,
@@ -1176,3 +1202,4 @@ window.onload = function(){
 </script>
 </body>
 </html>
+

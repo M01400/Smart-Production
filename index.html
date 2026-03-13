@@ -576,10 +576,8 @@ duplicateLock=false;
 let chassis = pendingChassis;
 let model = pendingModel;
 let engine = pendingEngine;
-let key = pendingKey;
 let lot = document.getElementById("lotInput").value || "-";
   
-scannedKey.add(key);
 
 const now=new Date();
 const cycleTimeSec=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
@@ -1206,6 +1204,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

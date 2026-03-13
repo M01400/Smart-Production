@@ -573,11 +573,12 @@ return;
 
 duplicateLock=false;
 
-let chassis=pendingChassis;
-let model=pendingModel;
-let engine=pendingEngine;
-let lot=document.getElementById("lotInput").value||"-";
-
+let chassis = pendingChassis;
+let model = pendingModel;
+let engine = pendingEngine;
+let key = pendingKey;
+let lot = document.getElementById("lotInput").value || "-";
+  
 scannedKey.add(key);
 
 const now=new Date();
@@ -1034,8 +1035,7 @@ function updateLiveStateOnly(){
 
 }
   
-function sendToSheet(chassis, model, lot, status, downtimeEvent){
-
+function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
   const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
   const actual = actualCount;
   const balance = actual - plan;
@@ -1206,6 +1206,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

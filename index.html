@@ -484,18 +484,31 @@ document.getElementById("modelInput").focus();
 /* ===== SCAN MODEL ===== */
 
 document.getElementById("modelInput").addEventListener("keydown",function(e){
+
 if(e.key==="Enter" && this.value.trim()!==""){
 
 if(pendingChassis==="") return;
 
 let model=this.value.trim();
 
-pendingModel = model;
+/* duplicate check */
+if(scannedModel.has(model)){
+duplicateLock=true;
+setStatus("DUPLICATE MODEL","status-red blink");
+this.value="";
+return;
+}
+
+duplicateLock=false;
+
+pendingModel=model;
+scannedModel.add(model);
 
 this.value="";
 document.getElementById("engineInput").focus();
 
 }
+
 });
   
 /* ===== DUPLICATE CHECK MODEL ===== */
@@ -1204,6 +1217,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

@@ -1060,11 +1060,11 @@ timeValue.toLocaleTimeString("en-MY",{hour12:false});
 newRow.insertCell(2).innerText = row[2]; // Model
 newRow.insertCell(3).innerText = row[1]; // Lot
 newRow.insertCell(4).innerText = row[3]; // Chassis
-newRow.insertCell(5).innerText = row[5] || "-"; // Engine
-newRow.insertCell(6).innerText = row[6] || "-"; // Key
+newRow.insertCell(5).innerText = row[4] || "-"; // Engine ✅
+newRow.insertCell(6).innerText = row[5] || "-"; // Key ✅
 
 let statusCell = newRow.insertCell(7);
-statusCell.innerText = row[4];
+statusCell.innerText = row[6]; // Status ✅
 
 if(row[4] === "DOWN TIME"){
 statusCell.classList.add("status-red");
@@ -1075,7 +1075,7 @@ statusCell.classList.add("status-green");
 }
 
 let downtimeCell = newRow.insertCell(8);
-downtimeCell.innerText = row[7] || "";
+downtimeCell.innerText = row[9] || ""; // Downtime ✅
 
 if(row[4] === "DOWN TIME"){
 downtimeCell.classList.add("status-red");
@@ -1188,6 +1188,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

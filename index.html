@@ -329,15 +329,14 @@ let lastScanTime=null;
 let startTime=null;
 let isDowntime=false;
 let pendingChassis="";
-let scannedChassis=new Set();
-let duplicateLock=false;
 let pendingModel="";
 let pendingEngine="";
 let pendingKey="";
-
-let scannedModel=new Set();
-let scannedEngine=new Set();
-let scannedKey=new Set();
+let scannedChassis = new Set();
+let scannedModel = new Set();
+let scannedEngine = new Set();
+let scannedKey = new Set();
+let duplicateLock=false;
   
 /* ===== DATE TIME ===== */
 
@@ -442,6 +441,7 @@ setStatus("PAUSED","status-orange");
 
 /* RESET */
 function resetProduction(){
+  
 clearInterval(timer);
 timer=null;
 countdownValue=0;
@@ -457,6 +457,7 @@ scannedKey.clear();
 isDowntime=false;
 duplicateLock=false;
 document.getElementById("scanTable").innerHTML="";
+  
 setStatus("READY","status-blue");
 updateDisplay();
 }
@@ -466,19 +467,25 @@ updateDisplay();
 document.getElementById("chassisInput").addEventListener("keydown",function(e){
 if(e.key==="Enter" && this.value.trim()!==""){
 let value=this.value.trim();
-if(pendingChassis===value || scannedChassis.has(value)){
+
+/* DUPLICATE CHECK */
+if(scannedChassis.has(value)){
 duplicateLock=true;
 setStatus("DUPLICATE CHASSIS","status-red blink");
 this.value="";
 return;
 }
+
 duplicateLock=false;
+
 pendingChassis=value;
+scannedChassis.add(value);
+
 this.value="";
-if(!timer){startProduction();}
-setStatus("WAITING MODEL","status-orange");
 document.getElementById("modelInput").focus();
+
 }
+
 });
 
 /* ===== SCAN MODEL ===== */
@@ -491,7 +498,7 @@ if(pendingChassis==="") return;
 
 let model=this.value.trim();
 
-/* duplicate check */
+/* DUPLICATE CHECK */
 if(scannedModel.has(model)){
 duplicateLock=true;
 setStatus("DUPLICATE MODEL","status-red blink");
@@ -510,33 +517,6 @@ document.getElementById("engineInput").focus();
 }
 
 });
-  
-/* ===== DUPLICATE CHECK MODEL ===== */
-  
-document.getElementById("modelInput").addEventListener("keydown",function(e){
-
-if(e.key==="Enter" && this.value.trim()!==""){
-
-let value=this.value.trim();
-
-if(scannedModel.has(value)){
-duplicateLock=true;
-setStatus("DUPLICATE MODEL","status-red blink");
-this.value="";
-return;
-}
-
-duplicateLock=false;
-
-pendingModel=value;
-scannedModel.add(value);
-
-this.value="";
-document.getElementById("engineInput").focus();
-
-}
-
-});
 
 /* ===== SCAN ENGINE NO ===== */
 
@@ -548,6 +528,7 @@ if(pendingModel==="") return;
 
 let value=this.value.trim();
 
+/* DUPLICATE CHECK */
 if(scannedEngine.has(value)){
 duplicateLock=true;
 setStatus("DUPLICATE ENGINE","status-red blink");
@@ -566,7 +547,7 @@ document.getElementById("keyInput").focus();
 }
 
 });
-
+  
 /* ===== SCAN KEY ===== */
 
 document.getElementById("keyInput").addEventListener("keydown",function(e){
@@ -577,6 +558,7 @@ if(pendingChassis==="" || pendingModel==="" || pendingEngine==="") return;
 
 let key=this.value.trim();
 
+/* ===== DUPLICATE CHECK KEY ===== */
 if(scannedKey.has(key)){
 duplicateLock=true;
 setStatus("DUPLICATE KEY","status-red blink");
@@ -586,6 +568,9 @@ return;
 
 duplicateLock=false;
 
+pendingKey=key;
+scannedKey.add(key);
+  
 let chassis = pendingChassis;
 let model = pendingModel;
 let engine = pendingEngine;
@@ -1217,6 +1202,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

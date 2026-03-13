@@ -635,8 +635,11 @@ pendingEngine="";
 pendingKey="";
 
 this.value="";
-document.getElementById("chassisInput").focus();
 
+setTimeout(()=>{
+document.getElementById("chassisInput").focus();
+},50);
+  
 }
 });
   
@@ -1203,6 +1206,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

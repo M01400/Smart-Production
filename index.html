@@ -340,6 +340,7 @@ let isDowntime=false;
 let pendingChassis="";
 let scannedChassis=new Set();
 let duplicateLock=false;
+let scannedPairs = new Set();
 
 const chassisInput = document.getElementById("chassisInput");
 const modelInput = document.getElementById("modelInput");
@@ -449,6 +450,8 @@ setStatus("PAUSED","status-orange");
 
 /* RESET */
 function resetProduction(){
+scannedPairs.clear();
+scannedChassis.clear();
 clearInterval(timer);
 timer=null;
 countdownValue=0;
@@ -538,7 +541,15 @@ let engine=engineInput.value.trim();
 let key=this.value.trim();
 let chassis=pendingChassis;
 let lot=document.getElementById("lotInput").value || "-";
+let pair = chassis + "|" + model;
 
+if(scannedPairs.has(pair)){
+    duplicateLock = true;
+    setStatus("DUPLICATE MODEL","status-red blink");
+    keyInput.value="";
+    return;
+}
+  
 const now=new Date();
 const cycleTimeSec=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
 
@@ -583,6 +594,7 @@ statusCell.classList.add("status-green");
 /* ===== UPDATE PRODUCTION ===== */
 
 actualCount++;
+scannedPairs.add(pair);
 countdownValue=cycleTimeSec;
 isDowntime=false;
 lastScanTime=now;
@@ -1188,6 +1200,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

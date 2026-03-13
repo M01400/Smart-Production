@@ -526,8 +526,31 @@ keyInput.focus();
 
 });
 
+function isDuplicateScan(chassis, model){
 
-/* ===== SCAN KEY (FINAL SUBMIT) ===== */
+let rows = document.querySelectorAll("#scanTable tr");
+
+for(let row of rows){
+
+let cells = row.querySelectorAll("td");
+
+if(cells.length > 0){
+
+let existingModel = cells[2].innerText;
+let existingChassis = cells[4].innerText;
+
+if(existingChassis === chassis && existingModel === model){
+return true;
+}
+
+}
+
+}
+
+return false;
+}
+
+/* ===== SCAN KEY ===== */
 
 keyInput.addEventListener("keydown",function(e){
 
@@ -540,13 +563,11 @@ let engine=engineInput.value.trim();
 let key=this.value.trim();
 let chassis=pendingChassis;
 let lot=document.getElementById("lotInput").value || "-";
-let pair = chassis + "|" + model;
-
-if(scannedPairs.has(pair)){
-    duplicateLock = true;
-    setStatus("DUPLICATE MODEL","status-red blink");
-    keyInput.value="";
-    return;
+if(isDuplicateScan(chassis, model)){
+duplicateLock = true;
+setStatus("DUPLICATE MODEL","status-red blink");
+keyInput.value="";
+return;
 }
   
 const now=new Date();
@@ -1200,6 +1221,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

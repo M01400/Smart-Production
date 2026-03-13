@@ -235,19 +235,10 @@ Lot:
 </div>
 
 <div class="scan-container">
-
-<input type="text" id="chassisInput" class="scan-box" 
-placeholder="Scan Chassis" autofocus>
-
-<input type="text" id="modelInput" class="scan-box" 
-placeholder="Scan Model">
-
-<input type="text" id="engineInput" class="scan-box" 
-placeholder="Scan Engine No">
-
-<input type="text" id="keyInput" class="scan-box" 
-placeholder="Scan Key No">
-
+<input type="text" id="chassisInput" class="scan-box" placeholder="Scan Chassis First" autofocus>
+<input type="text" id="modelInput" class="scan-box" placeholder="Scan Model After Chassis">
+<input type="text" id="engineInput" class="scan-box" placeholder="Scan Engine No">
+<input type="text" id="keyInput" class="scan-box" placeholder="Scan Key No">
 </div>
   
 <table>
@@ -341,6 +332,12 @@ let pendingChassis="";
 let scannedChassis=new Set();
 let duplicateLock=false;
 let scannedPairs = new Set();
+
+//// ADDITION ONLY
+let scannedEngines = new Set();
+let scannedKeys = new Set();
+let pendingEngine = "";
+let pendingModel="";
 
 const chassisInput = document.getElementById("chassisInput");
 const modelInput = document.getElementById("modelInput");
@@ -450,8 +447,9 @@ setStatus("PAUSED","status-orange");
 
 /* RESET */
 function resetProduction(){
-scannedPairs.clear();
-scannedChassis.clear();
+
+scannedEngines.clear();
+scannedKeys.clear();
 clearInterval(timer);
 timer=null;
 countdownValue=0;
@@ -501,44 +499,65 @@ modelInput.focus();
   
 /* ===== SCAN MODEL ===== */
 
-modelInput.addEventListener("keydown",function(e){
-
+document.getElementById("modelInput").addEventListener("keydown",function(e){
 if(e.key==="Enter" && this.value.trim()!==""){
-
 if(pendingChassis==="") return;
 
-engineInput.focus();
+let model=this.value.trim();
+let chassis=pendingChassis;
+//// ADDITION ONLY
+if(isDuplicateScan(chassis, model)) return;
+let lot=document.getElementById("lotInput").value||"-";
 
+pendingChassis="";
+scannedChassis.add(chassis);
+
+const now=new Date();
+const cycleTimeSec=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
+
+let downtimeEvent="";
+
+if(isDowntime){
+downtimeEvent = format(downtimeSeconds);
+  
 }
 
 });
 
 
-/* ===== SCAN ENGINE ===== */
+// ===== ADDITION ONLY : SCAN ENGINE =====
 
-engineInput.addEventListener("keydown",function(e){
+document.getElementById("engineInput").addEventListener("keydown",function(e){
 
 if(e.key==="Enter" && this.value.trim()!==""){
 
-keyInput.focus();
+let engine=this.value.trim();
+
+if(scannedEngines.has(engine)){
+duplicateLock=true;
+setStatus("DUPLICATE ENGINE","status-red blink");
+this.value="";
+return;
+}
+
+pendingEngine=engine;
+//// ADDITION ONLY
+scannedEngines.add(engine);
+this.value="";
+
+document.getElementById("keyInput").focus();
 
 }
 
 });
 
 function isDuplicateScan(chassis, model){
-
 let rows = document.querySelectorAll("#scanTable tr");
-
 for(let row of rows){
-
 let cells = row.querySelectorAll("td");
-
 if(cells.length > 0){
-
 let existingModel = cells[2].innerText;
 let existingChassis = cells[4].innerText;
-
 if(existingChassis === chassis && existingModel === model){
 return true;
 }
@@ -561,6 +580,13 @@ if(pendingChassis==="") return;
 let model=modelInput.value.trim();
 let engine=engineInput.value.trim();
 let key=this.value.trim();
+//// ADDITION ONLY
+if(scannedKeys.has(key)){
+duplicateLock=true;
+setStatus("DUPLICATE KEY","status-red blink");
+this.value="";
+return;
+}
 let chassis=pendingChassis;
 let lot=document.getElementById("lotInput").value || "-";
 if(isDuplicateScan(chassis, model)){
@@ -569,8 +595,10 @@ setStatus("DUPLICATE MODEL","status-red blink");
 keyInput.value="";
 return;
 }
-  
+//// ADDITION ONLY
+scannedKeys.add(key);  
 const now=new Date();
+  
 const cycleTimeSec=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
 
 let downtimeEvent="";
@@ -1219,6 +1247,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

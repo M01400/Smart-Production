@@ -677,9 +677,21 @@ clearInterval(timer);timer=null;countdownValue=0;isDowntime=false;
 setStatus("TARGET ACHIEVED","status-green");
 }
 else if(isDowntime){setStatus("DOWN TIME","status-red blink");}
-else if(pendingChassis!==""){setStatus("WAITING MODEL","status-orange");}
-else{setStatus("RUNNING","status-green pulse");}
+else if(pendingChassis!==""){
+setStatus("WAITING MODEL","status-orange");
+}
 
+else if(pendingModel!==""){
+setStatus("WAITING ENGINE","status-orange");
+}
+
+else if(pendingEngine!==""){
+setStatus("WAITING KEY","status-orange");
+}
+
+else{
+setStatus("RUNNING","status-green pulse");
+}
 const downtimeCard=document.getElementById("downtimeCard");
 const downtimeText=document.getElementById("downtime");
 if(isDowntime){
@@ -1202,4 +1214,5 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 

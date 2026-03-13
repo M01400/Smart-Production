@@ -485,88 +485,16 @@ document.getElementById("modelInput").focus();
 
 document.getElementById("modelInput").addEventListener("keydown",function(e){
 if(e.key==="Enter" && this.value.trim()!==""){
+
 if(pendingChassis==="") return;
 
 let model=this.value.trim();
-let chassis=pendingChassis;
-let lot=document.getElementById("lotInput").value||"-";
 
-pendingChassis="";
-scannedChassis.add(chassis);
-
-const now=new Date();
-const cycleTimeSec=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
-
-let downtimeEvent="";
-
-if(isDowntime){
-downtimeEvent = format(downtimeSeconds);
-}
-
-let engine = pendingEngine || "-";
-let key = pendingKey || "-";
-
-let row=document.getElementById("scanTable").insertRow(0);
-
-row.insertCell(0).innerText=now.toLocaleDateString();
-row.insertCell(1).innerText=now.toLocaleTimeString();
-row.insertCell(2).innerText=lot;
-row.insertCell(3).innerText=model;
-row.insertCell(4).innerText=chassis;
-row.insertCell(5).innerText=engine;
-row.insertCell(6).innerText=key;
-
-let statusCell=row.insertCell(7);
-let downtimeCell=row.insertCell(8);
-
-
-let plan=parseInt(document.getElementById("dailyPlanTarget").value)||0;
-
-if(actualCount>=plan && plan>0){
-statusCell.innerText="-";
-downtimeCell.innerText="";
-}
-else if(downtimeEvent){
-statusCell.innerText="DOWN TIME";
-statusCell.classList.add("status-red");
-downtimeCell.innerText=downtimeEvent;
-downtimeCell.classList.add("status-red");
-}
-else{
-statusCell.innerText="SCANNED";
-statusCell.classList.add("status-green");
-}
-
-actualCount++;
-countdownValue=cycleTimeSec;
-isDowntime=false;
-lastScanTime=now;
-
-updateDisplay();
-  
-pendingEngine="";
-pendingKey="";
-  
-let downtimeSend = "";
-
-if(statusCell.innerText === "DOWN TIME"){
-  downtimeSend = downtimeEvent;
-}
-  
-sendToSheet(
-  chassis,
-  model,
-  engine,
-  key,
-  lot,
-  statusCell.innerText,
-  downtimeSend
-);
-
-updateLiveStateOnly();
+pendingModel = model;
 
 this.value="";
-document.getElementById("chassisInput").focus();
+document.getElementById("engineInput").focus();
+
 }
 });
   
@@ -598,10 +526,12 @@ document.getElementById("engineInput").focus();
 });
 
 /* ===== SCAN ENGINE NO ===== */
-  
+
 document.getElementById("engineInput").addEventListener("keydown",function(e){
 
 if(e.key==="Enter" && this.value.trim()!==""){
+
+if(pendingModel==="") return;
 
 let value=this.value.trim();
 
@@ -630,9 +560,11 @@ document.getElementById("keyInput").addEventListener("keydown",function(e){
 
 if(e.key==="Enter" && this.value.trim()!==""){
 
-let value=this.value.trim();
+if(pendingChassis==="" || pendingModel==="" || pendingEngine==="") return;
 
-if(scannedKey.has(value)){
+let key=this.value.trim();
+
+if(scannedKey.has(key)){
 duplicateLock=true;
 setStatus("DUPLICATE KEY","status-red blink");
 this.value="";
@@ -641,14 +573,71 @@ return;
 
 duplicateLock=false;
 
-pendingKey=value;
-scannedKey.add(value);
+let chassis=pendingChassis;
+let model=pendingModel;
+let engine=pendingEngine;
+let lot=document.getElementById("lotInput").value||"-";
+
+scannedKey.add(key);
+
+const now=new Date();
+const cycleTimeSec=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
+
+let downtimeEvent="";
+
+if(isDowntime){
+downtimeEvent=format(downtimeSeconds);
+}
+
+let row=document.getElementById("scanTable").insertRow(0);
+
+row.insertCell(0).innerText=now.toLocaleDateString();
+row.insertCell(1).innerText=now.toLocaleTimeString();
+row.insertCell(2).innerText=lot;
+row.insertCell(3).innerText=model;
+row.insertCell(4).innerText=chassis;
+row.insertCell(5).innerText=engine;
+row.insertCell(6).innerText=key;
+
+let statusCell=row.insertCell(7);
+let downtimeCell=row.insertCell(8);
+
+if(downtimeEvent){
+statusCell.innerText="DOWN TIME";
+statusCell.classList.add("status-red");
+downtimeCell.innerText=downtimeEvent;
+downtimeCell.classList.add("status-red");
+}
+else{
+statusCell.innerText="SCANNED";
+statusCell.classList.add("status-green");
+}
+
+actualCount++;
+countdownValue=cycleTimeSec;
+isDowntime=false;
+
+updateDisplay();
+
+sendToSheet(
+  chassis,
+  model,
+  engine,
+  key,
+  lot,
+  statusCell.innerText,
+  downtimeEvent
+);
+
+pendingChassis="";
+pendingModel="";
+pendingEngine="";
+pendingKey="";
 
 this.value="";
 document.getElementById("chassisInput").focus();
 
 }
-
 });
   
 /* ===== UPDATE DISPLAY ===== */
@@ -1214,5 +1203,6 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 

@@ -499,25 +499,6 @@ modelInput.focus();
   
 /* ===== SCAN MODEL ===== */
 
-document.getElementById("modelInput").addEventListener("keydown",function(e){
-if(e.key==="Enter" && this.value.trim()!==""){
-if(pendingChassis==="") return;
-
-let model=this.value.trim();
-let chassis=pendingChassis;
-let lot=document.getElementById("lotInput").value||"-";
-
-pendingChassis="";
-scannedChassis.add(chassis);
-
-const now=new Date();
-const cycleTimeSec=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
-
-let downtimeEvent="";
-
-if(isDowntime){
-downtimeEvent = format(downtimeSeconds);
-}
 modelInput.addEventListener("keydown",function(e){
 
 if(e.key==="Enter" && this.value.trim()!==""){
@@ -529,7 +510,8 @@ engineInput.focus();
 }
 
 });
-  
+
+
 /* ===== SCAN ENGINE ===== */
 
 engineInput.addEventListener("keydown",function(e){
@@ -541,8 +523,9 @@ keyInput.focus();
 }
 
 });
-  
-/* ===== SCAN KEY ===== */
+
+
+/* ===== SCAN KEY (FINAL SUBMIT) ===== */
 
 keyInput.addEventListener("keydown",function(e){
 
@@ -556,10 +539,16 @@ let key=this.value.trim();
 let chassis=pendingChassis;
 let lot=document.getElementById("lotInput").value || "-";
 
-pendingChassis="";
-scannedChassis.add(chassis);
-
 const now=new Date();
+const cycleTimeSec=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
+
+let downtimeEvent="";
+
+if(isDowntime){
+downtimeEvent = format(downtimeSeconds);
+}
+
+/* ===== INSERT TABLE ===== */
 
 let row=document.getElementById("scanTable").insertRow(0);
 
@@ -574,12 +563,39 @@ row.insertCell(6).innerText=key;
 let statusCell=row.insertCell(7);
 let downtimeCell=row.insertCell(8);
 
+let plan=parseInt(document.getElementById("dailyPlanTarget").value)||0;
+
+if(actualCount>=plan && plan>0){
+statusCell.innerText="-";
+downtimeCell.innerText="";
+}
+else if(downtimeEvent){
+statusCell.innerText="DOWN TIME";
+statusCell.classList.add("status-red");
+downtimeCell.innerText=downtimeEvent;
+downtimeCell.classList.add("status-red");
+}
+else{
 statusCell.innerText="SCANNED";
 statusCell.classList.add("status-green");
+}
+
+/* ===== UPDATE PRODUCTION ===== */
 
 actualCount++;
+countdownValue=cycleTimeSec;
+isDowntime=false;
+lastScanTime=now;
 
 updateDisplay();
+
+let downtimeSend="";
+
+if(statusCell.innerText==="DOWN TIME"){
+downtimeSend=downtimeEvent;
+}
+
+/* ===== SEND DATA TO GOOGLE SHEET ===== */
 
 sendToSheet(
 chassis,
@@ -588,12 +604,18 @@ lot,
 engine,
 key,
 statusCell.innerText,
-""
+downtimeSend
 );
+
+updateLiveStateOnly();
+
+/* ===== RESET INPUT ===== */
 
 modelInput.value="";
 engineInput.value="";
 keyInput.value="";
+pendingChassis="";
+
 chassisInput.focus();
 
 }
@@ -1166,6 +1188,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

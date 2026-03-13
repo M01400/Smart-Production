@@ -483,9 +483,9 @@ document.getElementById("chassisInput").addEventListener("keydown", function(e) 
             return;
         }
 
-        /* START AUTOMATICALLY ON FIRST SCAN */
+        /* --- TAMBAHAN: MULA COUNTDOWN PADA SCAN PERTAMA --- */
         if (!timer) {
-            startProduction();
+            startProduction(); 
         }
 
         duplicateLock = false;
@@ -496,7 +496,7 @@ document.getElementById("chassisInput").addEventListener("keydown", function(e) 
         document.getElementById("modelInput").focus();
     }
 });
-
+  
 /* ===== SCAN MODEL ===== */
 
 document.getElementById("modelInput").addEventListener("keydown",function(e){
@@ -667,33 +667,39 @@ function updateDisplay() {
     else { balanceEl.className = "big-number status-blue"; }
     balanceEl.innerText = displayBalance;
 
-    // --- LOGIK STATUS (SUSUNAN ADALAH PENTING) ---
+    /* ================= LOGIK STATUS BARU ================= */
     if (isBreakTime()) {
         setStatus("BREAK TIME", "status-orange");
-    } else if (duplicateLock) {
-        setStatus("DUPLICATE CHASSIS", "status-red blink");
-    } else if (isDowntime) {
+    } 
+    else if (duplicateLock) {
+        setStatus("DUPLICATE SCAN", "status-red blink");
+    } 
+    else if (isDowntime) {
         setStatus("DOWN TIME", "status-red blink");
-    } else if (actualCount >= plan && plan > 0) {
-        clearInterval(timer);
-        timer = null;
-        countdownValue = 0;
-        isDowntime = false;
+    } 
+    else if (actualCount >= plan && plan > 0) {
+        clearInterval(timer); timer = null; countdownValue = 0; isDowntime = false;
         setStatus("TARGET ACHIEVED", "status-green");
-    } else if (pendingChassis !== "" && pendingModel === "") {
+    } 
+    // Jika sedang dalam proses scan (salah satu input sudah diisi tapi belum lengkap semua)
+    else if (pendingChassis !== "" && pendingModel === "") {
         setStatus("WAITING MODEL", "status-orange");
-    } else if (pendingModel !== "" && pendingEngine === "") {
+    } 
+    else if (pendingModel !== "" && pendingEngine === "") {
         setStatus("WAITING ENGINE", "status-orange");
-    } else if (pendingEngine !== "" && pendingKey === "") {
+    } 
+    else if (pendingEngine !== "" && pendingKey === "") {
         setStatus("WAITING KEY", "status-orange");
-    } else if (timer) {
-        // Jika timer sedang jalan dan tiada pending scan, status adalah RUNNING
+    } 
+    // Jika timer sedang jalan dan tiada proses scan yang tertunggak, status adalah RUNNING
+    else if (timer) {
         setStatus("RUNNING", "status-green pulse");
-    } else {
+    } 
+    else {
         setStatus("READY", "status-blue");
     }
+    /* ===================================================== */
 
-    // Downtime Card Alert
     const downtimeCard = document.getElementById("downtimeCard");
     const downtimeText = document.getElementById("downtime");
     if (isDowntime) {
@@ -704,7 +710,6 @@ function updateDisplay() {
         downtimeText.classList.remove("status-red", "blink");
     }
 }
-
 /* ===== DAILY SUMMARY ===== */
 
 function openSummary(){
@@ -1215,6 +1220,7 @@ window.onload = function(){
 </script>
 </body>
 </html>
+
 
 
 

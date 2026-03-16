@@ -1165,16 +1165,25 @@ scanRows.reverse().forEach(row => {
     let downtimeCell = newRow.insertCell(8);
     let rawDowntime = row[9] || "";
 
-    if (rawDowntime.toString().includes("T")) {
-        // Jika data ada format tarikh pelik, kita potong ambil minit & saat sahaja
-        let timePart = rawDowntime.split("T")[1].split(".")[0]; 
-        let parts = timePart.split(":");
-        // Ini akan mengeluarkan format "00:04" atau "00:07"
-        downtimeCell.innerText = parts[1] + ":" + parts[2];
-    } else {
-        // Jika data sudah dalam format "0:07", paparkan terus
-        downtimeCell.innerText = rawDowntime;
+// Pastikan format mm:ss
+if(rawDowntime){
+
+    let text = rawDowntime.toString();
+
+    if(text.includes(":")){
+        let parts = text.split(":");
+
+        if(parts.length === 3){
+            downtimeCell.innerText = parts[1] + ":" + parts[2];
+        }
+        else if(parts.length === 2){
+            downtimeCell.innerText = ("0"+parts[0]).slice(-2) + ":" + ("0"+parts[1]).slice(-2);
+        }
+        else{
+            downtimeCell.innerText = text;
+        }
     }
+}
 
     if(statusText === "DOWN TIME") downtimeCell.className = "status-red";
 });

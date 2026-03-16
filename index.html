@@ -1140,19 +1140,19 @@ table.innerHTML="";
 scanRows.reverse().forEach(row => {
     let newRow = table.insertRow();
 
-    // 1. DATE & TIME (Pecahkan dari Kolum A)
+    // 1. DATE & TIME (Diambil dari Kolum A - row[0])
     let fullDateTime = new Date(row[0]);
     newRow.insertCell(0).innerText = fullDateTime.toLocaleDateString("en-GB");
     newRow.insertCell(1).innerText = fullDateTime.toLocaleTimeString("en-GB", {
         hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true 
     }).toLowerCase();
 
-    // 2. DATA UTAMA (Ikut urutan Google Sheet Gambar 12)
+    // 2. DATA UTAMA (Susunan mengikut Google Sheet anda)
     newRow.insertCell(2).innerText = row[1] || "-"; // Lot (Kolum B)
     newRow.insertCell(3).innerText = row[2] || "-"; // Model (Kolum C)
     newRow.insertCell(4).innerText = row[3] || "-"; // Chassis (Kolum D)
-    newRow.insertCell(5).innerText = row[4] || "-"; // Engine (Kolum E)
-    newRow.insertCell(6).innerText = row[5] || "-"; // Key (Kolum F)
+    newRow.insertCell(5).innerText = row[4] || "-"; // Engine No (Kolum E)
+    newRow.insertCell(6).innerText = row[5] || "-"; // Key No (Kolum F)
 
     // 3. STATUS (Kolum G) + Warna
     let statusCell = newRow.insertCell(7);
@@ -1161,22 +1161,18 @@ scanRows.reverse().forEach(row => {
     if(statusText === "SCANNED") statusCell.className = "status-green";
     if(statusText === "DOWN TIME") statusCell.className = "status-red";
 
-    // 4. DOWNTIME (Kolum J -> row[9]) - FIX 4 SAAT
+    // 4. DOWNTIME (Kolum J -> row[9]) - DIAMBIL SEBAGAI TEKS SAHAJA
     let downtimeCell = newRow.insertCell(8);
     let rawDowntime = row[9] || "";
 
-    // Fungsi "Mencuci" ralat 17:08 atau 08:35
     if (rawDowntime.toString().includes("T")) {
-        // Ambil bahagian HH:mm:ss sahaja
+        // Jika data ada format tarikh pelik, kita potong ambil minit & saat sahaja
         let timePart = rawDowntime.split("T")[1].split(".")[0]; 
         let parts = timePart.split(":");
-        
-        // Ambil Minit dan Saat sahaja, abaikan Jam (kerana jam itu punca ralat zon masa)
-        // Ini akan tukar "17:00:04" kepada "0:04"
-        let minutes = parseInt(parts[1]);
-        let seconds = parts[2];
-        downtimeCell.innerText = minutes + ":" + seconds;
+        // Ini akan mengeluarkan format "00:04" atau "00:07"
+        downtimeCell.innerText = parts[1] + ":" + parts[2];
     } else {
+        // Jika data sudah dalam format "0:07", paparkan terus
         downtimeCell.innerText = rawDowntime;
     }
 

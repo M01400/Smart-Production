@@ -1137,39 +1137,40 @@ function loadLiveData(){
 const table = document.getElementById("scanTable");
 table.innerHTML="";
 
-scanRows.reverse().forEach(row=>{
-
+scanRows.reverse().forEach(row => {
     let newRow = table.insertRow();
 
-    // 1. Masa (Time) - Indeks 1 di Google Sheet
-    newRow.insertCell(0).innerText = row[1] || ""; 
+    // 1. Tarikh (Date) - Ambil dari row[0]
+    newRow.insertCell(0).innerText = row[0] || "";
 
-    // 2. Lot - Indeks 2 di Google Sheet
-    newRow.insertCell(1).innerText = row[2] || ""; 
+    // 2. Masa (Time) - Ambil dari row[1] 
+    newRow.insertCell(1).innerText = row[1] || "";
 
-    // 3. Model - Indeks 3 di Google Sheet
-    newRow.insertCell(2).innerText = row[3] || ""; 
+    // 3. Lot - Ambil dari row[2]
+    newRow.insertCell(2).innerText = row[2] || "";
 
-    // 4. Chassis - Indeks 4 di Google Sheet
-    newRow.insertCell(3).innerText = row[4] || ""; 
+    // 4. Model - Ambil dari row[3]
+    newRow.insertCell(3).innerText = row[3] || "";
 
-    // 5. Engine No - Indeks 5 di Google Sheet
-    newRow.insertCell(4).innerText = row[5] || ""; 
+    // 5. Chassis - Ambil dari row[4]
+    newRow.insertCell(4).innerText = row[4] || "";
 
-    // 6. Key No (TAMBAHAN BARU) - Indeks 6 di Google Sheet
-    newRow.insertCell(5).innerText = row[6] || ""; 
+    // 6. Engine No - Ambil dari row[5]
+    newRow.insertCell(5).innerText = row[5] || "";
 
-    // 7. Status (KEMASKINI) - Indeks 7 di Google Sheet
-    let statusCell = newRow.insertCell(6);
+    // 7. Key No - Ambil dari row[6]
+    newRow.insertCell(6).innerText = row[6] || "";
+
+    // 8. Status - Ambil dari row[7] + Warna
+    let statusCell = newRow.insertCell(7);
     statusCell.innerText = row[7] || "";
-    if(row[7] === "DOWN TIME") statusCell.classList.add("status-red");
     if(row[7] === "SCANNED") statusCell.classList.add("status-green");
+    if(row[7] === "DOWN TIME") statusCell.classList.add("status-red");
 
-    // 8. Downtime (KEMASKINI) - Indeks 8 di Google Sheet
-    let downtimeCell = newRow.insertCell(7);
+    // 9. Downtime - Ambil dari row[8] + Warna
+    let downtimeCell = newRow.insertCell(8);
     downtimeCell.innerText = row[8] || "";
     if(row[7] === "DOWN TIME") downtimeCell.classList.add("status-red");
-
 });
 
       const state = data.state[data.state.length - 1];

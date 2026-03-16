@@ -1143,38 +1143,46 @@ scanRows.reverse().forEach(row => {
     // Kolum A di Sheet (row[0]) ada Tarikh & Masa
     let fullDateTime = new Date(row[0]);
     
-    // 1. DATE - Ambil tarikh sahaja dari Kolum A
+    // 1. DATE
     newRow.insertCell(0).innerText = fullDateTime.toLocaleDateString("en-GB");
 
-    // 2. TIME - Ambil masa sahaja dari Kolum A
-    newRow.insertCell(1).innerText = fullDateTime.toLocaleTimeString("en-GB", {hour12: true}).toLowerCase();
+    // 2. TIME
+    newRow.insertCell(1).innerText = fullDateTime.toLocaleTimeString("en-GB", {hour: '2-digit', minute:'2-digit', second:'2-digit', hour12: true}).toLowerCase();
 
-    // 3. LOT - Ambil dari Kolum B (row[1])
+    // 3. LOT (Kolum B)
     newRow.insertCell(2).innerText = row[1] || "-";
 
-    // 4. MODEL - Ambil dari Kolum C (row[2])
+    // 4. MODEL (Kolum C)
     newRow.insertCell(3).innerText = row[2] || "-";
 
-    // 5. CHASSIS - Ambil dari Kolum D (row[3])
+    // 5. CHASSIS (Kolum D)
     newRow.insertCell(4).innerText = row[3] || "-";
 
-    // 6. ENGINE NO - Ambil dari Kolum E (row[4])
+    // 6. ENGINE NO (Kolum E)
     newRow.insertCell(5).innerText = row[4] || "-";
 
-    // 7. KEY NO - Ambil dari Kolum F (row[5])
+    // 7. KEY NO (Kolum F)
     newRow.insertCell(6).innerText = row[5] || "-";
 
-    // 8. STATUS - Ambil dari Kolum G (row[6]) + Warna
+    // 8. STATUS (Kolum G) + Warna
     let statusCell = newRow.insertCell(7);
     let statusText = row[6] || "";
     statusCell.innerText = statusText;
     if(statusText === "SCANNED") statusCell.className = "status-green";
     if(statusText === "DOWN TIME") statusCell.className = "status-red";
 
-    // 9. DOWNTIME - Ambil dari Kolum J (row[9]) + Warna
+    // 9. DOWNTIME (Kolum J / row[9]) + Pembersihan Tarikh 1899
     let downtimeCell = newRow.insertCell(8);
-    let downtimeVal = row[9] || "";
-    downtimeCell.innerText = downtimeVal;
+    let rawDowntime = row[9] || "";
+    
+    // Jika data mengandungi tarikh 1899 atau simbol T, kita potong ambil masa sahaja
+    if (rawDowntime.includes("T")) {
+        let timePart = rawDowntime.split("T")[1].split(".")[0]; // Ambil HH:mm:ss
+        downtimeCell.innerText = timePart;
+    } else {
+        downtimeCell.innerText = rawDowntime;
+    }
+    
     if(statusText === "DOWN TIME") downtimeCell.className = "status-red";
 });
       

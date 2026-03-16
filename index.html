@@ -1128,123 +1128,81 @@ function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
 
 }
 // Ambil data untuk MONITOR PC
+// Ambil data untuk MONITOR PC - GANTIKAN SEMUA DALAM FUNCTION INI
 function loadLiveData(){
 
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
+      // 1. Kemaskini Jadual (Mirror 100%)
       const scanRows = data.scan.slice(1);
-const table = document.getElementById("scanTable");
-table.innerHTML="";
+      const table = document.getElementById("scanTable");
+      table.innerHTML = ""; 
 
-scanRows.reverse().forEach(row=>{
+      scanRows.reverse().forEach(row => {
+        let newRow = table.insertRow();
+        
+        // Loop 9 kali untuk 9 kolum (Date, Time, Lot, Model, Chassis, Engine, Key, Status, Downtime)
+        for (let i = 0; i < 9; i++) {
+          let newCell = newRow.insertCell(i);
+          let cellValue = row[i] || "";
 
-let newRow = table.insertRow();
+          // Papar data terus dari Google Sheet
+          newCell.innerText = cellValue;
 
-let timeValue = new Date(row[0]);
+          // Tambah warna Status (Kolum ke-8 / Indeks 7)
+          if (i === 7) {
+            if (cellValue === "SCANNED") newCell.className = "status-green";
+            if (cellValue === "DOWN TIME") newCell.className = "status-red";
+          }
+          // Tambah warna Downtime (Kolum ke-9 / Indeks 8)
+          if (i === 8 && cellValue !== "") {
+            newCell.className = "status-red";
+          }
+        }
+      });
 
-newRow.insertCell(0).innerText =
-timeValue.toLocaleTimeString("en-MY",{hour12:false});
-newRow.insertCell(1).innerText = row[1];
-newRow.insertCell(2).innerText = row[2];
-newRow.insertCell(3).innerText = row[3];
-
-let statusCell = newRow.insertCell(4);
-statusCell.innerText = row[4];
-
-if(row[4] === "DOWN TIME"){
-statusCell.classList.add("status-red");
-}
-if(row[4] === "SCANNED"){
-statusCell.classList.add("status-green");
-}
-
-let downtimeCell = newRow.insertCell(5);
-downtimeCell.innerText = row[7] || "";
-
-if(row[4] === "DOWN TIME"){
-downtimeCell.classList.add("status-red");
-}  
-});
-
+      // 2. Kemaskini Dashboard (Mirror State)
       const state = data.state[data.state.length - 1];
       if(!state) return;
 
-      const plan = parseInt(state[0]) || 0;
-      const actual = parseInt(state[1]) || 0;
+      // Update angka-angka besar
+      document.getElementById("plan").innerText = state[0] || 0;
+      document.getElementById("actual").innerText = state[1] || 0;
+      
       const balance = parseInt(state[2]) || 0;
+      const balanceEl = document.getElementById("balance");
+      balanceEl.innerText = balance > 0 ? "+" + balance : balance;
+      balanceEl.className = balance < 0 ? "big-number status-red" : (balance > 0 ? "big-number status-green" : "big-number status-blue");
+
       const status = state[3] || "READY";
       const totalDowntime = parseInt(state[4]) || 0;
       const countdown = parseInt(state[5]) || 0;
 
-      // Update dashboard
-      document.getElementById("plan").innerText = plan;
-      document.getElementById("actual").innerText = actual;
-      
       countdownValue = countdown;
       document.getElementById("countdown").innerText = format(countdownValue);
-    
       document.getElementById("downtime").innerText = format(totalDowntime);
 
-      // Balance
-      const balanceEl = document.getElementById("balance");
-      if(balance < 0){
-        balanceEl.className="big-number status-red";
-        balanceEl.innerText = balance;
+      // 3. Mirror Efek Visual (Blink/Pulse)
+      const downtimeCard = document.getElementById("downtimeCard");
+      const downtimeText = document.getElementById("downtime");
+
+      if(status === "DOWN TIME"){
+          setStatus("DOWN TIME","status-red blink");
+          downtimeCard.classList.add("downtime-alert","blink");
+          downtimeText.classList.add("status-red","blink");
+      } else if(status === "RUNNING"){
+          setStatus("RUNNING","status-green pulse");
+          downtimeCard.classList.remove("downtime-alert","blink");
+          downtimeText.classList.remove("status-red","blink");
+      } else {
+          setStatus(status, "status-blue");
+          downtimeCard.classList.remove("downtime-alert","blink");
+          downtimeText.classList.remove("status-red","blink");
       }
-      else if(balance > 0){
-        balanceEl.className="big-number status-green";
-        balanceEl.innerText = "+" + balance;
-      }
-      else{
-        balanceEl.className="big-number status-blue";
-        balanceEl.innerText = "0";
-      }
-
- // Status mirror
-if(status === "DOWN TIME"){
-    setStatus("DOWN TIME","status-red blink");
-
-    const downtimeCard = document.getElementById("downtimeCard");
-    const downtimeText = document.getElementById("downtime");
-
-    downtimeCard.classList.add("downtime-alert","blink");
-    downtimeText.classList.add("status-red","blink");
-}
-
-else if(status === "RUNNING"){
-    setStatus("RUNNING","status-green pulse");
-
-    const downtimeCard = document.getElementById("downtimeCard");
-    const downtimeText = document.getElementById("downtime");
-
-    downtimeCard.classList.remove("downtime-alert","blink");
-    downtimeText.classList.remove("status-red","blink");
-}
-
-else if(status === "TARGET ACHIEVED"){
-    setStatus("TARGET ACHIEVED","status-green");
-
-    const downtimeCard = document.getElementById("downtimeCard");
-    const downtimeText = document.getElementById("downtime");
-
-    downtimeCard.classList.remove("downtime-alert","blink");
-    downtimeText.classList.remove("status-red","blink");
-}
-
-else{
-    setStatus(status,"status-blue");
-
-    const downtimeCard = document.getElementById("downtimeCard");
-    const downtimeText = document.getElementById("downtime");
-
-    downtimeCard.classList.remove("downtime-alert","blink");
-    downtimeText.classList.remove("status-red","blink");
-}
     })
     .catch(err => console.log("Monitor load error:", err));
 }
-
 /* ===== INITIALIZE SYSTEM ===== */
 
 window.onload = function(){

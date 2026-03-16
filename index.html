@@ -204,10 +204,10 @@ tr:nth-child(even){background:#0f172a;}
 <div class="controls">
 
 Cycle Time (min):
-<input type="number" id="cycleTarget" min="16">
+<input type="number" id="cycleTarget" min="1">
 
 Daily Plan:
-<input type="number" id="dailyPlanTarget" min="27">
+<input type="number" id="dailyPlanTarget" min="2">
 
 Lot:
 <input type="number" id="lotInput" placeholder="Lot No">
@@ -266,8 +266,8 @@ Lot:
 
 const SETTINGS = {
 
-  defaultCycle: 1,
-  defaultPlan: 2,
+  defaultCycle: 16,
+  defaultPlan: 20,
 
   breakTime: {
     normal: {

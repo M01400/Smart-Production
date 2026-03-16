@@ -1140,13 +1140,13 @@ table.innerHTML="";
 scanRows.reverse().forEach(row => {
     let newRow = table.insertRow();
 
-    // Kolum A di Sheet (row[0]) ada Tarikh & Masa
+    // Kolum A (row[0]) ada Tarikh & Masa
     let fullDateTime = new Date(row[0]);
     
-    // 1. DATE (16/03/2026)
+    // 1. DATE
     newRow.insertCell(0).innerText = fullDateTime.toLocaleDateString("en-GB");
 
-    // 2. TIME (11:56:16 am)
+    // 2. TIME
     newRow.insertCell(1).innerText = fullDateTime.toLocaleTimeString("en-GB", {
         hour: '2-digit', 
         minute: '2-digit', 
@@ -1173,24 +1173,22 @@ scanRows.reverse().forEach(row => {
     let statusCell = newRow.insertCell(7);
     let statusText = row[6] || "";
     statusCell.innerText = statusText;
-    
-    // Warna Status
     if(statusText === "SCANNED") statusCell.className = "status-green";
     if(statusText === "DOWN TIME") statusCell.className = "status-red";
 
-    // 9. DOWNTIME (Kolum J -> row[9])
+    // 9. DOWNTIME (Kolum J -> row[9]) - FIX UNTUK 4 SAAT
     let downtimeCell = newRow.insertCell(8);
     let rawDowntime = row[9] || "";
 
-    // Sini kita cuci data Downtime supaya tak keluar tarikh 1899
-    if (rawDowntime.toString().includes("T")) {
-        // Ambil bahagian masa sahaja (HH:mm:ss)
-        downtimeCell.innerText = rawDowntime.split("T")[1].split(".")[0];
+    if (rawDowntime && rawDowntime.toString().includes("T")) {
+        // Ambil bahagian jam:minit:saat sahaja dari format ISO
+        let timeOnly = rawDowntime.split("T")[1].split(".")[0]; 
+        // Potong supaya jadi format minit:saat (contoh: 00:04)
+        downtimeCell.innerText = timeOnly.substring(3); 
     } else {
         downtimeCell.innerText = rawDowntime;
     }
 
-    // Warna Downtime jadi merah jika DOWN TIME
     if(statusText === "DOWN TIME") downtimeCell.className = "status-red";
 });
       

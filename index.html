@@ -1140,39 +1140,40 @@ table.innerHTML="";
 scanRows.reverse().forEach(row => {
     let newRow = table.insertRow();
 
-    // 1. Tarikh (Date) - Ambil dari row[0]
-    newRow.insertCell(0).innerText = row[0] || "";
+    // 1. DATE - Format semula format ISO (2026-03-16T...) kepada Tarikh sahaja
+    let dateVal = row[0] ? new Date(row[0]).toLocaleDateString("en-GB") : "-";
+    newRow.insertCell(0).innerText = dateVal;
 
-    // 2. Masa (Time) - Ambil dari row[1] 
-    newRow.insertCell(1).innerText = row[1] || "";
+    // 2. TIME - Ambil masa dari row[1]
+    newRow.insertCell(1).innerText = row[1] || "-";
 
-    // 3. Lot - Ambil dari row[2]
-    newRow.insertCell(2).innerText = row[2] || "";
+    // 3. LOT - Ambil dari row[2]
+    newRow.insertCell(2).innerText = row[2] || "-";
 
-    // 4. Model - Ambil dari row[3]
-    newRow.insertCell(3).innerText = row[3] || "";
+    // 4. MODEL - Ambil dari row[3]
+    newRow.insertCell(3).innerText = row[3] || "-";
 
-    // 5. Chassis - Ambil dari row[4]
-    newRow.insertCell(4).innerText = row[4] || "";
+    // 5. CHASSIS - Ambil dari row[4]
+    newRow.insertCell(4).innerText = row[4] || "-";
 
-    // 6. Engine No - Ambil dari row[5]
-    newRow.insertCell(5).innerText = row[5] || "";
+    // 6. ENGINE NO - Ambil dari row[5]
+    newRow.insertCell(5).innerText = row[5] || "-";
 
-    // 7. Key No - Ambil dari row[6]
-    newRow.insertCell(6).innerText = row[6] || "";
+    // 7. KEY NO - Ambil dari row[6]
+    newRow.insertCell(6).innerText = row[6] || "-";
 
-    // 8. Status - Ambil dari row[7] + Warna
+    // 8. STATUS - Ambil dari row[7] + Warna
     let statusCell = newRow.insertCell(7);
     statusCell.innerText = row[7] || "";
-    if(row[7] === "SCANNED") statusCell.classList.add("status-green");
-    if(row[7] === "DOWN TIME") statusCell.classList.add("status-red");
+    if(row[7] === "SCANNED") statusCell.className = "status-green";
+    if(row[7] === "DOWN TIME") statusCell.className = "status-red";
 
-    // 9. Downtime - Ambil dari row[8] + Warna
+    // 9. DOWNTIME - Ambil dari row[8] + Warna
     let downtimeCell = newRow.insertCell(8);
     downtimeCell.innerText = row[8] || "";
-    if(row[7] === "DOWN TIME") downtimeCell.classList.add("status-red");
+    if(row[7] === "DOWN TIME") downtimeCell.className = "status-red";
 });
-
+      
       const state = data.state[data.state.length - 1];
       if(!state) return;
 

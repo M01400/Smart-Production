@@ -509,14 +509,6 @@ if(pendingChassis==="") return;
 
 let model=this.value.trim();
 
-/* DUPLICATE CHECK */
-if(scannedModel.has(model)){
-duplicateLock=true;
-setStatus("DUPLICATE MODEL","status-red blink");
-this.value="";
-return;
-}
-
 duplicateLock=false;
 
 pendingModel=model;

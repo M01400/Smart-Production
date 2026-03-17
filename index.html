@@ -10,8 +10,10 @@
   --header-size:70px;
   --big-number-size:70px;
   --card-title-size:30px;
-  .monitor-mode .scan-container{
-display:none;
+}
+
+.monitor-mode .scan-container{
+  display:none;
 }
 
 body{
@@ -433,7 +435,6 @@ function startProduction(){
         if(countdownValue > 0){
             countdownValue--;
         } else {
-            downtimeSeconds++;
             isDowntime = true;
         }
         
@@ -580,14 +581,25 @@ let engine = pendingEngine;
 let lot = document.getElementById("lotInput").value || "-";
   
 
-const now=new Date();
-const cycleTimeSec=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
+const now = new Date();
+const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
 
-let downtimeEvent="";
+let downtimeEvent = "";
 
-if(isDowntime){
-downtimeEvent=format(downtimeSeconds);
+if(lastScanTime){
+    let diffSec = Math.floor((now - lastScanTime) / 1000);
+
+    if(diffSec > cycleTimeSec){
+        let actualDowntime = diffSec - cycleTimeSec;
+
+        downtimeEvent = format(actualDowntime);
+
+        // ✅ TAMBAH KE TOTAL DASHBOARD
+        downtimeSeconds += actualDowntime;
+    }
 }
+
+lastScanTime = now;
 
 let row=document.getElementById("scanTable").insertRow(0);
 

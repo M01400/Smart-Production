@@ -435,6 +435,7 @@ function startProduction(){
         if(countdownValue > 0){
             countdownValue--;
         } else {
+          isDowntime = true;
     
         }
         
@@ -594,9 +595,18 @@ if(lastScanTime){
 
         downtimeEvent = format(actualDowntime);
 
-        // ✅ TAMBAH KE TOTAL DASHBOARD
+        // ✅ accumulate dashboard
         downtimeSeconds += actualDowntime;
+
+        // ✅ TRIGGER STATUS
+        isDowntime = true;
+
+    } else {
+        // ✅ TAK DOWNTIME
+        isDowntime = false;
     }
+} else {
+    isDowntime = false;
 }
 
 lastScanTime = now;

@@ -48,6 +48,27 @@ font-size:60px;
 font-weight:900;
 font-family:'Courier New',monospace;color:#22d3ee;}
 
+
+.expected-bar{
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  margin:10px 20px;
+  padding:15px;
+  background:#111827;
+  border-radius:15px;
+  font-size:28px;
+  font-weight:bold;
+}
+
+.expected-bar span{
+  color:#60a5fa;
+}
+
+#expectedStatus{
+  font-weight:900;
+}
+  
 /* ================= CONTROLS SETTINGS ================= */
 
 .controls{
@@ -262,6 +283,15 @@ Lot:
 <div class="card"><h3>Plan</h3><div class="big-number" id="plan">0</div></div>
 <div class="card"><h3>Actual</h3><div class="big-number" id="actual">0</div></div>
 <div class="card"><h3>Production Balance</h3><div class="big-number status-blue" id="balance">0</div></div>
+</div>
+<div class="expected-bar">
+  <div>
+    EXPECTED: <span id="expectedOutput">0</span>
+  </div>
+  <div>
+    ACTUAL: <span id="actualVsExpected">0</span>
+  </div>
+  <div id="expectedStatus">ON TRACK</div>
 </div>
 
 <div class="bottom">
@@ -713,7 +743,67 @@ function updateDisplay() {
     else if (balance > 0) { balanceEl.className = "big-number status-green"; } 
     else { balanceEl.className = "big-number status-blue"; }
     balanceEl.innerText = displayBalance;
-    updateExpectedSection();
+  
+  /* ===== EXPECTED VS ACTUAL (NEW) ===== */
+
+if(startTime){
+
+    const now = new Date();
+    const diffMin = Math.floor((now - startTime)/60000);
+
+    const cycle = parseFloat(document.getElementById("cycleTarget").value) || 1;
+
+    let expected = Math.floor(diffMin / cycle);
+    if(expected < 0) expected = 0;
+
+    // EXPECTED
+    const expectedEl = document.getElementById("expectedOutput");
+    if(expectedEl){
+        expectedEl.innerText = expected;
+    }
+
+    // ACTUAL VS EXPECTED
+    const actualVs = document.getElementById("actualVsExpected");
+    if(actualVs){
+        actualVs.innerText = actualCount + " / " + expected;
+    }
+
+    // STATUS
+    const statusEl = document.getElementById("expectedStatus");
+    if(statusEl){
+        if(actualCount < expected){
+            statusEl.innerText = "🔴 BEHIND";
+            statusEl.style.color = "#ef4444";
+        }else{
+            statusEl.innerText = "🟢 ON TRACK";
+            statusEl.style.color = "#22c55e";
+        }
+    }
+}
+    
+    // EXPECTED
+const expectedEl = document.getElementById("expectedOutput");
+if(expectedEl){
+    expectedEl.innerText = expected;
+}
+
+// ACTUAL VS EXPECTED
+const actualVs = document.getElementById("actualVsExpected");
+if(actualVs){
+    actualVs.innerText = actualCount + " / " + expected;
+}
+
+// STATUS
+const statusEl = document.getElementById("expectedStatus");
+if(statusEl){
+    if(actualCount < expected){
+        statusEl.innerText = "🔴 BEHIND";
+        statusEl.style.color = "#ef4444";
+    }else{
+        statusEl.innerText = "🟢 ON TRACK";
+        statusEl.style.color = "#22c55e";
+    }
+}
 
     /* ================= NEW STATUS LOGIC ================= */
     if (isBreakTime()) {

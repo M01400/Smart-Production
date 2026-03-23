@@ -746,15 +746,18 @@ function updateDisplay() {
   
   /* ===== EXPECTED VS ACTUAL (NEW) ===== */
 
+if(timer || startTime){
+
+const now = new Date();
+const cycle = parseFloat(document.getElementById("cycleTarget").value) || 1;
+
+// expected = how many cycles should have passed
+let expected = 0;
+
 if(startTime){
-
-    const now = new Date();
-    const diffMin = Math.floor((now - startTime)/60000);
-
-    const cycle = parseFloat(document.getElementById("cycleTarget").value) || 1;
-
-    let expected = Math.floor(diffMin / cycle);
-    if(expected < 0) expected = 0;
+    const elapsedSec = Math.floor((new Date() - startTime)/1000);
+    expected = Math.floor(elapsedSec / (cycle * 60));
+}
 
     // EXPECTED
     const expectedEl = document.getElementById("expectedOutput");

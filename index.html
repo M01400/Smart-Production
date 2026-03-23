@@ -218,9 +218,9 @@ tr:nth-child(even){background:#0f172a;}
   </div>
 
   <div class="card">
-    <h3>ACTUAL (TARGET)</h3>
-    <div class="big-number" id="actualTarget">0</div>
-  </div>
+  <h3>Actual</h3>
+  <div class="big-number" id="actualDisplay">0 / 0</div>
+</div>
 
   <div class="card">
     <h3>STATUS</h3>
@@ -1330,7 +1330,18 @@ else{
     document.getElementById("expectedOutput").innerText = expected;
 
     // ACTUAL (your real count)
-    document.getElementById("actualTarget").innerText = actualCount;
+    const actualEl = document.getElementById("actualDisplay");
+
+if(actualEl){
+    actualEl.innerText = actualCount + " / " + expected;
+
+    // Optional color change
+    if(actualCount < expected){
+        actualEl.className = "big-number status-red";
+    } else {
+        actualEl.className = "big-number status-green";
+    }
+}
 
     // STATUS
     let status = actualCount >= expected ? "ON TRACK" : "BEHIND";

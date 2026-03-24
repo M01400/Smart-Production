@@ -5,6 +5,15 @@
 <title>TF 2 Production Monitoring</title>
 
 <style>
+
+.main-dashboard{
+display:grid;
+grid-template-columns: 1fr 1.6fr 1fr;
+gap:25px;
+margin:20px;
+align-items:stretch;
+}
+  
 :root{
   --main-font:'Segoe UI', sans-serif;
   --header-size:70px;
@@ -18,8 +27,8 @@
 
 body{
 margin:0;
-font-family:var(--main-font);
-background:#0b1220;
+font-family:'Segoe UI',sans-serif;
+background: radial-gradient(circle at top, #0f172a, #020617);
 color:#e5e7eb;
 }
 
@@ -251,7 +260,7 @@ Lot:
 
 <h3>Performance Gauge</h3>
 
-<canvas id="gaugeCanvas" width="220" height="140"></canvas>
+<canvas id="gaugeCanvas" width="300" height="200"></canvas>
 
 </div>
 
@@ -1065,6 +1074,58 @@ print-color-adjust: exact;
 }
 
 .action-buttons{ display:none !important; }
+}
+
+.center-panel{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+text-align:center;
+}
+
+.left-panel{
+display:flex;
+flex-direction:column;
+justify-content:flex-start;
+}
+
+.right-panel{
+display:flex;
+flex-direction:column;
+justify-content:flex-start;
+}
+
+.right-panel div{
+display:flex;
+justify-content:space-between;
+margin:8px 0;
+}
+
+.balance-box{
+margin-top:25px;
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.circle{
+width:16px;
+height:16px;
+border-radius:50%;
+background:#22c55e;
+box-shadow:0 0 10px #22c55e;
+}
+
+.ea-text{
+margin-top:10px;
+font-size:15px;
+letter-spacing:1px;
+}
+
+.small-boxes{
+margin-top:20px;
+gap:40px;
 }
 
 </style>

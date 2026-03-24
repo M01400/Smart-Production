@@ -234,8 +234,25 @@ Lot:
 </div>
 
 <div class="bottom">
-<div class="card"><h3>Status</h3><div class="big-number status-blue" id="status">READY</div></div>
-<div class="card" id="downtimeCard"><h3>Accumulated Downtime</h3><div class="big-number" id="downtime">00:00</div></div>
+
+<div class="card">
+<h3>Status</h3>
+<div class="big-number status-blue" id="status">READY</div>
+</div>
+
+<div class="card" id="downtimeCard">
+<h3>Accumulated Downtime</h3>
+<div class="big-number" id="downtime">00:00</div>
+</div>
+
+</div
+
+<div class="card" style="margin:20px;text-align:center;">
+
+<h3>Performance Gauge</h3>
+
+<canvas id="gaugeCanvas" width="220" height="140"></canvas>
+
 </div>
 
 <div class="card" style="margin:20px;">
@@ -370,6 +387,8 @@ let scannedModel = new Set();
 let scannedEngine = new Set();
 let scannedKey = new Set();
 let duplicateLock=false;
+let actualCount = 0;
+let targetGauge = 0;
   
 /* ===== DATE TIME ===== */
 
@@ -742,9 +761,22 @@ function updateDisplay() {
     else if (balance > 0) { balanceEl.className = "big-number status-green"; } 
     else { balanceEl.className = "big-number status-blue"; }
     balanceEl.innerText = displayBalance;
-
+  
+    const expected = getExpectedUnits();
+    let percent = 0;
+    
+    if(expected > 0){
+      percent = (actualCount / expected) * 100;
+    }
+    
+    // limit
+    if(percent > 120) percent = 120;
+    
+    // small movement effect
+    percent += (Math.random()-0.5)*1.2;
+    targetGauge = percent;
     updateTimeline();
-
+  
     /* ================= LOGIK STATUS BARU ================= */
     if (isBreakTime()) {
         setStatus("BREAK TIME", "status-orange");
@@ -1386,12 +1418,81 @@ else{
     .catch(err => console.log("Monitor load error:", err));
 }
 
+let gaugeValue = 0;
+
+function drawGauge(value){
+
+  const canvas = document.getElementById("gaugeCanvas");
+  if(!canvas) return;
+
+  const ctx = canvas.getContext("2d");
+
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.clearRect(0,0,w,h);
+
+  const cx = w/2;
+  const cy = h - 10;
+  const r = 90;
+
+  function drawArc(start,end,color){
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, start, end);
+    ctx.lineWidth = 14;
+    ctx.strokeStyle = color;
+    ctx.stroke();
+  }
+
+  drawArc(Math.PI, Math.PI + Math.PI*0.4, "#ef4444");
+  drawArc(Math.PI + Math.PI*0.4, Math.PI + Math.PI*0.7, "#facc15");
+  drawArc(Math.PI + Math.PI*0.7, Math.PI*2, "#22c55e");
+
+  // NEEDLE
+  let angle = Math.PI + (value/120)*Math.PI;
+
+  const nx = cx + 75 * Math.cos(angle);
+  const ny = cy + 75 * Math.sin(angle);
+
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(nx, ny);
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = "white";
+  ctx.stroke();
+
+  // CENTER
+  ctx.beginPath();
+  ctx.arc(cx, cy, 6, 0, Math.PI*2);
+  ctx.fillStyle = "#e5e7eb";
+  ctx.fill();
+
+  // TEXT
+  ctx.fillStyle = "#22c55e";
+  ctx.font = "18px Segoe UI";
+  ctx.textAlign = "center";
+  ctx.fillText(Math.round(value)+"%", cx, cy - 25);
+}
+
+  function animateGauge(target){
+
+  const diff = target - gaugeValue;
+
+  gaugeValue += diff * 0.08;
+
+  drawGauge(gaugeValue);
+
+  requestAnimationFrame(()=>animateGauge(target));
+}
+
 /* ===== INITIALIZE SYSTEM ===== */
 
 window.onload = function(){
   
   updateDisplay();
   updateDateTime();
+  drawGauge(0);
+  animateGauge();
   setInterval(updateDateTime,1000);
 
   if(isMonitor){

@@ -232,51 +232,76 @@ Lot:
 <button class="summary" id="ramadanToggle" onclick="toggleRamadan()">
 🌙 Ramadhan : OFF
 </button>
-
-</div>
-
-<div class="dashboard">
-<div class="card"><h3>Countdown</h3><div class="big-number" id="countdown">00:00</div></div>
-<div class="card"><h3>Plan</h3><div class="big-number" id="plan">0</div></div>
-<div class="card"><h3>Actual</h3><div class="big-number" id="actual">0</div></div>
-<div class="card"><h3>Production Balance</h3><div class="big-number status-blue" id="balance">0</div></div>
-</div>
-
-<div class="bottom">
-
-<div class="card">
-<h3>Status</h3>
-<div class="big-number status-blue" id="status">READY</div>
-</div>
-
-<div class="card" id="downtimeCard">
-<h3>Accumulated Downtime</h3>
-<div class="big-number" id="downtime">00:00</div>
-</div>
-
-</div
-
-<div class="card" style="margin:20px;text-align:center;">
-
-<h3>Performance Gauge</h3>
-
-<canvas id="gaugeCanvas" width="300" height="200"></canvas>
-
-</div>
-
-<div class="card" style="margin:20px;">
-
-<h3>Live Performance Timeline</h3>
-
-<div class="timeline-container">
-  <div class="timeline-expected" id="expectedBar"></div>
-  <div class="timeline-actual" id="actualBar"></div>
-  <div class="timeline-marker" id="marker"></div>
 </div>
 
 <div style="margin-top:10px;">
 Expected: <span id="expectedDisplay">0</span> |
 Actual: <span id="actualDisplay">0</span>
+</div>
+
+</div>
+
+<div class="main-dashboard">
+
+<!-- LEFT -->
+<div class="left-panel">
+
+<div class="status-box green">ON TIME</div>
+<div class="status-box yellow">SLIGHT DELAY</div>
+<div class="status-box red">BEHIND TARGET</div>
+
+<div class="balance-box">
+<div class="circle"></div>
+<div>
+<div id="balanceMain" class="balance-value">0</div>
+<div>(ON TRACK)</div>
+</div>
+</div>
+
+</div>
+
+<!-- CENTER -->
+<div class="center-panel">
+
+<canvas id="gaugeCanvas" width="320" height="220"></canvas>
+
+<div class="gap-text" id="gapDisplay">GAP: 0 MIN</div>
+
+<div class="ea-text">
+EXPECTED: <span id="expectedDisplay">0</span>
+ACTUAL: <span id="actualDisplay">0</span>
+</div>
+
+<div class="small-boxes">
+<div>
+<div>Countdown</div>
+<div id="countdown">00:00</div>
+</div>
+<div>
+<div>Accumulated</div>
+<div id="downtime">00:00</div>
+</div>
+</div>
+
+</div>
+
+<!-- RIGHT -->
+<div class="right-panel">
+
+<h3>SHIFT PERFORMANCE</h3>
+
+<div>Daily Plan <span id="plan">0</span></div>
+<div>Actual <span id="actual">0</span></div>
+<div>Production Balance <span id="balance">0</span></div>
+<div>Efficiency <span id="efficiency">0%</span></div>
+<div>Avg Cycle <span id="avgCycle">0</span></div>
+
+<div class="timeline-title">Live Performance Timeline</div>
+
+<div class="timeline-container">
+<div class="timeline-expected" id="expectedBar"></div>
+<div class="timeline-actual" id="actualBar"></div>
+<div class="timeline-marker" id="marker"></div>
 </div>
 
 </div>

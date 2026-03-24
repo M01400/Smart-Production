@@ -387,7 +387,6 @@ let scannedModel = new Set();
 let scannedEngine = new Set();
 let scannedKey = new Set();
 let duplicateLock=false;
-let actualCount = 0;
 let targetGauge = 0;
   
 /* ===== DATE TIME ===== */
@@ -1474,15 +1473,15 @@ function drawGauge(value){
   ctx.fillText(Math.round(value)+"%", cx, cy - 25);
 }
 
-  function animateGauge(target){
+  function animateGauge(){
 
-  const diff = target - gaugeValue;
+  const diff = targetGauge - gaugeValue;
 
   gaugeValue += diff * 0.08;
 
   drawGauge(gaugeValue);
 
-  requestAnimationFrame(()=>animateGauge(target));
+  requestAnimationFrame(animateGauge);
 }
 
 /* ===== INITIALIZE SYSTEM ===== */

@@ -231,6 +231,8 @@ Lot:
 <div class="card"><h3>Plan</h3><div class="big-number" id="plan">0</div></div>
 <div class="card"><h3>Actual</h3><div class="big-number" id="actual">0</div></div>
 <div class="card"><h3>Production Balance</h3><div class="big-number status-blue" id="balance">0</div></div>
+<div class="card"><h3>Expected</h3><div class="big-number" id="expected">0</div></div>
+<div class="card"><h3>Delay / Ahead</h3><div class="big-number" id="delay">0</div></div>
 </div>
 
 <div class="bottom">
@@ -406,6 +408,34 @@ function isBreakTime(){
   return false;
 }
 
+function calculateExpectedOutput(){
+
+    if(!startTime) return 0;
+
+    const now = new Date();
+    let elapsedSec = Math.floor((now - startTime) / 1000);
+
+    const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+
+    // 🚫 Tolak break time
+    let breakSeconds = 0;
+
+    let tempTime = new Date(startTime);
+
+    while(tempTime < now){
+        if(isBreakTime()){
+            breakSeconds += 60;
+        }
+        tempTime.setMinutes(tempTime.getMinutes() + 1);
+    }
+
+    let netTime = elapsedSec - breakSeconds;
+
+    if(netTime < 0) netTime = 0;
+
+    return Math.floor(netTime / cycleTimeSec);
+}
+  
 /* ===== STATUS ===== */
 
 function setStatus(text,color){
@@ -672,6 +702,28 @@ function updateDisplay() {
     let balance = actualCount - plan;
     let displayBalance = balance > 0 ? ("+" + balance) : balance;
 
+        // ✅ EXPECTED CALCULATION
+    let expected = calculateExpectedOutput();
+    let delay = actualCount - expected;
+    
+    // Display Expected
+    document.getElementById("expected").innerText = expected;
+    
+    // Display Delay / Ahead
+    let delayEl = document.getElementById("delay");
+    
+    if(delay < 0){
+        delayEl.className = "big-number status-red";
+    } 
+    else if(delay > 0){
+        delayEl.className = "big-number status-green";
+    } 
+    else{
+        delayEl.className = "big-number status-blue";
+    }
+    
+    delayEl.innerText = delay > 0 ? ("+" + delay) : delay;
+  
     document.getElementById("plan").innerText = plan;
     document.getElementById("actual").innerText = actualCount;
     document.getElementById("countdown").innerText = format(countdownValue);
@@ -682,6 +734,9 @@ function updateDisplay() {
     else if (balance > 0) { balanceEl.className = "big-number status-green"; } 
     else { balanceEl.className = "big-number status-blue"; }
     balanceEl.innerText = displayBalance;
+    if(delay < 0){
+    setStatus("BEHIND SCHEDULE","status-red blink");
+}
 
     /* ================= LOGIK STATUS BARU ================= */
     if (isBreakTime()) {
@@ -1301,6 +1356,7 @@ window.onload = function(){
   document.getElementById("keyInput").style.display="none";
 
   loadLiveData();
+  document.getElementById("expected").innerText = calculateExpectedOutput();
   setInterval(loadLiveData,1500);
 
   } else {

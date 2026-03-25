@@ -6,6 +6,11 @@
 
 <style>
 :root{
+  --big-number-size: 60px;
+  --card-title-size: 16px;
+  --clock-size: 70px;
+  --header-size: 60px;
+
   --bg:#050b18;
   --panel:#0f172a;
   --glass:rgba(255,255,255,0.05);
@@ -27,7 +32,7 @@ body{
 
 /* HEADER */
 .header{
-  font-size:60px;
+  font-size:var(--header-size);
   font-weight:900;
   text-align:center;
   padding:20px;
@@ -38,10 +43,16 @@ body{
 
 /* CLOCK */
 #clock{
-  font-size:70px;
+  font-size:var(--clock-size);
   font-weight:900;
   color:#22d3ee;
   text-shadow:0 0 15px rgba(34,211,238,0.6);
+}
+  
+  /* DATE */
+#dateDisplay{
+  font-size:18px;
+  color:#94a3b8;
 }
 
 /* CONTROL PANEL */
@@ -55,14 +66,6 @@ body{
   backdrop-filter:blur(10px);
   border:1px solid var(--border);
   border-radius:15px;
-  margin:20px;
-}
-
-/* KPI GRID */
-.dashboard{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:20px;
   margin:20px;
 }
 
@@ -101,21 +104,6 @@ body{
   pointer-events:none;
 }
 
-/* TITLE */
-.card h3{
-  font-size:16px;
-  color:#94a3b8;
-  margin-bottom:10px;
-  margin-top:0;
-}
-
-/* BIG NUMBER */
-.big-number{
-  font-size:900px;
-  font-weight:900;
-  margin-top:40px;   /* small gap from title */
-}
-
 /* STATUS COLORS */
 .status-green{color:var(--green);}
 .status-red{color:var(--red);}
@@ -141,12 +129,6 @@ body{
 }
 
 /* STATUS BAR (BOTTOM) */
-.bottom{
-  display:flex;
-  flex-direction:column;
-  gap:20px;
-  margin:20px;
-}
 
 .bottom-row{
   display:grid;
@@ -183,22 +165,9 @@ table{
 }
 th{
   background:#0f172a;
-}}
+}
 
 /* ================= CONTROLS SETTINGS ================= */
-
-.controls{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:20px;
-flex-wrap:wrap;
-margin:20px;
-padding:20px;
-background:#111827;
-border-radius:20px;
-font-size:20px;
-}
 
 .controls input{
 padding:6px;
@@ -230,13 +199,6 @@ gap:20px;
 margin:20px;
 }
 
-.card{
-background:#111827;
-border-radius:20px;
-padding:20px;
-text-align:center;
-}
-
 .card h3{
 color:#9ca3af;
 margin-bottom:5px;
@@ -253,11 +215,6 @@ grid-template-columns:1fr 1fr;
 gap:20px;
 margin:20px;
 }
-
-.status-blue{color:#3b82f6;}
-.status-green{color:#22c55e;}
-.status-red{color:#ef4444;}
-.status-orange{color:#f97316;}
 
 .fullscreen-btn{
 position:absolute;

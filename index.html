@@ -139,7 +139,7 @@ body{
 
 .bottom-row{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap:15px;
   margin:15px;
 }
@@ -332,7 +332,7 @@ Lot:
 <div class="card"><h3>BALANCE</h3><div class="big-number" id="balance">0</div></div>
 
 <!-- LINE STATUS -->
-<div class="card">
+<div class="card wide">
 <h3>LINE STATUS</h3>
 <div class="big-number" id="status">READY</div>
 </div>
@@ -345,7 +345,7 @@ Lot:
   
 <div class="bottom-row">
 <!-- LEFT: SCAN -->
-<div class="card">
+<div class="card wide">
 <h3>SCAN INPUT</h3>
 
 <div class="scan-grid">

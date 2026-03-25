@@ -61,11 +61,10 @@ body{
 /* KPI GRID */
 .dashboard{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(4,1fr); /* 🔥 4 columns */
   gap:20px;
   margin:20px;
 }
-
 /* CARD STYLE (SCADA LOOK) */
 .card{
   background:linear-gradient(145deg,#0f172a,#020617);
@@ -130,10 +129,22 @@ body{
 
 /* STATUS BAR (BOTTOM) */
 .bottom{
-  display:grid;
-  grid-template-columns:1fr 1fr;
+  display:flex;
+  flex-direction:column;
   gap:20px;
   margin:20px;
+}
+
+.bottom-row{
+  display:grid;
+  grid-template-columns:2fr 1fr; /* scan bigger */
+  gap:20px;
+}
+
+.scan-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
 }
 
 /* DOWNTIME ALERT */
@@ -340,6 +351,7 @@ Lot:
 
 <div class="dashboard">
 
+<!-- ROW 1 -->
 <div class="card">
 <h3>COUNTDOWN</h3>
 <div class="big-number" id="countdown">00:00</div>
@@ -360,6 +372,7 @@ Lot:
 <div class="big-number" id="delay">0</div>
 </div>
 
+<!-- ROW 2 -->
 <div class="card">
 <h3>DAILY PLAN</h3>
 <div class="big-number" id="plan">0</div>
@@ -370,28 +383,36 @@ Lot:
 <div class="big-number" id="balance">0</div>
 </div>
 
-</div>
-
-<div class="bottom">
-
-<!-- 🔹 LINE STATUS + SCAN -->
+<!-- 🔥 NEW POSITION -->
 <div class="card">
-
 <h3>LINE STATUS</h3>
 <div class="big-number" id="status">READY</div>
+</div>
 
-<!-- ✅ MOVE SCAN HERE -->
-<div style="margin-top:20px; display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
+</div>
 
+<div class="bottom-row">
+
+<!-- LEFT: SCAN -->
+<div class="card">
+<h3>SCAN INPUT</h3>
+
+<div class="scan-grid">
 <input type="text" id="chassisInput" class="scan-box" placeholder="Scan Chassis First" autofocus>
 <input type="text" id="modelInput" class="scan-box" placeholder="Scan Model">
 <input type="text" id="engineInput" class="scan-box" placeholder="Scan Engine No">
 <input type="text" id="keyInput" class="scan-box" placeholder="Scan Key No">
-
 </div>
 
 </div>
 
+<!-- RIGHT: DOWNTIME -->
+<div class="card" id="downtimeCard">
+<h3>TOTAL DOWNTIME</h3>
+<div class="big-number" id="downtime">00:00</div>
+</div>
+
+</div>
 <!-- 🔹 TOTAL DOWNTIME -->
 <div class="card" id="downtimeCard">
 <h3>TOTAL DOWNTIME</h3>

@@ -61,10 +61,16 @@ body{
 /* KPI GRID */
 .dashboard{
   display:grid;
-  grid-template-columns:repeat(4,1fr); /* 🔥 4 columns */
+  grid-template-columns:repeat(4,1fr);
   gap:20px;
   margin:20px;
 }
+
+/* 🔥 MAKE LINE STATUS WIDE */
+.wide{
+  grid-column: span 2;
+}
+  
 /* CARD STYLE (SCADA LOOK) */
 .card{
   background:linear-gradient(145deg,#0f172a,#020617);
@@ -137,8 +143,9 @@ body{
 
 .bottom-row{
   display:grid;
-  grid-template-columns:2fr 1fr; /* scan bigger */
+  grid-template-columns:2fr 1fr;
   gap:20px;
+  margin:20px;
 }
 
 .scan-grid{
@@ -351,40 +358,18 @@ Lot:
 
 <div class="dashboard">
 
-<!-- ROW 1 -->
-<div class="card">
-<h3>COUNTDOWN</h3>
-<div class="big-number" id="countdown">00:00</div>
-</div>
+<!-- 🔹 ROW 1 -->
+<div class="card"><h3>COUNTDOWN</h3><div class="big-number" id="countdown">00:00</div></div>
+<div class="card"><h3>ACTUAL OUTPUT</h3><div class="big-number status-green" id="actual">0</div></div>
+<div class="card"><h3>EXPECTED OUTPUT</h3><div class="big-number status-blue" id="expected">0</div></div>
+<div class="card"><h3>DELAY / AHEAD</h3><div class="big-number" id="delay">0</div></div>
 
-<div class="card">
-<h3>ACTUAL OUTPUT</h3>
-<div class="big-number status-green" id="actual">0</div>
-</div>
+<!-- 🔹 ROW 2 -->
+<div class="card"><h3>DAILY PLAN</h3><div class="big-number" id="plan">0</div></div>
+<div class="card"><h3>BALANCE</h3><div class="big-number" id="balance">0</div></div>
 
-<div class="card">
-<h3>EXPECTED OUTPUT</h3>
-<div class="big-number status-blue" id="expected">0</div>
-</div>
-
-<div class="card">
-<h3>DELAY / AHEAD</h3>
-<div class="big-number" id="delay">0</div>
-</div>
-
-<!-- ROW 2 -->
-<div class="card">
-<h3>DAILY PLAN</h3>
-<div class="big-number" id="plan">0</div>
-</div>
-
-<div class="card">
-<h3>BALANCE</h3>
-<div class="big-number" id="balance">0</div>
-</div>
-
-<!-- 🔥 NEW POSITION -->
-<div class="card">
+<!-- 🔥 LINE STATUS (WIDE) -->
+<div class="card wide">
 <h3>LINE STATUS</h3>
 <div class="big-number" id="status">READY</div>
 </div>
@@ -408,11 +393,12 @@ Lot:
 
 <!-- RIGHT: DOWNTIME -->
 <div class="card" id="downtimeCard">
-<h3>TOTAL DOWNTIME</h3>
+<h3>DOWNTIME</h3>
 <div class="big-number" id="downtime">00:00</div>
 </div>
 
 </div>
+  
 <!-- 🔹 TOTAL DOWNTIME -->
 <div class="card" id="downtimeCard">
 <h3>TOTAL DOWNTIME</h3>

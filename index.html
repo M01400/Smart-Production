@@ -374,23 +374,30 @@ Lot:
 
 <div class="bottom">
 
+<!-- 🔹 LINE STATUS + SCAN -->
 <div class="card">
+
 <h3>LINE STATUS</h3>
 <div class="big-number" id="status">READY</div>
+
+<!-- ✅ MOVE SCAN HERE -->
+<div style="margin-top:20px; display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
+
+<input type="text" id="chassisInput" class="scan-box" placeholder="Scan Chassis First" autofocus>
+<input type="text" id="modelInput" class="scan-box" placeholder="Scan Model">
+<input type="text" id="engineInput" class="scan-box" placeholder="Scan Engine No">
+<input type="text" id="keyInput" class="scan-box" placeholder="Scan Key No">
+
 </div>
 
+</div>
+
+<!-- 🔹 TOTAL DOWNTIME -->
 <div class="card" id="downtimeCard">
 <h3>TOTAL DOWNTIME</h3>
 <div class="big-number" id="downtime">00:00</div>
 </div>
 
-</div>
-
-<div class="scan-container">
-<input type="text" id="chassisInput" class="scan-box" placeholder="Scan Chassis First" autofocus>
-<input type="text" id="modelInput" class="scan-box" placeholder="Scan Model">
-<input type="text" id="engineInput" class="scan-box" placeholder="Scan Engine No">
-<input type="text" id="keyInput" class="scan-box" placeholder="Scan Key No">
 </div>
 
 <table>

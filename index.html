@@ -332,11 +332,16 @@ Lot:
 <div class="card"><h3>BALANCE</h3><div class="big-number" id="balance">0</div></div>
 
 <!-- 🔥 LINE STATUS (WIDE) -->
-<div class="card wide">
+<div class="card">
 <h3>LINE STATUS</h3>
 <div class="big-number" id="status">READY</div>
 </div>
 
+</div>
+
+<div class="card">
+<h3>EFFICIENCY</h3>
+<div class="big-number" id="efficiency">0%</div>
 </div>
 
 <div class="bottom-row">
@@ -817,9 +822,30 @@ function updateDisplay() {
     let balance = actualCount - plan;
     let displayBalance = balance > 0 ? ("+" + balance) : balance;
 
-        // ✅ EXPECTED CALCULATION
+    //  EXPECTED CALCULATION
     let expected = calculateExpectedOutput();
     let delay = actualCount - expected;
+  
+    let efficiency = 0;
+
+    if(expected > 0){
+    efficiency = (actualCount / expected) * 100;
+    }
+    
+    efficiency = Math.floor(efficiency);
+    
+    let effEl = document.getElementById("efficiency");
+    effEl.innerText = efficiency + "%";
+
+    if(efficiency < 90){
+    effEl.className = "big-number status-red";
+    }
+    else if(efficiency < 100){
+    effEl.className = "big-number status-orange";
+    }
+    else{
+    effEl.className = "big-number status-green";
+    }
     
     // Display Expected
     document.getElementById("expected").innerText = expected;

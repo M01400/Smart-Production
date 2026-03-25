@@ -83,6 +83,12 @@ body{
     0 0 20px rgba(0,0,0,0.8);
   position:relative;
   overflow:hidden;
+   display:flex;                /* 🔥 ADD */
+  flex-direction:column;       /* 🔥 ADD */
+  justify-content:flex-start;  /* 🔥 TOP align */
+  align-items:center;          /* 🔥 CENTER horizontally */
+
+  min-height:120px;            /* optional for consistency */
 }
 
 /* GLOW BORDER */
@@ -97,16 +103,17 @@ body{
 
 /* TITLE */
 .card h3{
-  font-size:18px;
+  font-size:16px;
   color:#94a3b8;
   margin-bottom:10px;
+  margin-top:0;
 }
 
 /* BIG NUMBER */
 .big-number{
   font-size:60px;
   font-weight:900;
-  letter-spacing:1px;
+  margin-top:5px;   /* small gap from title */
 }
 
 /* STATUS COLORS */
@@ -399,14 +406,6 @@ Lot:
 
 </div>
   
-<!-- 🔹 TOTAL DOWNTIME -->
-<div class="card" id="downtimeCard">
-<h3>TOTAL DOWNTIME</h3>
-<div class="big-number" id="downtime">00:00</div>
-</div>
-
-</div>
-
 <table>
 <thead>
 <tr>

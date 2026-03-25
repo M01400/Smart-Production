@@ -250,7 +250,7 @@ flex-wrap:wrap;
 
 .scan-box{
 width:300px;
-padding:15px;
+padding:10px;
 font-size:18px;
 border-radius:40px;
 background:#0f172a;
@@ -346,7 +346,7 @@ Lot:
 <h3>SCAN INPUT</h3>
 
 <div class="scan-grid">
-<input type="text" id="chassisInput" class="scan-box" placeholder="Scan Chassis First" autofocus>
+<input type="text" id="chassisInput" class="scan-box" placeholder="Scan Chassis" autofocus>
 <input type="text" id="modelInput" class="scan-box" placeholder="Scan Model">
 <input type="text" id="engineInput" class="scan-box" placeholder="Scan Engine No">
 <input type="text" id="keyInput" class="scan-box" placeholder="Scan Key No">
@@ -621,29 +621,29 @@ updateDisplay();
 /* ===== SCAN CHASSIS ===== */
 
 document.getElementById("chassisInput").addEventListener("keydown", function(e) {
-    if (e.key === "Enter" && this.value.trim() !== "") {
-        let value = this.value.trim();
+if (e.key === "Enter" && this.value.trim() !== "") {
+let value = this.value.trim();
 
-        /* DUPLICATE CHECK */
-        if (scannedChassis.has(value)) {
-            duplicateLock = true;
-            setStatus("DUPLICATE CHASSIS", "status-red blink");
-            this.value = "";
-            return;
-        }
+/* DUPLICATE CHECK */
+if (scannedChassis.has(value)) {
+duplicateLock = true;
+setStatus("DUPLICATE CHASSIS", "status-red blink");
+this.value = "";
+return;
+}
 
-        /* --- TAMBAHAN: MULA COUNTDOWN PADA SCAN PERTAMA --- */
-        if (!timer) {
-            startProduction(); 
-        }
+/* --- START COUNTDOWN ON FIRST SCAN --- */
+if (!timer) {
+startProduction(); 
+}
 
-        duplicateLock = false;
-        pendingChassis = value;
-        scannedChassis.add(value);
+duplicateLock = false;
+pendingChassis = value;
+scannedChassis.add(value);
 
-        this.value = "";
-        document.getElementById("modelInput").focus();
-    }
+this.value = "";
+document.getElementById("modelInput").focus();
+}
 });
   
 /* ===== SCAN MODEL ===== */

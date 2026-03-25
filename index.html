@@ -616,7 +616,6 @@ scannedKey.clear();
 isDowntime=false;
 duplicateLock=false;
 document.getElementById("scanTable").innerHTML="";
-localStorage.removeItem("prodData");
   
 setStatus("READY","status-blue");
 updateDisplay();
@@ -876,7 +875,6 @@ function updateDisplay() {
     balanceEl.innerText = displayBalance;
     if(delay < 0){
     setStatus("BEHIND SCHEDULE","status-red blink");
-    saveData();
 }
 
     /* ================= LOGIK STATUS BARU ================= */
@@ -1478,76 +1476,10 @@ else{
     .catch(err => console.log("Monitor load error:", err));
 }
 
-function saveData(){
-  const data = {
-    actualCount,
-    downtimeSeconds,
-    countdownValue,
-    startTime,
-    lastScanTime,
-
-    isRunning: !!timer, 
-    isDowntime: isDowntime, 
-    
-    table: document.getElementById("scanTable").innerHTML,
-
-    scannedChassis: Array.from(scannedChassis),
-    scannedEngine: Array.from(scannedEngine),
-    scannedKey: Array.from(scannedKey)
-  };
-
-  localStorage.setItem("prodData", JSON.stringify(data));
-}
-  
 /* ===== INITIALIZE SYSTEM ===== */
 
 window.onload = function(){
-
-// LOAD SAVED DATA
-if(localStorage.getItem("prodData")){
-  let data = JSON.parse(localStorage.getItem("prodData"));
-
-  actualCount = data.actualCount || 0;
-  downtimeSeconds = data.downtimeSeconds || 0;
-  countdownValue = data.countdownValue || 0;
-
-  startTime = data.startTime ? new Date(data.startTime) : null;
-  lastScanTime = data.lastScanTime ? new Date(data.lastScanTime) : null;
-
-  document.getElementById("scanTable").innerHTML = data.table || "";
-
-  // restore scanned set (avoid duplicate issue)
-  scannedChassis = new Set(data.scannedChassis || []);
-  scannedEngine = new Set(data.scannedEngine || []);
-  scannedKey = new Set(data.scannedKey || []);
-}
-
-  // ✅ RESTORE RUNNING STATE
-if(data.isRunning){
   
-  // recalculate countdown based on real time
-  const now = new Date();
-
-  if(lastScanTime){
-    let diff = Math.floor((now - lastScanTime)/1000);
-    let cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
-
-    if(diff < cycleTimeSec){
-      countdownValue = cycleTimeSec - diff;
-      isDowntime = false;
-    } else {
-      countdownValue = 0;
-      isDowntime = true;
-      downtimeSeconds += (diff - cycleTimeSec);
-    }
-  }
-
-  // restart timer safely
-  startProduction();
-}
-  setTimeout(() => {
-  updateDisplay();
-}, 100);
   updateDisplay();
   updateDateTime();
   setInterval(updateDateTime,1000);
@@ -1564,9 +1496,6 @@ if(data.isRunning){
 
   loadLiveData();
   document.getElementById("expected").innerText = calculateExpectedOutput();
-  document.getElementById("actual").innerText = actualCount;
-  document.getElementById("downtime").innerText = format(downtimeSeconds);
-  document.getElementById("countdown").innerText = format(countdownValue);
   setInterval(loadLiveData,1500);
 
   } else {

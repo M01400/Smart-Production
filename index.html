@@ -5,118 +5,6 @@
 <title>TF 2 Production Monitoring</title>
 
 <style>
-
-.main-dashboard{
-display:grid;
-grid-template-columns: 1fr 2fr 1fr;
-gap:20px;
-padding:20px;
-}
-
-/* PANELS */
-.left-panel, .center-panel, .right-panel{
-background: #111827;
-border-radius:20px;
-padding:20px;
-box-shadow: 0 0 20px rgba(0,0,0,0.5);
-}
-
-/* LEFT */
-.left-panel{
-display:flex;
-flex-direction:column;
-gap:12px;
-}
-
-.status-box{
-padding:15px;
-border-radius:12px;
-font-weight:bold;
-text-align:center;
-}
-
-.green{background:#064e3b;color:#22c55e;}
-.yellow{background:#78350f;color:#facc15;}
-.red{background:#7f1d1d;color:#ef4444;}
-
-.balance-box{
-margin-top:20px;
-display:flex;
-align-items:center;
-gap:10px;
-}
-
-.circle{
-width:15px;
-height:15px;
-border-radius:50%;
-background:#22c55e;
-}
-
-/* CENTER */
-.center-panel{
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-}
-
-.gap-text{
-font-size:28px;
-font-weight:bold;
-color:#22c55e;
-margin-top:10px;
-}
-
-.small-boxes{
-display:flex;
-gap:40px;
-margin-top:15px;
-}
-
-/* RIGHT */
-.right-panel{
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-.right-panel div{
-display:flex;
-justify-content:space-between;
-}
-
-/* TIMELINE */
-.timeline-container{
-height:20px;
-background:#1f2937;
-border-radius:10px;
-position:relative;
-margin-top:10px;
-}
-
-.timeline-expected{
-position:absolute;
-height:100%;
-background:#3b82f6;
-opacity:0.3;
-width:0%;
-}
-
-.timeline-actual{
-position:absolute;
-height:100%;
-background:#22c55e;
-width:0%;
-}
-
-.timeline-marker{
-position:absolute;
-width:2px;
-height:100%;
-background:white;
-}
-  
 :root{
   --main-font:'Segoe UI', sans-serif;
   --header-size:70px;
@@ -130,8 +18,8 @@ background:white;
 
 body{
 margin:0;
-font-family:'Segoe UI',sans-serif;
-background: radial-gradient(circle at top, #0f172a, #020617);
+font-family:var(--main-font);
+background:#0b1220;
 color:#e5e7eb;
 }
 
@@ -335,78 +223,19 @@ Lot:
 <button class="summary" id="ramadanToggle" onclick="toggleRamadan()">
 🌙 Ramadhan : OFF
 </button>
-</div>
-
-<div style="margin-top:10px;">
-Expected: <span id="expectedDisplay">0</span> |
-Actual: <span id="actualDisplay">0</span>
-</div>
 
 </div>
 
-<div class="main-dashboard">
-
-<!-- LEFT -->
-<div class="left-panel">
-
-<div class="status-box green">ON TIME</div>
-<div class="status-box yellow">SLIGHT DELAY</div>
-<div class="status-box red">BEHIND TARGET</div>
-
-<div class="balance-box">
-<div class="circle"></div>
-<div>
-<div id="balanceMain" class="balance-value">0</div>
-<div>(ON TRACK)</div>
-</div>
+<div class="dashboard">
+<div class="card"><h3>Countdown</h3><div class="big-number" id="countdown">00:00</div></div>
+<div class="card"><h3>Plan</h3><div class="big-number" id="plan">0</div></div>
+<div class="card"><h3>Actual</h3><div class="big-number" id="actual">0</div></div>
+<div class="card"><h3>Production Balance</h3><div class="big-number status-blue" id="balance">0</div></div>
 </div>
 
-</div>
-
-<!-- CENTER -->
-<div class="center-panel">
-
-<canvas id="gaugeCanvas" width="320" height="220"></canvas>
-
-<div class="gap-text" id="gapDisplay">GAP: 0 MIN</div>
-
-<div class="ea-text">
-EXPECTED: <span id="expectedDisplay">0</span>
-ACTUAL: <span id="actualDisplay">0</span>
-</div>
-
-<div class="small-boxes">
-<div>
-<div>Countdown</div>
-<div id="countdown">00:00</div>
-</div>
-<div>
-<div>Accumulated</div>
-<div id="downtime">00:00</div>
-</div>
-</div>
-
-</div>
-
-<!-- RIGHT -->
-<div class="right-panel">
-
-<h3>SHIFT PERFORMANCE</h3>
-
-<div>Daily Plan <span id="plan">0</span></div>
-<div>Actual <span id="actual">0</span></div>
-<div>Production Balance <span id="balance">0</span></div>
-<div>Efficiency <span id="efficiency">0%</span></div>
-<div>Avg Cycle <span id="avgCycle">0</span></div>
-
-<div class="timeline-title">Live Performance Timeline</div>
-
-<div class="timeline-container">
-<div class="timeline-expected" id="expectedBar"></div>
-<div class="timeline-actual" id="actualBar"></div>
-<div class="timeline-marker" id="marker"></div>
-</div>
-
+<div class="bottom">
+<div class="card"><h3>Status</h3><div class="big-number status-blue" id="status">READY</div></div>
+<div class="card" id="downtimeCard"><h3>Accumulated Downtime</h3><div class="big-number" id="downtime">00:00</div></div>
 </div>
 
 <div class="scan-container">
@@ -495,18 +324,6 @@ function updateDateTime(){
 
 /* ===== VARIABLES ===== */
 
-function getExpectedUnits(){
-
-  if(!startTime) return 0;
-
-  const cycle = parseFloat(document.getElementById("cycleTarget").value) || 1;
-  const now = new Date();
-
-  const diffMin = (now - startTime) / 60000;
-
-  return Math.floor(diffMin / cycle);
-}
-  
 let ramadanMode=false;
 let timer=null;
 let countdownValue=0;
@@ -524,7 +341,6 @@ let scannedModel = new Set();
 let scannedEngine = new Set();
 let scannedKey = new Set();
 let duplicateLock=false;
-let targetGauge = 0;
   
 /* ===== DATE TIME ===== */
 
@@ -848,37 +664,6 @@ document.getElementById("chassisInput").focus();
   
 }
 });
-
-function updateTimeline(){
-
-  const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 1;
-  const actual = actualCount;
-  const expected = getExpectedUnits();
-
-  const expectedPercent = (expected / plan) * 100;
-  const actualPercent = (actual / plan) * 100;
-
-  document.getElementById("expectedBar").style.width = expectedPercent + "%";
-  document.getElementById("actualBar").style.width = actualPercent + "%";
-  document.getElementById("marker").style.left = expectedPercent + "%";
-
-  document.getElementById("expectedDisplay").innerText = expected;
-  document.getElementById("actualDisplay").innerText = actual;
-
-  const bar = document.getElementById("actualBar");
-  bar.classList.remove("blink");
-
-  if(actual >= expected){
-    bar.style.background = "#22c55e";
-  }
-  else if(actual >= expected - 1){
-    bar.style.background = "#facc15";
-  }
-  else{
-    bar.style.background = "#ef4444";
-    bar.classList.add("blink");
-  }
-}
   
 /* ===== UPDATE DISPLAY ===== */
 
@@ -897,22 +682,7 @@ function updateDisplay() {
     else if (balance > 0) { balanceEl.className = "big-number status-green"; } 
     else { balanceEl.className = "big-number status-blue"; }
     balanceEl.innerText = displayBalance;
-  
-    const expected = getExpectedUnits();
-    let percent = 0;
-    
-    if(expected > 0){
-      percent = (actualCount / expected) * 100;
-    }
-    
-    // limit
-    if(percent > 120) percent = 120;
-    
-    // small movement effect
-    percent += (Math.random()-0.5)*1.2;
-    targetGauge = percent;
-    updateTimeline();
-  
+
     /* ================= LOGIK STATUS BARU ================= */
     if (isBreakTime()) {
         setStatus("BREAK TIME", "status-orange");
@@ -956,8 +726,9 @@ function updateDisplay() {
         downtimeText.classList.remove("status-red", "blink");
     }
 }
-  
 /* ===== DAILY SUMMARY ===== */
+
+/* ===== DAILY SUMMARY (VERSI DIKEMASKINI: SAMA PERSIH DENGAN DASHBOARD) ===== */
 
 function openSummary() {
     let plan = parseInt(document.getElementById("plan").innerText) || 0;
@@ -1004,39 +775,6 @@ function openSummary() {
 <html>
 <head>
 <title>Daily Summary Report</title>
-.timeline-container{
-  position: relative;
-  width: 100%;
-  height: 20px;
-  background: #1f2937;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.timeline-expected{
-  position: absolute;
-  height: 100%;
-  background: #3b82f6;
-  opacity: 0.3;
-  width: 0%;
-}
-
-.timeline-actual{
-  position: absolute;
-  height: 100%;
-  background: #22c55e;
-  width: 0%;
-  transition: 0.5s;
-}
-
-.timeline-marker{
-  position: absolute;
-  width: 2px;
-  height: 100%;
-  background: white;
-  left: 0%;
-}
-
 <style>
 /* --- Gaya Asas (Sama seperti Dashboard) --- */
 body{
@@ -1204,58 +942,6 @@ print-color-adjust: exact;
 .action-buttons{ display:none !important; }
 }
 
-.center-panel{
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-text-align:center;
-}
-
-.left-panel{
-display:flex;
-flex-direction:column;
-justify-content:flex-start;
-}
-
-.right-panel{
-display:flex;
-flex-direction:column;
-justify-content:flex-start;
-}
-
-.right-panel div{
-display:flex;
-justify-content:space-between;
-margin:8px 0;
-}
-
-.balance-box{
-margin-top:25px;
-display:flex;
-align-items:center;
-gap:12px;
-}
-
-.circle{
-width:16px;
-height:16px;
-border-radius:50%;
-background:#22c55e;
-box-shadow:0 0 10px #22c55e;
-}
-
-.ea-text{
-margin-top:10px;
-font-size:15px;
-letter-spacing:1px;
-}
-
-.small-boxes{
-margin-top:20px;
-gap:40px;
-}
-
 </style>
 </head>
 
@@ -1420,7 +1106,6 @@ function updateLiveStateOnly(){
   fetch(API_URL,{
     method:"POST",
     body: JSON.stringify({
-      expected: getExpectedUnits(),
       liveOnly: true,
       plan: plan,
       actual: actual,
@@ -1528,19 +1213,10 @@ if(rawDowntime){
       const status = state[3] || "READY";
       const totalDowntime = parseInt(state[4]) || 0;
       const countdown = parseInt(state[5]) || 0;
-      const expected = parseInt(state[6]) || 0;
 
       // Update dashboard
       document.getElementById("plan").innerText = plan;
       document.getElementById("actual").innerText = actual;
-      document.getElementById("expectedDisplay").innerText = expected;
-      document.getElementById("actualDisplay").innerText = actual;
-
-      const planSafe = plan || 1;
-      
-      document.getElementById("expectedBar").style.width = (expected / planSafe * 100) + "%";
-      document.getElementById("actualBar").style.width = (actual / planSafe * 100) + "%";
-      document.getElementById("marker").style.left = (expected / planSafe * 100) + "%";
       
       countdownValue = countdown;
       document.getElementById("countdown").innerText = format(countdownValue);
@@ -1606,81 +1282,12 @@ else{
     .catch(err => console.log("Monitor load error:", err));
 }
 
-let gaugeValue = 0;
-
-function drawGauge(value){
-
-  const canvas = document.getElementById("gaugeCanvas");
-  if(!canvas) return;
-
-  const ctx = canvas.getContext("2d");
-
-  const w = canvas.width;
-  const h = canvas.height;
-
-  ctx.clearRect(0,0,w,h);
-
-  const cx = w/2;
-  const cy = h - 10;
-  const r = 90;
-
-  function drawArc(start,end,color){
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, start, end);
-    ctx.lineWidth = 14;
-    ctx.strokeStyle = color;
-    ctx.stroke();
-  }
-
-  drawArc(Math.PI, Math.PI + Math.PI*0.4, "#ef4444");
-  drawArc(Math.PI + Math.PI*0.4, Math.PI + Math.PI*0.7, "#facc15");
-  drawArc(Math.PI + Math.PI*0.7, Math.PI*2, "#22c55e");
-
-  // NEEDLE
-  let angle = Math.PI + (value/120)*Math.PI;
-
-  const nx = cx + 75 * Math.cos(angle);
-  const ny = cy + 75 * Math.sin(angle);
-
-  ctx.beginPath();
-  ctx.moveTo(cx, cy);
-  ctx.lineTo(nx, ny);
-  ctx.lineWidth = 4;
-  ctx.strokeStyle = "white";
-  ctx.stroke();
-
-  // CENTER
-  ctx.beginPath();
-  ctx.arc(cx, cy, 6, 0, Math.PI*2);
-  ctx.fillStyle = "#e5e7eb";
-  ctx.fill();
-
-  // TEXT
-  ctx.fillStyle = "#22c55e";
-  ctx.font = "18px Segoe UI";
-  ctx.textAlign = "center";
-  ctx.fillText(Math.round(value)+"%", cx, cy - 25);
-}
-
-  function animateGauge(){
-
-  const diff = targetGauge - gaugeValue;
-
-  gaugeValue += diff * 0.08;
-
-  drawGauge(gaugeValue);
-
-  requestAnimationFrame(animateGauge);
-}
-
 /* ===== INITIALIZE SYSTEM ===== */
 
 window.onload = function(){
   
   updateDisplay();
   updateDateTime();
-  drawGauge(0);
-  animateGauge();
   setInterval(updateDateTime,1000);
 
   if(isMonitor){

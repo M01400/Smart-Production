@@ -823,7 +823,22 @@ function updateDisplay() {
     //  EXPECTED CALCULATION
     let expected = calculateExpectedOutput();
     let delay = actualCount - expected;
-  
+    let delayEl = document.getElementById("delay");
+
+    delayEl.className = "big-number";
+    
+    if(delay < 0){
+        delayEl.classList.add("status-red");
+    } 
+    else if(delay > 0){
+        delayEl.classList.add("status-green");
+    } 
+    else{
+        delayEl.classList.add("status-blue");
+    }
+    
+    delayEl.innerText = delay > 0 ? ("+" + delay) : delay;
+      
     let efficiency = 0;
 
     if(expected > 0){
@@ -847,22 +862,6 @@ function updateDisplay() {
     
     // Display Expected
     document.getElementById("expected").innerText = expected;
-    
-    // Display Delay / Ahead
-    let delayEl = document.getElementById("delay");
-    
-    if(delay < 0){
-        delayEl.className = "big-number status-red";
-    } 
-    else if(delay > 0){
-        delayEl.className = "big-number status-green";
-    } 
-    else{
-        delayEl.className = "big-number status-blue";
-    }
-    
-    delayEl.innerText = delay > 0 ? ("+" + delay) : delay;
-  
     document.getElementById("plan").innerText = plan;
     document.getElementById("actual").innerText = actualCount;
     document.getElementById("countdown").innerText = format(countdownValue);
@@ -1430,23 +1429,6 @@ if(rawDowntime){
       document.getElementById("downtime").innerText = format(totalDowntime);
       document.getElementById("expected").innerText = expected;
 
-      let delayEl = document.getElementById("delay");
-      delayEl.innerText = delay > 0 ? ("+" + delay) : delay;
-      
-      let effEl = document.getElementById("efficiency");
-
-      effEl.innerText = efficiency + "%";
-      
-      if(efficiency < 90){
-          effEl.className = "big-number status-red";
-      }
-      else if(efficiency < 100){
-          effEl.className = "big-number status-orange";
-      }
-      else{
-          effEl.className = "big-number status-green";
-      }
-
       // Balance
       const balanceEl = document.getElementById("balance");
       if(balance < 0){
@@ -1461,6 +1443,24 @@ if(rawDowntime){
         balanceEl.className="big-number status-blue";
         balanceEl.innerText = "0";
       }
+
+      //  ALWAYS APPLY DELAY COLOR (MOVE HERE)
+let delayEl = document.getElementById("delay");
+
+// reset first
+delayEl.className = "big-number";
+
+if(delay < 0){
+    delayEl.classList.add("status-red");
+} 
+else if(delay > 0){
+    delayEl.classList.add("status-green");
+} 
+else{
+    delayEl.classList.add("status-blue");
+}
+
+delayEl.innerText = delay > 0 ? ("+" + delay) : delay;
 
 // Status mirror (FULL SAME AS MAIN PC)
 
@@ -1500,19 +1500,6 @@ else{
     downtimeCard.classList.remove("downtime-alert","blink");
     downtimeText.classList.remove("status-red","blink");
 
-    let delayEl = document.getElementById("delay");
-    
-    if(delay < 0){
-        delayEl.className = "big-number status-red";
-    } 
-    else if(delay > 0){
-        delayEl.className = "big-number status-green";
-    } 
-    else{
-        delayEl.className = "big-number status-blue";
-    }
-    
-    delayEl.innerText = delay > 0 ? ("+" + delay) : delay;
 }
     })
     .catch(err => console.log("Monitor load error:", err));

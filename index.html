@@ -1352,11 +1352,25 @@ function loadLiveData(){
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
-      const scanRows = data.scan.slice(1);
-const table = document.getElementById("scanTable");
-table.innerHTML="";
+    if(!window.lastValidState){
+        window.lastValidState = null;
+    }
 
-scanRows.reverse().forEach(row => {
+    let newState = [...data.state].reverse().find(row => row.length >= 9);
+
+    if(newState && newState.length >= 9){
+        window.lastValidState = newState;
+    }
+
+    const state = window.lastValidState;
+
+    if(!state) return;
+      
+    const scanRows = data.scan.slice(1);
+    const table = document.getElementById("scanTable");
+    table.innerHTML="";
+    
+    scanRows.reverse().forEach(row => {
     let newRow = table.insertRow();
 
     // 1. DATE & TIME (Diambil dari Kolum A - row[0])
@@ -1407,8 +1421,22 @@ if(rawDowntime){
     if(statusText === "DOWN TIME") downtimeCell.className = "status-red";
 });
       
-     const state = [...data.state].reverse().find(row => row.length >= 9);
-      if(!state) return;
+    // 🔥 KEEP LAST GOOD STATE
+if(!window.lastValidState){
+    window.lastValidState = null;
+}
+
+let newState = [...data.state].reverse().find(row => row.length >= 9);
+
+// If new data valid → update
+if(newState && newState.length >= 9){
+    window.lastValidState = newState;
+}
+
+// If no valid data → use last one
+const state = window.lastValidState;
+
+if(!state) return;
 
       const plan = parseInt(state[0]) || 0;
       const actual = parseInt(state[1]) || 0;
@@ -1419,7 +1447,6 @@ if(rawDowntime){
       const expected = parseInt(state[6]) || 0;
       const delay = parseInt(state[7]) || 0;
       const efficiency = parseInt(state[8]) || 0;
-      document.getElementById("countdown").innerText = format(countdownValue);
       
       // Update dashboard
       document.getElementById("plan").innerText = plan;

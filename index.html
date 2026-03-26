@@ -1398,7 +1398,7 @@ if(rawDowntime){
     if(statusText === "DOWN TIME") downtimeCell.className = "status-red";
 });
       
-      const state = data.state[data.state.length - 1];
+     const state = [...data.state].reverse().find(row => row.length >= 9);
       if(!state) return;
 
       const plan = parseInt(state[0]) || 0;
@@ -1407,7 +1407,8 @@ if(rawDowntime){
       const status = state[3] || "READY";
       const totalDowntime = parseInt(state[4]) || 0;
       const countdown = parseInt(state[5]) || 0;
-
+      document.getElementById("countdown").innerText = format(countdownValue);
+      
       // Update dashboard
       document.getElementById("plan").innerText = plan;
       document.getElementById("actual").innerText = actual;

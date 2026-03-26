@@ -1313,7 +1313,10 @@ function updateLiveStateOnly(){
       balance: balance,
       status: status,
       countdown: countdownValue,
-      totalDowntime: downtimeSeconds
+      totalDowntime: downtimeSeconds,
+      expected: expected,
+      delay: delay,
+      efficiency: efficiency
     })
   }).catch(err => console.log("Live state error:", err));
 
@@ -1414,16 +1417,24 @@ if(rawDowntime){
       const status = state[3] || "READY";
       const totalDowntime = parseInt(state[4]) || 0;
       const countdown = parseInt(state[5]) || 0;
+      const expected = parseInt(state[6]) || 0;
+      const delay = parseInt(state[7]) || 0;
+      const efficiency = parseInt(state[8]) || 0;
       document.getElementById("countdown").innerText = format(countdownValue);
       
       // Update dashboard
       document.getElementById("plan").innerText = plan;
       document.getElementById("actual").innerText = actual;
-      
       countdownValue = countdown;
       document.getElementById("countdown").innerText = format(countdownValue);
-    
       document.getElementById("downtime").innerText = format(totalDowntime);
+      document.getElementById("expected").innerText = expected;
+
+      let delayEl = document.getElementById("delay");
+      delayEl.innerText = delay > 0 ? ("+" + delay) : delay;
+      
+      let effEl = document.getElementById("efficiency");
+      effEl.innerText = efficiency + "%";
 
       // Balance
       const balanceEl = document.getElementById("balance");

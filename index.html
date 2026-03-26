@@ -1431,9 +1431,6 @@ if(newState && newState.length >= 9){
     window.lastValidState = newState;
 }
 
-// If no valid data → use last one
-const state = window.lastValidState;
-
 if(!state) return;
 
       const plan = parseInt(state[0]) || 0;

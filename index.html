@@ -1296,6 +1296,13 @@ function updateLiveStateOnly(){
   const actual = actualCount;
   const balance = actual - plan;
   const status = document.getElementById("status").innerText.trim();
+  const expected = calculateExpectedOutput();
+  const delay = actual - expected;
+
+  let efficiency = 0;
+  if(expected > 0){
+    efficiency = Math.floor((actual / expected) * 100);
+  }
 
   fetch(API_URL,{
     method:"POST",
@@ -1306,7 +1313,10 @@ function updateLiveStateOnly(){
       balance: balance,
       status: status,
       countdown: countdownValue,
-      totalDowntime: downtimeSeconds
+      totalDowntime: downtimeSeconds,
+      expected: expected,
+      delay: delay,
+      efficiency: efficiency
     })
   }).catch(err => console.log("Live state error:", err));
 
@@ -1343,11 +1353,11 @@ function loadLiveData(){
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
-      const scanRows = data.scan.slice(1);
-const table = document.getElementById("scanTable");
-table.innerHTML="";
+    const scanRows = data.scan.slice(1);
+    const table = document.getElementById("scanTable");
+    table.innerHTML="";
 
-scanRows.reverse().forEach(row => {
+    scanRows.reverse().forEach(row => {
     let newRow = table.insertRow();
 
     // 1. DATE & TIME (Diambil dari Kolum A - row[0])
@@ -1374,6 +1384,36 @@ scanRows.reverse().forEach(row => {
     // 4. DOWNTIME (Kolum J -> row[9]) - DIAMBIL SEBAGAI TEKS SAHAJA
     let downtimeCell = newRow.insertCell(8);
     let rawDowntime = row[9] || "";
+
+    // Expected
+document.getElementById("expected").innerText = expected;
+
+// Delay
+let delayEl = document.getElementById("delay");
+if(delay < 0){
+    delayEl.className = "big-number status-red";
+} 
+else if(delay > 0){
+    delayEl.className = "big-number status-green";
+} 
+else{
+    delayEl.className = "big-number status-blue";
+}
+delayEl.innerText = delay > 0 ? ("+" + delay) : delay;
+
+// Efficiency
+let effEl = document.getElementById("efficiency");
+effEl.innerText = efficiency + "%";
+
+if(efficiency < 90){
+    effEl.className = "big-number status-red";
+}
+else if(efficiency < 100){
+    effEl.className = "big-number status-orange";
+}
+else{
+    effEl.className = "big-number status-green";
+}
 
 // Pastikan format mm:ss
 if(rawDowntime){
@@ -1407,6 +1447,9 @@ if(rawDowntime){
       const status = state[3] || "READY";
       const totalDowntime = parseInt(state[4]) || 0;
       const countdown = parseInt(state[5]) || 0;
+      const expected = parseInt(state[6]) || 0;
+      const delay = parseInt(state[7]) || 0;
+      const efficiency = parseInt(state[8]) || 0;
 
       // Update dashboard
       document.getElementById("plan").innerText = plan;

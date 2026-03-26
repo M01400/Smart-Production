@@ -1426,8 +1426,6 @@ if(!window.lastValidState){
     window.lastValidState = null;
 }
 
-let newState = [...data.state].reverse().find(row => row.length >= 9);
-
 // If new data valid → update
 if(newState && newState.length >= 9){
     window.lastValidState = newState;

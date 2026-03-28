@@ -462,6 +462,7 @@ let scannedEngine = new Set();
 let scannedKey = new Set();
 let duplicateLock=false;
 let lastUpdateTime = 0;
+let lastTableData = "";
   
 /* ===== DATE TIME ===== */
 
@@ -1388,10 +1389,12 @@ function loadLiveData(){
     const now = Date.now();
     if(now - lastUpdateTime < 1000) return;
     lastUpdateTime = now;
-    if(!window.lastValidState){
-        window.lastValidState = null;
-    }
 
+    // ✅ CHECK FIRST (IMPORTANT)
+    if(!data || !data.state || data.state.length === 0) return;
+    if(!data.scan || data.scan.length === 0) return;
+
+// ✅ THEN ONLY PROCESS
     let newState = [...data.state].reverse().find(row => row && row.length >= 9);
 
     // ✅ ONLY update if valid
@@ -1411,40 +1414,48 @@ function loadLiveData(){
       
     const scanRows = data.scan.slice(1);
     const table = document.getElementById("scanTable");
-    table.innerHTML="";
     
-    scanRows.reverse().forEach(row => {
+    // Convert to string for comparison
+    const newTableData = JSON.stringify(scanRows);
+    
+    if(newTableData !== lastTableData){
+
+  lastTableData = newTableData;
+
+  table.innerHTML="";
+
+  scanRows.reverse().forEach(row => {
+
     let newRow = table.insertRow();
 
-    // 1. DATE & TIME (Diambil dari Kolum A - row[0])
     let fullDateTime = new Date(row[0]);
     newRow.insertCell(0).innerText = fullDateTime.toLocaleDateString("en-GB");
     newRow.insertCell(1).innerText = fullDateTime.toLocaleTimeString("en-GB", {
         hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true 
     }).toLowerCase();
 
-    // 2. DATA UTAMA (Susunan mengikut Google Sheet anda)
-    newRow.insertCell(2).innerText = row[1] || "-"; // Lot (Kolum B)
-    newRow.insertCell(3).innerText = row[2] || "-"; // Model (Kolum C)
-    newRow.insertCell(4).innerText = row[3] || "-"; // Chassis (Kolum D)
-    newRow.insertCell(5).innerText = row[4] || "-"; // Engine No (Kolum E)
-    newRow.insertCell(6).innerText = row[5] || "-"; // Key No (Kolum F)
+    newRow.insertCell(2).innerText = row[1] || "-";
+    newRow.insertCell(3).innerText = row[2] || "-";
+    newRow.insertCell(4).innerText = row[3] || "-";
+    newRow.insertCell(5).innerText = row[4] || "-";
+    newRow.insertCell(6).innerText = row[5] || "-";
 
-    // 3. STATUS (Kolum G) + Warna
     let statusCell = newRow.insertCell(7);
     let statusText = row[6] || "";
     statusCell.innerText = statusText;
+
     if(statusText === "SCANNED") statusCell.className = "status-green";
     if(statusText === "DOWN TIME") statusCell.className = "status-red";
 
-    // 4. DOWNTIME (Kolum J -> row[9]) - DIAMBIL SEBAGAI TEKS SAHAJA
-    let rawDowntime = row[9] || "";
+    let rawDowntime = row[10] || "";
     let downtimeCell = newRow.insertCell(8);
 
     downtimeCell.innerText = cleanDowntime(rawDowntime);
 
     if(statusText === "DOWN TIME") downtimeCell.className = "status-red";
-});
+  });
+
+}
       
       const plan = parseInt(state[0]) || 0;
       const actual = parseInt(state[1]) || 0;
@@ -1574,7 +1585,7 @@ window.onload = function(){
   document.getElementById("keyInput").style.display="none";
 
   loadLiveData();
-  setInterval(loadLiveData,1500);
+  setInterval(loadLiveData,2000);
 
   } else {
 

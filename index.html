@@ -886,14 +886,14 @@ function updateDisplay() {
     balanceEl.innerText = displayBalance;
 }
 
-    /* ================= LOGIK STATUS BARU ================= */
-    if (actualCount >= plan && plan > 0) {
+/* ================= LOGIK STATUS BARU ================= */
 
-    isTargetAchieved = true; // ✅ ADD THIS
+// ✅ TARGET FIRST (HIGHEST PRIORITY)
+if (actualCount >= plan && plan > 0) {
 
-    clearInterval(timer);
-    timer = null;
-    countdownValue = 0;
+    clearInterval(timer); 
+    timer = null; 
+    countdownValue = 0; 
     isDowntime = false;
 
     if(!endTime){
@@ -901,37 +901,28 @@ function updateDisplay() {
     }
 
     setStatus("TARGET ACHIEVED", "status-green");
+    return; // 🔥 VERY IMPORTANT
 }
-    if (isBreakTime()) {
-        setStatus("BREAK TIME", "status-orange");
-    } 
-    else if (duplicateLock) {
-        setStatus("DUPLICATE SCAN", "status-red blink");
-    } 
-    else if (isDowntime) {
-        setStatus("DOWN TIME", "status-red blink");
-    } 
-    else if (delay < 0) {
+
+// ✅ OTHER CONDITIONS
+if (isBreakTime()) {
+    setStatus("BREAK TIME", "status-orange");
+}
+else if (duplicateLock) {
+    setStatus("DUPLICATE SCAN", "status-red blink");
+}
+else if (isDowntime) {
+    setStatus("DOWN TIME", "status-red blink");
+}
+else if (delay < 0) {
     setStatus("BEHIND SCHEDULE","status-red blink");
 }
-   
-    // Jika sedang dalam proses scan (salah satu input sudah diisi tapi belum lengkap semua)
-    else if (pendingChassis !== "" && pendingModel === "") {
-        setStatus("WAITING MODEL", "status-orange");
-    } 
-    else if (pendingModel !== "" && pendingEngine === "") {
-        setStatus("WAITING ENGINE", "status-orange");
-    } 
-    else if (pendingEngine !== "" && pendingKey === "") {
-        setStatus("WAITING KEY", "status-orange");
-    } 
-    // Jika timer sedang jalan dan tiada proses scan yang tertunggak, status adalah RUNNING
-    else if (timer) {
-        setStatus("RUNNING", "status-green pulse");
-    } 
-    else {
-        setStatus("READY", "status-blue");
-    }
+else if (timer) {
+    setStatus("RUNNING", "status-green pulse");
+}
+else {
+    setStatus("READY", "status-blue");
+}
     /* ===================================================== */
 
     const downtimeCard = document.getElementById("downtimeCard");

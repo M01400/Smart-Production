@@ -463,6 +463,7 @@ let scannedKey = new Set();
 let duplicateLock=false;
 let lastUpdateTime = 0;
 let lastTableData = "";
+let isTargetAchieved = false;
 let endTime = null;
   
 /* ===== DATE TIME ===== */
@@ -568,6 +569,7 @@ el.className="big-number "+color;
 /* ===== START ===== */
 
 function startProduction(){
+    isTargetAchieved = false;
     if(isMonitor) return;
     if(timer) return; // Jika timer sudah jalan, jangan buat apa-apa
 
@@ -606,6 +608,8 @@ setStatus("PAUSED","status-orange");
 
 /* RESET */
 function resetProduction(){
+  
+isTargetAchieved = false;
   
 clearInterval(timer);
 timer=null;
@@ -742,7 +746,7 @@ const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) |
 
 let downtimeEvent = "";
 
-if(lastScanTime){
+if(lastScanTime && !isTargetAchieved){
     let diffSec = Math.floor((now - lastScanTime) / 1000);
 
     if(diffSec > cycleTimeSec){
@@ -886,6 +890,8 @@ function updateDisplay() {
 
     /* ================= LOGIK STATUS BARU ================= */
     if (actualCount >= plan && plan > 0) {
+
+    isTargetAchieved = true; // ✅ ADD THIS
 
     clearInterval(timer);
     timer = null;

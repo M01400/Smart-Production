@@ -1301,8 +1301,6 @@ function updateLiveStateOnly(){
   const status = document.getElementById("status").innerText.trim();
   const delay = actual - expected;
   let expected = calculateExpectedOutput();
-
-  const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
   
   // ✅ STOP EXPECTED WHEN TARGET ACHIEVED
   if(actualCount >= plan){

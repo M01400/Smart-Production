@@ -463,6 +463,7 @@ let scannedKey = new Set();
 let duplicateLock=false;
 let lastUpdateTime = 0;
 let lastTableData = "";
+let endTime = null;
   
 /* ===== DATE TIME ===== */
 
@@ -532,7 +533,7 @@ function calculateExpectedOutput(){
     if(isMonitor) return 0;
     if(!startTime) return 0;
 
-    const now = new Date();
+    const now = endTime ? endTime : new Date(); // ✅ IMPORTANT
     let elapsedSec = Math.floor((now - startTime) / 1000);
 
     const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
@@ -569,6 +570,8 @@ el.className="big-number "+color;
 function startProduction(){
     if(isMonitor) return;
     if(timer) return; // Jika timer sudah jalan, jangan buat apa-apa
+
+    endTime = null; // ✅ allow expected to run again
     
     // Set masa permulaan jika baru bermula
     if(countdownValue === 0){
@@ -619,6 +622,7 @@ scannedKey.clear();
 isDowntime=false;
 duplicateLock=false;
 document.getElementById("scanTable").innerHTML="";
+endTime = null; // ✅ RESET FREEZE
   
 setStatus("READY","status-blue");
 updateDisplay();
@@ -881,6 +885,19 @@ function updateDisplay() {
 }
 
     /* ================= LOGIK STATUS BARU ================= */
+    if (actualCount >= plan && plan > 0) {
+
+    clearInterval(timer);
+    timer = null;
+    countdownValue = 0;
+    isDowntime = false;
+
+    if(!endTime){
+        endTime = new Date();
+    }
+
+    setStatus("TARGET ACHIEVED", "status-green");
+}
     if (isBreakTime()) {
         setStatus("BREAK TIME", "status-orange");
     } 
@@ -890,10 +907,7 @@ function updateDisplay() {
     else if (isDowntime) {
         setStatus("DOWN TIME", "status-red blink");
     } 
-    else if (actualCount >= plan && plan > 0) {
-        clearInterval(timer); timer = null; countdownValue = 0; isDowntime = false;
-        setStatus("TARGET ACHIEVED", "status-green");
-    } 
+   
     // Jika sedang dalam proses scan (salah satu input sudah diisi tapi belum lengkap semua)
     else if (pendingChassis !== "" && pendingModel === "") {
         setStatus("WAITING MODEL", "status-orange");
@@ -1406,6 +1420,7 @@ function loadLiveData(){
     if(!window.lastValidState) return;
     
     const state = window.lastValidState;
+    endTime = new Date(); // ✅ STOP ANY TIME-BASED DRIFT
     
     if(!state || state.length < 9){
     console.log("⚠️ Invalid state skipped");

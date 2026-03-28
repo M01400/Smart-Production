@@ -1500,10 +1500,9 @@ function loadLiveData(){
       countdownValue = countdown;
       document.getElementById("countdown").innerText = format(countdownValue);
       document.getElementById("downtime").innerText = format(totalDowntime);
-      document.getElementById("expected").innerText = state[6];
-      let plan = parseInt(state[0]) || 0;
-      let actual = parseInt(state[1]) || 0;
-      let expected = parseInt(state[6]) || 0;
+      plan = parseInt(state[0]) || 0;
+      actual = parseInt(state[1]) || 0;
+      expected = parseInt(state[6]) || 0;
       
       if(actual >= plan){
         expected = plan;

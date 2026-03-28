@@ -1354,7 +1354,7 @@ function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
 function cleanDowntime(raw){
   if(!raw) return "";
 
-  // ✅ If number (seconds) → convert to mm:ss
+  // ✅ Case 1: number (seconds)
   if(!isNaN(raw)){
     let sec = parseInt(raw);
     let m = String(Math.floor(sec / 60)).padStart(2,'0');
@@ -1362,9 +1362,24 @@ function cleanDowntime(raw){
     return m + ":" + s;
   }
 
+  // ✅ Case 2: Date object (Google Sheets time)
+  if(Object.prototype.toString.call(raw) === "[object Date]"){
+    let m = String(raw.getMinutes()).padStart(2,'0');
+    let s = String(raw.getSeconds()).padStart(2,'0');
+    return m + ":" + s;
+  }
+
   let text = raw.toString();
 
-  // ✅ Already correct format (mm:ss)
+  // ✅ Case 3: ISO string (like 1899-12-29T...)
+  if(text.includes("T")){
+    let d = new Date(text);
+    let m = String(d.getMinutes()).padStart(2,'0');
+    let s = String(d.getSeconds()).padStart(2,'0');
+    return m + ":" + s;
+  }
+
+  // ✅ Case 4: already mm:ss
   if(text.includes(":")){
     return text;
   }

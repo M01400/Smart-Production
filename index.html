@@ -1447,7 +1447,7 @@ function loadLiveData(){
     if(statusText === "SCANNED") statusCell.className = "status-green";
     if(statusText === "DOWN TIME") statusCell.className = "status-red";
 
-    let rawDowntime = row[11] || "";
+    let rawDowntime = row[10] || "";
     let downtimeCell = newRow.insertCell(8);
 
     downtimeCell.innerText = cleanDowntime(rawDowntime);

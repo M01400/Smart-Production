@@ -463,8 +463,6 @@ let scannedKey = new Set();
 let duplicateLock=false;
 let lastUpdateTime = 0;
 let lastTableData = "";
-let isTargetAchieved = false;
-let endTime = null;
   
 /* ===== DATE TIME ===== */
 
@@ -534,7 +532,7 @@ function calculateExpectedOutput(){
     if(isMonitor) return 0;
     if(!startTime) return 0;
 
-    const now = endTime ? endTime : new Date(); // ✅ IMPORTANT
+    const now = new Date();
     let elapsedSec = Math.floor((now - startTime) / 1000);
 
     const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
@@ -569,11 +567,8 @@ el.className="big-number "+color;
 /* ===== START ===== */
 
 function startProduction(){
-    isTargetAchieved = false;
     if(isMonitor) return;
     if(timer) return; // Jika timer sudah jalan, jangan buat apa-apa
-
-    endTime = null; // ✅ allow expected to run again
     
     // Set masa permulaan jika baru bermula
     if(countdownValue === 0){
@@ -609,8 +604,6 @@ setStatus("PAUSED","status-orange");
 /* RESET */
 function resetProduction(){
   
-isTargetAchieved = false;
-  
 clearInterval(timer);
 timer=null;
 countdownValue=0;
@@ -626,7 +619,6 @@ scannedKey.clear();
 isDowntime=false;
 duplicateLock=false;
 document.getElementById("scanTable").innerHTML="";
-endTime = null; // ✅ RESET FREEZE
   
 setStatus("READY","status-blue");
 updateDisplay();
@@ -746,7 +738,7 @@ const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) |
 
 let downtimeEvent = "";
 
-if(lastScanTime && !isTargetAchieved){
+if(lastScanTime){
     let diffSec = Math.floor((now - lastScanTime) / 1000);
 
     if(diffSec > cycleTimeSec){
@@ -884,44 +876,41 @@ function updateDisplay() {
     else if (balance > 0) { balanceEl.className = "big-number status-green"; } 
     else { balanceEl.className = "big-number status-blue"; }
     balanceEl.innerText = displayBalance;
-}
-
-/* ================= LOGIK STATUS BARU ================= */
-
-// ✅ TARGET FIRST (HIGHEST PRIORITY)
-if (actualCount >= plan && plan > 0) {
-
-    clearInterval(timer); 
-    timer = null; 
-    countdownValue = 0; 
-    isDowntime = false;
-
-    if(!endTime){
-        endTime = new Date();
-    }
-
-setStatus("TARGET ACHIEVED", "status-green");
-}
-
-// ✅ OTHER CONDITIONS
-if (isBreakTime()) {
-    setStatus("BREAK TIME", "status-orange");
-}
-else if (duplicateLock) {
-    setStatus("DUPLICATE SCAN", "status-red blink");
-}
-else if (isDowntime) {
-    setStatus("DOWN TIME", "status-red blink");
-}
-else if (delay < 0) {
+    if(delay < 0){
     setStatus("BEHIND SCHEDULE","status-red blink");
 }
-else if (timer) {
-    setStatus("RUNNING", "status-green pulse");
-}
-else {
-    setStatus("READY", "status-blue");
-}
+
+    /* ================= LOGIK STATUS BARU ================= */
+    if (isBreakTime()) {
+        setStatus("BREAK TIME", "status-orange");
+    } 
+    else if (duplicateLock) {
+        setStatus("DUPLICATE SCAN", "status-red blink");
+    } 
+    else if (isDowntime) {
+        setStatus("DOWN TIME", "status-red blink");
+    } 
+    else if (actualCount >= plan && plan > 0) {
+        clearInterval(timer); timer = null; countdownValue = 0; isDowntime = false;
+        setStatus("TARGET ACHIEVED", "status-green");
+    } 
+    // Jika sedang dalam proses scan (salah satu input sudah diisi tapi belum lengkap semua)
+    else if (pendingChassis !== "" && pendingModel === "") {
+        setStatus("WAITING MODEL", "status-orange");
+    } 
+    else if (pendingModel !== "" && pendingEngine === "") {
+        setStatus("WAITING ENGINE", "status-orange");
+    } 
+    else if (pendingEngine !== "" && pendingKey === "") {
+        setStatus("WAITING KEY", "status-orange");
+    } 
+    // Jika timer sedang jalan dan tiada proses scan yang tertunggak, status adalah RUNNING
+    else if (timer) {
+        setStatus("RUNNING", "status-green pulse");
+    } 
+    else {
+        setStatus("READY", "status-blue");
+    }
     /* ===================================================== */
 
     const downtimeCard = document.getElementById("downtimeCard");
@@ -933,6 +922,7 @@ else {
         downtimeCard.classList.remove("downtime-alert", "blink");
         downtimeText.classList.remove("status-red", "blink");
     }
+}
 /* ===== DAILY SUMMARY ===== */
 
 /* ===== DAILY SUMMARY (VERSI DIKEMASKINI: SAMA PERSIH DENGAN DASHBOARD) ===== */
@@ -1416,7 +1406,6 @@ function loadLiveData(){
     if(!window.lastValidState) return;
     
     const state = window.lastValidState;
-    endTime = new Date(); // ✅ STOP ANY TIME-BASED DRIFT
     
     if(!state || state.length < 9){
     console.log("⚠️ Invalid state skipped");

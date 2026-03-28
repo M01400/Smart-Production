@@ -1299,13 +1299,8 @@ function updateLiveStateOnly(){
   const actual = actualCount;
   const balance = actual - plan;
   const status = document.getElementById("status").innerText.trim();
+  const expected = calculateExpectedOutput();
   const delay = actual - expected;
-  let expected = calculateExpectedOutput();
-  
-  // ✅ STOP EXPECTED WHEN TARGET ACHIEVED
-  if(actualCount >= plan){
-    expected = plan;
-  }
 
   let efficiency = 0;
   if(expected > 0){
@@ -1359,24 +1354,9 @@ function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
 function cleanDowntime(raw){
   if(!raw) return "";
 
-  // ✅ Case 1: number (seconds)
-  if(!isNaN(raw)){
-    let sec = parseInt(raw);
-    let m = String(Math.floor(sec / 60)).padStart(2,'0');
-    let s = String(sec % 60).padStart(2,'0');
-    return m + ":" + s;
-  }
-
-  // ✅ Case 2: Date object (Google Sheets time)
-  if(Object.prototype.toString.call(raw) === "[object Date]"){
-    let m = String(raw.getMinutes()).padStart(2,'0');
-    let s = String(raw.getSeconds()).padStart(2,'0');
-    return m + ":" + s;
-  }
-
   let text = raw.toString();
 
-  // ✅ Case 3: ISO string (like 1899-12-29T...)
+  // Fix ISO format like 04:35.000Z
   if(text.includes("T")){
     let d = new Date(text);
     let m = String(d.getMinutes()).padStart(2,'0');
@@ -1384,9 +1364,17 @@ function cleanDowntime(raw){
     return m + ":" + s;
   }
 
-  // ✅ Case 4: already mm:ss
+  // Normal format
   if(text.includes(":")){
-    return text;
+    let parts = text.split(":");
+
+    if(parts.length === 3){
+      return parts[1] + ":" + parts[2];
+    }
+
+    if(parts.length === 2){
+      return ("0"+parts[0]).slice(-2) + ":" + ("0"+parts[1]).slice(-2);
+    }
   }
 
   return text;
@@ -1459,7 +1447,7 @@ function loadLiveData(){
     if(statusText === "SCANNED") statusCell.className = "status-green";
     if(statusText === "DOWN TIME") statusCell.className = "status-red";
 
-    let rawDowntime = row[10] || row[11];
+    let rawDowntime = row[11] || "";
     let downtimeCell = newRow.insertCell(8);
 
     downtimeCell.innerText = cleanDowntime(rawDowntime);
@@ -1498,15 +1486,7 @@ function loadLiveData(){
       countdownValue = countdown;
       document.getElementById("countdown").innerText = format(countdownValue);
       document.getElementById("downtime").innerText = format(totalDowntime);
-      plan = parseInt(state[0]) || 0;
-      actual = parseInt(state[1]) || 0;
-      expected = parseInt(state[6]) || 0;
-      
-      if(actual >= plan){
-        expected = plan;
-      }
-
-document.getElementById("expected").innerText = expected;
+      document.getElementById("expected").innerText = expected;
 
       // Balance
       const balanceEl = document.getElementById("balance");

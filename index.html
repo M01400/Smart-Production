@@ -461,6 +461,7 @@ let scannedModel = new Set();
 let scannedEngine = new Set();
 let scannedKey = new Set();
 let duplicateLock=false;
+let lastUpdateTime = 0;
   
 /* ===== DATE TIME ===== */
 
@@ -1346,25 +1347,65 @@ function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
   .catch(err=>console.log("Sheet error:",err));
 
 }
+
+function cleanDowntime(raw){
+  if(!raw) return "";
+
+  let text = raw.toString();
+
+  // Fix ISO format like 04:35.000Z
+  if(text.includes("T")){
+    let d = new Date(text);
+    let m = String(d.getMinutes()).padStart(2,'0');
+    let s = String(d.getSeconds()).padStart(2,'0');
+    return m + ":" + s;
+  }
+
+  // Normal format
+  if(text.includes(":")){
+    let parts = text.split(":");
+
+    if(parts.length === 3){
+      return parts[1] + ":" + parts[2];
+    }
+
+    if(parts.length === 2){
+      return ("0"+parts[0]).slice(-2) + ":" + ("0"+parts[1]).slice(-2);
+    }
+  }
+
+  return text;
+}
+  
 // Ambil data untuk MONITOR PC
 function loadLiveData(){
 
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
+    const now = Date.now();
+    if(now - lastUpdateTime < 1000) return;
+    lastUpdateTime = now;
     if(!window.lastValidState){
         window.lastValidState = null;
     }
 
-    let newState = [...data.state].reverse().find(row => row.length >= 9);
+    let newState = [...data.state].reverse().find(row => row && row.length >= 9);
 
+    // ✅ ONLY update if valid
     if(newState && newState.length >= 9){
         window.lastValidState = newState;
     }
-
+    
+    // ✅ NEVER allow null overwrite
+    if(!window.lastValidState) return;
+    
     const state = window.lastValidState;
-
-    if(!state) return;
+    
+    if(!state || state.length < 9){
+    console.log("⚠️ Invalid state skipped");
+    return;
+  }  
       
     const scanRows = data.scan.slice(1);
     const table = document.getElementById("scanTable");
@@ -1396,27 +1437,9 @@ function loadLiveData(){
 
     // 4. DOWNTIME (Kolum J -> row[9]) - DIAMBIL SEBAGAI TEKS SAHAJA
     let downtimeCell = newRow.insertCell(8);
-    let rawDowntime = row[9] || "";
+    <script>
 
-// Pastikan format mm:ss
-if(rawDowntime){
-
-    let text = rawDowntime.toString();
-
-    if(text.includes(":")){
-        let parts = text.split(":");
-
-        if(parts.length === 3){
-            downtimeCell.innerText = parts[1] + ":" + parts[2];
-        }
-        else if(parts.length === 2){
-            downtimeCell.innerText = ("0"+parts[0]).slice(-2) + ":" + ("0"+parts[1]).slice(-2);
-        }
-        else{
-            downtimeCell.innerText = text;
-        }
-    }
-}
+    downtimeCell.innerText = cleanDowntime(rawDowntime);
 
     if(statusText === "DOWN TIME") downtimeCell.className = "status-red";
 });
@@ -1442,6 +1465,19 @@ if(!state) return;
       const expected = parseInt(state[6]) || 0;
       const delay = parseInt(state[7]) || 0;
       const efficiency = parseInt(state[8]) || 0;
+
+      let effEl = document.getElementById("efficiency");
+      effEl.innerText = efficiency + "%";
+      
+      if(efficiency < 90){
+        effEl.className = "big-number status-red";
+      }
+      else if(efficiency < 100){
+        effEl.className = "big-number status-orange";
+      }
+      else{
+        effEl.className = "big-number status-green";
+      }
       
       // Update dashboard
       document.getElementById("plan").innerText = plan;

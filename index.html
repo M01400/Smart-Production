@@ -1299,8 +1299,15 @@ function updateLiveStateOnly(){
   const actual = actualCount;
   const balance = actual - plan;
   const status = document.getElementById("status").innerText.trim();
-  const expected = calculateExpectedOutput();
   const delay = actual - expected;
+  let expected = calculateExpectedOutput();
+
+  const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+  
+  // ✅ STOP EXPECTED WHEN TARGET ACHIEVED
+  if(actualCount >= plan){
+    expected = plan;
+  }
 
   let efficiency = 0;
   if(expected > 0){

@@ -528,7 +528,7 @@ function isBreakTime(){
 }
 
 function calculateExpectedOutput(){
-
+    if(isMonitor) return 0;
     if(!startTime) return 0;
 
     const now = new Date();
@@ -566,6 +566,7 @@ el.className="big-number "+color;
 /* ===== START ===== */
 
 function startProduction(){
+    if(isMonitor) return;
     if(timer) return; // Jika timer sudah jalan, jangan buat apa-apa
     
     // Set masa permulaan jika baru bermula
@@ -817,6 +818,7 @@ document.getElementById("chassisInput").focus();
 /* ===== UPDATE DISPLAY ===== */
 
 function updateDisplay() {
+    if(isMonitor) return;
     let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
     let balance = actualCount - plan;
     let displayBalance = balance > 0 ? ("+" + balance) : balance;
@@ -1436,6 +1438,7 @@ function loadLiveData(){
     if(statusText === "DOWN TIME") statusCell.className = "status-red";
 
     // 4. DOWNTIME (Kolum J -> row[9]) - DIAMBIL SEBAGAI TEKS SAHAJA
+    let rawDowntime = row[9] || "";
     let downtimeCell = newRow.insertCell(8);
 
     downtimeCell.innerText = cleanDowntime(rawDowntime);
@@ -1443,18 +1446,6 @@ function loadLiveData(){
     if(statusText === "DOWN TIME") downtimeCell.className = "status-red";
 });
       
-    // 🔥 KEEP LAST GOOD STATE
-if(!window.lastValidState){
-    window.lastValidState = null;
-}
-
-// If new data valid → update
-if(newState && newState.length >= 9){
-    window.lastValidState = newState;
-}
-
-if(!state) return;
-
       const plan = parseInt(state[0]) || 0;
       const actual = parseInt(state[1]) || 0;
       const balance = parseInt(state[2]) || 0;
@@ -1566,7 +1557,9 @@ else{
 
 window.onload = function(){
   
+ if(!isMonitor){
   updateDisplay();
+}
   updateDateTime();
   setInterval(updateDateTime,1000);
 
@@ -1581,7 +1574,6 @@ window.onload = function(){
   document.getElementById("keyInput").style.display="none";
 
   loadLiveData();
-  document.getElementById("expected").innerText = calculateExpectedOutput();
   setInterval(loadLiveData,1500);
 
   } else {

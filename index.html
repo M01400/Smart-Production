@@ -1367,27 +1367,28 @@ function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
 function cleanDowntime(raw){
   if(!raw) return "";
 
-  let text = raw.toString();
+  let text = raw.toString().trim();
 
-  // Fix ISO format like 04:35.000Z
+  // ✅ If already correct format mm:ss → keep
+  if(/^\d{2}:\d{2}$/.test(text)){
+    return text;
+  }
+
+  // ✅ If number (seconds) → convert to mm:ss
+  if(!isNaN(text)){
+    let sec = parseInt(text);
+    let m = Math.floor(sec / 60);
+    let s = sec % 60;
+
+    return String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
+  }
+
+  // ✅ ISO format fix
   if(text.includes("T")){
     let d = new Date(text);
     let m = String(d.getMinutes()).padStart(2,'0');
     let s = String(d.getSeconds()).padStart(2,'0');
     return m + ":" + s;
-  }
-
-  // Normal format
-  if(text.includes(":")){
-    let parts = text.split(":");
-
-    if(parts.length === 3){
-      return parts[1] + ":" + parts[2];
-    }
-
-    if(parts.length === 2){
-      return ("0"+parts[0]).slice(-2) + ":" + ("0"+parts[1]).slice(-2);
-    }
   }
 
   return text;

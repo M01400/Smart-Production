@@ -832,6 +832,13 @@ function updateDisplay() {
 
     //  EXPECTED CALCULATION
     let expected = calculateExpectedOutput();
+
+    let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+    
+    // ✅ FORCE CORRECT LOGIC AFTER TARGET
+    if(actualCount >= plan && plan > 0){
+        expected = plan;
+}
     let delay = actualCount - expected;
     let delayEl = document.getElementById("delay");
 

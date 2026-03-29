@@ -1595,13 +1595,51 @@ else{
     .catch(err => console.log("Monitor load error:", err));
 }
 
+function restoreStateFromSheet(){
+
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+
+      if(!data || !data.state || data.state.length < 2) return;
+
+      const state = data.state[1]; // latest saved row
+
+      if(!state) return;
+
+      const plan = parseInt(state[0]) || 0;
+      const actual = parseInt(state[1]) || 0;
+      const totalDowntime = parseInt(state[4]) || 0;
+      const countdown = parseInt(state[5]) || 0;
+
+      // ✅ RESTORE VALUES
+      document.getElementById("dailyPlanTarget").value = plan;
+      actualCount = actual;
+      downtimeSeconds = totalDowntime;
+      countdownValue = countdown;
+
+      // ✅ IMPORTANT: restore startTime
+      startTime = new Date();
+
+      // ✅ resume timer if needed
+      if(countdownValue > 0){
+        startProduction();
+      }
+
+      updateDisplay();
+    })
+    .catch(err => console.log("Restore error:", err));
+}
+  
 /* ===== INITIALIZE SYSTEM ===== */
 
 window.onload = function(){
   
  if(!isMonitor){
-  updateDisplay();
+    restoreStateFromSheet();
+    setTimeout(updateDisplay, 1000); // fallback
 }
+  
   updateDateTime();
   setInterval(updateDateTime,1000);
 

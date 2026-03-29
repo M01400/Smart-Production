@@ -1456,13 +1456,23 @@ function loadLiveData(){
     let statusText = row[6] || "";
     statusCell.innerText = statusText;
 
+    console.log("FULL ROW:", row);
+    console.log("DowntimeEvent (row[10]):", row[10]);
+    console.log("TotalDowntime (row[11]):", row[11]);
+
     if(statusText === "SCANNED") statusCell.className = "status-green";
     if(statusText === "DOWN TIME") statusCell.className = "status-red";
 
-    let rawDowntime = row[10] || "";
     let downtimeCell = newRow.insertCell(8);
 
+// ✅ ONLY show downtime if status is DOWN TIME
+    if(statusText === "DOWN TIME"){
+    let rawDowntime = row[10] || "";
     downtimeCell.innerText = cleanDowntime(rawDowntime);
+    downtimeCell.className = "status-red";
+    }else{
+    downtimeCell.innerText = ""; // 🔥 IMPORTANT (no carry over)
+}
 
     if(statusText === "DOWN TIME") downtimeCell.className = "status-red";
   });

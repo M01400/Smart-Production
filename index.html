@@ -1631,7 +1631,19 @@ function restoreStateFromSheet(){
       }
 
       updateDisplay();
-      if(!window.hasRestored) return;
+
+      // ✅ MARK RESTORE COMPLETE
+      window.hasRestored = true;
+
+      // 🔥 FORCE recalculation after restore
+    let expected = calculateExpectedOutput();
+    document.getElementById("expected").innerText = expected;
+    
+    let efficiency = expected > 0 
+    ? Math.round((actualCount / expected) * 100) 
+    : 0;
+
+    document.getElementById("efficiency").innerText = efficiency + "%";
       
     })
     

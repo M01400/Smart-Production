@@ -1469,7 +1469,7 @@ function loadLiveData(){
 
 // ✅ ONLY show downtime if status is DOWN TIME
     if(statusText === "DOWN TIME"){
-    let rawDowntime = row[10] || "";
+    let rawDowntime = row[9] || "";
     downtimeCell.innerText = cleanDowntime(rawDowntime);
     downtimeCell.className = "status-red";
     }else{

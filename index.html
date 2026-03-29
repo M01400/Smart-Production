@@ -628,6 +628,9 @@ document.getElementById("scanTable").innerHTML="";
   
 setStatus("READY","status-blue");
 updateDisplay();
+window.hasRestored = true;
+updateLiveStateOnly();
+
 }
 
 /* ===== SCAN CHASSIS ===== */

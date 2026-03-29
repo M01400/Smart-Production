@@ -532,6 +532,12 @@ function calculateExpectedOutput(){
     if(isMonitor) return 0;
     if(!startTime) return 0;
 
+  // ✅ STOP expected when target achieved
+    let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+    if(actualCount >= plan && plan > 0){
+    return actualCount; // freeze expected = actual
+}
+
     const now = new Date();
     let elapsedSec = Math.floor((now - startTime) / 1000);
 

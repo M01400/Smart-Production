@@ -1367,26 +1367,28 @@ function cleanDowntime(raw){
 
   let text = raw.toString().trim();
 
-  // ✅ If already correct format mm:ss → keep
+  // ✅ If already correct mm:ss AND minutes < 1 (safe)
   if(/^\d{2}:\d{2}$/.test(text)){
+    
+    let parts = text.split(":");
+    let min = parseInt(parts[0]);
+    let sec = parseInt(parts[1]);
+
+    // 🔥 FIX: if looks like "11:00" → convert to seconds
+    if(sec === 0 && min > 0){
+      return "00:" + String(min).padStart(2,'0');
+    }
+
     return text;
   }
 
-  // ✅ If number (seconds) → convert to mm:ss
+  // ✅ If number → convert to mm:ss
   if(!isNaN(text)){
     let sec = parseInt(text);
     let m = Math.floor(sec / 60);
     let s = sec % 60;
 
     return String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
-  }
-
-  // ✅ ISO format fix
-  if(text.includes("T")){
-    let d = new Date(text);
-    let m = String(d.getMinutes()).padStart(2,'0');
-    let s = String(d.getSeconds()).padStart(2,'0');
-    return m + ":" + s;
   }
 
   return text;

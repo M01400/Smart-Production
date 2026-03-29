@@ -535,7 +535,7 @@ function calculateExpectedOutput(){
   // ✅ STOP expected when target achieved
     let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
     if(actualCount >= plan && plan > 0){
-    return actualCount; // freeze expected = actual
+    return plan;
 }
 
     const now = new Date();

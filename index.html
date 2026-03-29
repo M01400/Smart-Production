@@ -1311,6 +1311,7 @@ const isMonitor = window.location.search.includes("monitor");
 // Hantar state live setiap saat (MAIN PC sahaja)
 function updateLiveStateOnly(){
 
+  if(!window.hasRestored) return;
   if(isMonitor) return; // monitor tak hantar data
 
   const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
@@ -1627,7 +1628,10 @@ function restoreStateFromSheet(){
       }
 
       updateDisplay();
+      if(!window.hasRestored) return;
+      
     })
+    
     .catch(err => console.log("Restore error:", err));
 }
   

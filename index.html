@@ -748,17 +748,19 @@ if(lastScanTime){
     let diffSec = Math.floor((now - lastScanTime) / 1000);
 
     if(diffSec > cycleTimeSec){
-        let actualDowntime = diffSec - cycleTimeSec;
+    let actualDowntime = diffSec - cycleTimeSec;
 
+    let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+
+    // ✅ ONLY BEFORE TARGET
+    if((actualCount + 1) <= plan){
         downtimeEvent = format(actualDowntime);
-
-        // ✅ accumulate dashboard
-        let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
-
-        // ✅ ONLY COUNT BEFORE TARGET
-        if(actualCount < plan){
-            downtimeSeconds += actualDowntime;
-        }
+        downtimeSeconds += actualDowntime;
+        isDowntime = true;
+    } else {
+        downtimeEvent = "";
+        isDowntime = false;
+    }
 
         // ✅ TRIGGER STATUS
         isDowntime = true;

@@ -514,18 +514,44 @@ async function checkAccess(){
     return false;
   }
 }
-  // Ask password
-  let input = prompt("Enter System Password:");
+ async function checkAccess(){
 
+  // allow monitor
+  if(window.location.search.includes("monitor")){
+    return true;
+  }
+
+  // 🔐 ask password FIRST
+  let input = prompt("Enter System Password:");
   if(input !== SYSTEM_PASSWORD){
     document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
     return false;
   }
 
-  // Register THIS PC as main
-  localStorage.setItem(DEVICE_KEY, "AUTHORIZED");
+  const deviceId = getDeviceId();
 
-  return true;
+  try{
+    let res = await fetch(API_URL,{
+      method:"POST",
+      body: JSON.stringify({
+        lockRequest:true,
+        deviceId: deviceId
+      })
+    });
+
+    let data = await res.json();
+
+    if(!data.allowed){
+      document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED (MAIN PC IN USE)</h1>";
+      return false;
+    }
+
+    return true;
+
+  }catch(err){
+    alert("Connection error");
+    return false;
+  }
 }
   
 /* ===== VARIABLES ===== */

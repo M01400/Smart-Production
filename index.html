@@ -454,6 +454,43 @@ function updateDateTime(){
   }
 }
 
+/* ================= SECURITY SYSTEM ================= */
+
+// 🔐 SET YOUR PASSWORD HERE
+const SYSTEM_PASSWORD = "1234"; 
+
+// Unique device ID key
+const DEVICE_KEY = "MAIN_PC_LOCK";
+
+/* ===== CHECK ACCESS ===== */
+function checkAccess(){
+
+  // If monitor mode → allow
+  if(window.location.search.includes("monitor")){
+    return true;
+  }
+
+  let savedDevice = localStorage.getItem(DEVICE_KEY);
+
+  // If already registered → allow
+  if(savedDevice){
+    return true;
+  }
+
+  // Ask password
+  let input = prompt("Enter System Password:");
+
+  if(input !== SYSTEM_PASSWORD){
+    document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
+    return false;
+  }
+
+  // Register THIS PC as main
+  localStorage.setItem(DEVICE_KEY, "AUTHORIZED");
+
+  return true;
+}
+  
 /* ===== VARIABLES ===== */
 
 let ramadanMode=false;
@@ -1639,6 +1676,32 @@ else{
 /* ===== INITIALIZE SYSTEM ===== */
   
  window.onload = function(){
+
+  // 🔐 SECURITY CHECK FIRST
+  if(!checkAccess()) return;
+
+  updateDateTime();
+  setInterval(updateDateTime,1000);
+
+  if(isMonitor){
+
+    document.body.classList.add("monitor-mode");
+
+    document.getElementById("chassisInput").style.display="none";
+    document.getElementById("modelInput").style.display="none";
+    document.getElementById("engineInput").style.display="none";
+    document.getElementById("keyInput").style.display="none";
+
+    loadLiveData();
+    setInterval(loadLiveData,1000);
+
+  } else {
+
+    setInterval(updateLiveStateOnly,1000);
+
+  }
+
+};
 
   updateDateTime();
   setInterval(updateDateTime,1000);

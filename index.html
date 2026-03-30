@@ -543,6 +543,9 @@ function isBreakTime(){
 function calculateExpectedOutput(){
     if(isMonitor) return 0;
     if(!startTime) return 0;
+    if(!timer){
+    return actualCount;
+    }
 
   // ✅ STOP expected when target achieved
     let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
@@ -555,7 +558,7 @@ function calculateExpectedOutput(){
 
     const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
 
-    // 🚫 Tolak break time
+    // 🚫 Tolak break Stime
     let breakSeconds = 0;
 
     let tempTime = new Date(startTime);

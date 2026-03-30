@@ -1722,11 +1722,31 @@ window.onload = async function(){
   // 🔐 SECURITY CHECK FIRST
   if(!(await checkAccess())) return;
 
-  // 🟡 DEV MODE VISUAL
+  // 🟡 DEV MODE UI
   if(window.location.search.includes("dev=1")){
-  document.body.style.border = "5px solid yellow";
-}
 
+  // Yellow border
+  document.body.style.border = "5px solid yellow";
+
+  // Banner
+  const banner = document.createElement("div");
+  banner.innerText = "🛠️ DEV MODE ACTIVE";
+  
+  banner.style.position = "fixed";
+  banner.style.top = "0";
+  banner.style.left = "0";
+  banner.style.width = "100%";
+  banner.style.background = "yellow";
+  banner.style.color = "black";
+  banner.style.textAlign = "center";
+  banner.style.padding = "8px";
+  banner.style.fontWeight = "bold";
+  banner.style.zIndex = "9999";
+  banner.style.fontSize = "18px";
+
+  document.body.appendChild(banner);
+}
+  
   updateDateTime();
   setInterval(updateDateTime,1000);
 

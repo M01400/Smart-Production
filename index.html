@@ -619,18 +619,20 @@ function startProduction(){
 
         const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
 
-        // 🔥 USE REAL TIME (IMPORTANT)
-        if(lastScanTime){
-            const now = new Date();
-            const diff = Math.floor((now - lastScanTime) / 1000);
-
-            countdownValue = Math.max(cycleTimeSec - diff, 0);
-
-            if(countdownValue === 0){
-                isDowntime = true;
-            } else {
-                isDowntime = false;
-            }
+        // 🔥 USE REAL TIME (FIXED)
+        const now = new Date();
+        
+        // use startTime if no scan yet
+        const baseTime = lastScanTime || startTime;
+        
+        const diff = Math.floor((now - baseTime) / 1000);
+        
+        countdownValue = Math.max(cycleTimeSec - diff, 0);
+        
+        if(countdownValue === 0){
+            isDowntime = true;
+        } else {
+            isDowntime = false;
         }
 
         updateDisplay();

@@ -419,6 +419,18 @@ const SETTINGS = {
 /* Apply defaults */
 document.getElementById("cycleTarget").value = SETTINGS.defaultCycle;
 document.getElementById("dailyPlanTarget").value = SETTINGS.defaultPlan;
+// 🔥 LIVE UPDATE WHEN USER CHANGE INPUT
+document.getElementById("cycleTarget").addEventListener("input", () => {
+if(!timer){
+    countdownValue = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+}
+  
+updateDisplay();
+});
+
+document.getElementById("dailyPlanTarget").addEventListener("input", () => {
+updateDisplay();
+});
 
 /* ===== ORIGINAL LOGIC BELOW (UNCHANGED) ===== */
 

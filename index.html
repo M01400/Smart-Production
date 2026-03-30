@@ -1553,7 +1553,7 @@ function loadLiveData(){
     if(!data.scan || data.scan.length === 0) return;
 
 // ✅ THEN ONLY PROCESS
-    let newState = data.state[1]; // always latest row
+    let newState = data.state[data.state.length - 1];
       
     // ✅ ONLY update if valid
     if(newState && newState.length >= 9){
@@ -1759,7 +1759,6 @@ else{
 
     // MAIN PC live sync only
     setInterval(updateLiveStateOnly,1000);
-    setInterval(loadLiveData,1000);
     setInterval(enforceLock,1000);
 
   }

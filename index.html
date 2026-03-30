@@ -877,12 +877,10 @@ function updateDisplay() {
     let balance = actualCount - plan;
     let displayBalance = balance > 0 ? ("+" + balance) : balance;
 
-    //  EXPECTED CALCULATION
-    let expected = calculateExpectedOutput();
-
     // ✅ FORCE CORRECT LOGIC AFTER TARGET
     if(actualCount >= plan && plan > 0){
         expected = plan;
+    let expected = calculateExpectedOutput(); // ✅ ADD THIS BACK
 }
     let delay = actualCount - expected;
     let delayEl = document.getElementById("delay");
@@ -981,9 +979,8 @@ function updateDisplay() {
         downtimeText.classList.remove("status-red", "blink");
     }
 }
+  
 /* ===== DAILY SUMMARY ===== */
-
-/* ===== DAILY SUMMARY (VERSI DIKEMASKINI: SAMA PERSIH DENGAN DASHBOARD) ===== */
 
 function openSummary() {
     let plan = parseInt(document.getElementById("plan").innerText) || 0;
@@ -1640,7 +1637,8 @@ else{
     .catch(err => console.log("Monitor load error:", err));
 }
 
-function restoreStateFromSheet(){
+
+    function restoreStateFromSheet(){
 
   fetch(API_URL)
     .then(res => res.json())
@@ -1648,10 +1646,7 @@ function restoreStateFromSheet(){
 
       if(!data || !data.state || data.state.length < 2) return;
 
-      const state = data.state[1]; // latest saved row
-      console.log("STATE:", state);
-      console.log("RESTORED START TIME:", state[10]);
-
+      const state = data.state[1];
 
       if(!state) return;
 
@@ -1660,41 +1655,41 @@ function restoreStateFromSheet(){
       const totalDowntime = parseInt(state[4]) || 0;
       const countdown = parseInt(state[5]) || 0;
 
-      // ✅ RESTORE VALUES
       document.getElementById("dailyPlanTarget").value = plan;
       actualCount = actual;
       downtimeSeconds = totalDowntime;
       countdownValue = countdown;
 
-      // ✅ IMPORTANT: restore startTime
       startTime = state[10] ? new Date(parseInt(state[10])) : null;
 
-    // ✅ DO NOT recalculate — use saved value
-      countdownValue = countdown;
+      if(startTime && !timer){
+        timer = setInterval(() => {
 
-      // ✅ resume timer if needed
-      // ✅ Resume timer ONLY (no reset)
-if(startTime && !timer){
-  timer = setInterval(() => {
+          if(isBreakTime()){
+            setStatus("BREAK TIME", "status-orange");
+            updateDisplay();
+            return;
+          }
 
-    if(isBreakTime()){
-      setStatus("BREAK TIME", "status-orange");
+          if(countdownValue > 0){
+            countdownValue--;
+          } else {
+            isDowntime = true;
+          }
+
+          updateDisplay();
+
+        }, 1000);
+      }
+
+      // ✅ ONLY THIS (NO DUPLICATE)
       updateDisplay();
-      return;
-    }
 
-    if(countdownValue > 0){
-      countdownValue--;
-    } else {
-      isDowntime = true;
-    }
+      window.hasRestored = true;
 
-    updateDisplay();
-
-  }, 1000);
+    })
+    .catch(err => console.log("Restore error:", err)); // ✅ CORRECT PLACE
 }
-      updateDisplay();
-    
 
 // 🔥 FORCE recalculation after restore
 expected = calculateExpectedOutput(); // ❗ REMOVE "let"
@@ -1710,17 +1705,6 @@ document.getElementById("efficiency").innerText = efficiency + "%";
       // ✅ MARK RESTORE COMPLETE
       window.hasRestored = true;
 
-      // 🔥 FORCE recalculation after restore
-    let expected = calculateExpectedOutput();
-    document.getElementById("expected").innerText = expected;
-    
-    let efficiency = expected > 0 
-    ? Math.round((actualCount / expected) * 100) 
-    : 0;
-
-    document.getElementById("efficiency").innerText = efficiency + "%";
-      
-    })
     
     .catch(err => console.log("Restore error:", err));
 }

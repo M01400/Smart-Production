@@ -458,7 +458,8 @@ function updateDateTime(){
 
 // 🔐 PASSWORD
 const SYSTEM_PASSWORD = "1234";
-
+const DEV_PASSWORD = "admin123";
+  
 // Device ID
 const DEVICE_ID_KEY = "DEVICE_ID";
 
@@ -480,18 +481,31 @@ function getDeviceId(){
 /* ===== CHECK ACCESS ===== */
 async function checkAccess(){
 
-  // allow monitor
+  // DEV MODE
+  if(window.location.search.includes("dev=1")){
+    let devPass = prompt("Developer Password:");
+    
+    if(devPass !== DEV_PASSWORD){
+      document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>DEV ACCESS DENIED</h1>";
+      return false;
+    }
+
+    return true;
+  }
+
+  // MONITOR
   if(window.location.search.includes("monitor")){
     return true;
   }
 
-  // password
+  // NORMAL USER
   let input = prompt("Enter System Password:");
   if(input !== SYSTEM_PASSWORD){
     document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
     return false;
   }
 
+  // LOCK SYSTEM (unchanged)
   const deviceId = getDeviceId();
 
   try{
@@ -500,7 +514,7 @@ async function checkAccess(){
       body: JSON.stringify({
         lockRequest:true,
         deviceId: deviceId,
-        tabId: TAB_ID   // 🔥 IMPORTANT
+        tabId: TAB_ID
       })
     });
 
@@ -1707,6 +1721,11 @@ window.onload = async function(){
 
   // 🔐 SECURITY CHECK FIRST
   if(!(await checkAccess())) return;
+
+  // 🟡 DEV MODE VISUAL
+  if(window.location.search.includes("dev=1")){
+  document.body.style.border = "5px solid yellow";
+}
 
   updateDateTime();
   setInterval(updateDateTime,1000);

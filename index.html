@@ -1726,18 +1726,18 @@ window.onload = async function(){
   if(window.location.search.includes("dev=1")){
 
   // Blue border
- document.body.style.border = "2px solid";
-  document.body.style.borderImage = "linear-gradient(90deg, blue, cyan) 1";
+  document.body.style.border = "6px solid";
+  document.body.style.borderImage = "linear-gradient(45deg, #00f, #0ff, #00f) 1";
 
   // Banner
   const banner = document.createElement("div");
-  banner.innerText = "🛠️ DEV MODE ACTIVE";
+  banner.innerText = "🛠️ DEV MODE";
   
   banner.style.position = "fixed";
   banner.style.top = "0";
   banner.style.left = "0";
   banner.style.width = "100%";
-  banner.style.background = "yellow";
+  banner.style.background = "grey";
   banner.style.color = "black";
   banner.style.textAlign = "center";
   banner.style.padding = "8px";

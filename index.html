@@ -1411,19 +1411,26 @@ const isMonitor = window.location.search.includes("monitor");
 
 function enforceLock(){
 
-      if(isMonitor) return;
-    
-      if(currentLock && currentLock !== pcId){
+  if(isMonitor) return;
 
-    // 🔴 Disable all controls
+  // ❗ ONLY block if lock exists AND NOT owner
+  if(currentLock && currentLock !== pcId){
+
     document.querySelectorAll("input, button").forEach(el=>{
       el.disabled = true;
     });
 
     setStatus("LOCKED BY OTHER PC","status-red blink");
 
+  } else {
+
+    // ✅ ENSURE OWNER NOT BLOCKED
+    document.querySelectorAll("input, button").forEach(el=>{
+      el.disabled = false;
+    });
+
   }
-}
+
 // Hantar state live setiap saat (MAIN PC sahaja)
 function updateLiveStateOnly(){
 
@@ -1751,6 +1758,7 @@ else{
 
     // MAIN PC live sync only
     setInterval(updateLiveStateOnly,1000);
+    setInterval(loadLiveData,1000);
     setInterval(enforceLock,1000);
 
   }

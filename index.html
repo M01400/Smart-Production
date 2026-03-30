@@ -555,12 +555,18 @@ function calculateExpectedOutput(){
         tempTime.setMinutes(tempTime.getMinutes() + 1);
     }
 
-    let netTime = elapsedSec - breakSeconds;
+   let netTime = elapsedSec - breakSeconds;
 
     if(netTime < 0) netTime = 0;
-
-    return Math.floor(netTime / cycleTimeSec);
-}
+    
+    let expected = Math.floor(netTime / cycleTimeSec);
+    
+    // 🔥 START SHOW AFTER FIRST SCAN
+    if(actualCount > 0 && expected === 0){
+        expected = 1;
+    }
+  
+  return expected;
   
 /* ===== STATUS ===== */
 

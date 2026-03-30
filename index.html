@@ -1580,11 +1580,11 @@ function loadLiveData(){
     
     if(newTableData !== lastTableData){
 
-  lastTableData = newTableData;
-
-  table.innerHTML="";
-
-  scanRows.reverse().forEach(row => {
+    lastTableData = newTableData;
+  
+    table.innerHTML="";
+  
+    scanRows.reverse().forEach(row => {
 
     let newRow = table.insertRow();
 
@@ -1636,6 +1636,14 @@ function loadLiveData(){
       const expected = parseInt(state[6]) || 0;
       const delay = parseInt(state[7]) || 0;
       const efficiency = parseInt(state[8]) || 0;
+      
+      // 🔥 SYNC INTO MAIN VARIABLES (IMPORTANT)
+      actualCount = actual;
+      countdownValue = countdown;
+      downtimeSeconds = totalDowntime;
+      
+      // 🔥 Sync plan input (so updateDisplay uses same value)
+      document.getElementById("dailyPlanTarget").value = plan;
 
       let effEl = document.getElementById("efficiency");
       effEl.innerText = efficiency + "%";
@@ -1651,12 +1659,7 @@ function loadLiveData(){
       }
       
       // Update dashboard
-      document.getElementById("plan").innerText = plan;
-      document.getElementById("actual").innerText = actual;
       countdownValue = countdown;
-      document.getElementById("countdown").innerText = format(countdownValue);
-      document.getElementById("downtime").innerText = format(totalDowntime);
-      document.getElementById("expected").innerText = expected;
       updateDisplay();
 
       // Balance
@@ -1674,64 +1677,17 @@ function loadLiveData(){
         balanceEl.innerText = "0";
       }
 
-      //  ALWAYS APPLY DELAY COLOR (MOVE HERE)
-let delayEl = document.getElementById("delay");
-
-// reset first
-delayEl.className = "big-number";
-
-if(delay < 0){
-    delayEl.classList.add("status-red");
-} 
-else if(delay > 0){
-    delayEl.classList.add("status-green");
-} 
-else{
-    delayEl.classList.add("status-blue");
-}
-
-delayEl.innerText = delay > 0 ? ("+" + delay) : delay;
 
 // Status mirror (FULL SAME AS MAIN PC)
 
 const downtimeCard = document.getElementById("downtimeCard");
 const downtimeText = document.getElementById("downtime");
 
-if(status === "DOWN TIME"){
-    setStatus("DOWN TIME","status-red blink");
+// 🔥 FORCE SAME DISPLAY AS MAIN PC
+window.forceMonitorUpdate = true;
+updateDisplay();
+window.forceMonitorUpdate = false;
 
-    downtimeCard.classList.add("downtime-alert","blink");
-    downtimeText.classList.add("status-red","blink");
-}
-else if(status === "RUNNING"){
-    setStatus("RUNNING","status-green pulse");
-
-    downtimeCard.classList.remove("downtime-alert","blink");
-    downtimeText.classList.remove("status-red","blink");
-}
-else if(status === "TARGET ACHIEVED"){
-    setStatus("TARGET ACHIEVED","status-green");
-
-    downtimeCard.classList.remove("downtime-alert","blink");
-    downtimeText.classList.remove("status-red","blink");
-}
-else if(status === "BEHIND SCHEDULE"){
-    setStatus("BEHIND SCHEDULE","status-red blink");
-}
-else if(status === "BREAK TIME"){
-    setStatus("BREAK TIME","status-orange");
-}
-else if(status === "PAUSED"){
-    setStatus("PAUSED","status-orange");
-}
-else{
-    setStatus(status,"status-blue");
-
-    downtimeCard.classList.remove("downtime-alert","blink");
-    downtimeText.classList.remove("status-red","blink");
-
-}
-    })
     .catch(err => console.log("Monitor load error:", err));
 }
 

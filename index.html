@@ -1725,8 +1725,9 @@ window.onload = async function(){
   // 🟡 DEV MODE UI
   if(window.location.search.includes("dev=1")){
 
-  // Yellow border
-  document.body.style.border = "5px solid yellow";
+  // Blue border
+ document.body.style.border = "2px solid";
+  document.body.style.borderImage = "linear-gradient(90deg, blue, cyan) 1";
 
   // Banner
   const banner = document.createElement("div");

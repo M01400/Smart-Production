@@ -1694,20 +1694,18 @@ if(startTime && !timer){
   }, 1000);
 }
       updateDisplay();
-      // ✅ FORCE FULL RECALCULATION AFTER RESTORE
+    
 
-let expected = calculateExpectedOutput();
+// 🔥 FORCE recalculation after restore
+expected = calculateExpectedOutput(); // ❗ REMOVE "let"
 document.getElementById("expected").innerText = expected;
 
-let delay = actualCount - expected;
-document.getElementById("delay").innerText =
-  delay > 0 ? "+" + delay : delay;
-
-let efficiency = expected > 0
-  ? Math.floor((actualCount / expected) * 100)
+efficiency = expected > 0
+  ? Math.round((actualCount / expected) * 100)
   : 0;
 
 document.getElementById("efficiency").innerText = efficiency + "%";
+      
 
       // ✅ MARK RESTORE COMPLETE
       window.hasRestored = true;

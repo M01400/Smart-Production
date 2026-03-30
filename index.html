@@ -579,8 +579,9 @@ function startProduction(){
     // Set masa permulaan jika baru bermula
     if(countdownValue === 0){
         countdownValue = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
-        startTime = new Date();
-    }
+     if(!startTime){
+  startTime = new Date();
+}
 
     timer = setInterval(() => {
         if(isBreakTime()){
@@ -595,7 +596,11 @@ function startProduction(){
           isDowntime = true;
     
         }
-        
+
+        if(!startTime){
+        startTime = new Date();
+        }
+                
         updateDisplay();
     }, 1000);
 }
@@ -1313,6 +1318,7 @@ const isMonitor = window.location.search.includes("monitor");
 
 // Hantar state live setiap saat (MAIN PC sahaja)
 function updateLiveStateOnly(){
+  console.log("SENDING START TIME:", startTime);
   
   if(!window.hasRestored) return;
   if(isMonitor) return; // monitor tak hantar data
@@ -1611,6 +1617,9 @@ function restoreStateFromSheet(){
       if(!data || !data.state || data.state.length < 2) return;
 
       const state = data.state[1]; // latest saved row
+      console.log("STATE:", state);
+      console.log("RESTORED START TIME:", state[10]);
+
 
       if(!state) return;
 
@@ -1628,22 +1637,45 @@ function restoreStateFromSheet(){
       // ✅ IMPORTANT: restore startTime
       startTime = state[10] ? new Date(parseInt(state[10])) : null;
 
-      if(startTime){
-
-      let now = new Date();
-      let elapsed = Math.floor((now - startTime) / 1000);
-    
-      let cycleTimeSec = parseFloat(document.getElementById("cycleTime").value || 0) * 60;
-    
-      countdownValue = Math.max(cycleTimeSec - (elapsed % cycleTimeSec), 0);
-      }
+    // ✅ DO NOT recalculate — use saved value
+      countdownValue = countdown;
 
       // ✅ resume timer if needed
-      if(startTime){
-      startProduction();
-  }
+      // ✅ Resume timer ONLY (no reset)
+if(startTime && !timer){
+  timer = setInterval(() => {
 
+    if(isBreakTime()){
+      setStatus("BREAK TIME", "status-orange");
       updateDisplay();
+      return;
+    }
+
+    if(countdownValue > 0){
+      countdownValue--;
+    } else {
+      isDowntime = true;
+    }
+
+    updateDisplay();
+
+  }, 1000);
+}
+      updateDisplay();
+      // ✅ FORCE FULL RECALCULATION AFTER RESTORE
+
+let expected = calculateExpectedOutput();
+document.getElementById("expected").innerText = expected;
+
+let delay = actualCount - expected;
+document.getElementById("delay").innerText =
+  delay > 0 ? "+" + delay : delay;
+
+let efficiency = expected > 0
+  ? Math.floor((actualCount / expected) * 100)
+  : 0;
+
+document.getElementById("efficiency").innerText = efficiency + "%";
 
       // ✅ MARK RESTORE COMPLETE
       window.hasRestored = true;

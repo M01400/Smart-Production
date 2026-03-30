@@ -516,6 +516,12 @@ function getDeviceId(){
     btn.style.marginTop = "10px";
     btn.style.padding = "6px 12px";
 
+    input.addEventListener("keypress", function(e){
+    if(e.key === "Enter"){
+    btn.click();
+    }
+  });
+
     btn.onclick = () => {
       document.body.removeChild(overlay);
       resolve(input.value);
@@ -527,6 +533,8 @@ function getDeviceId(){
     box.appendChild(btn);
     overlay.appendChild(box);
     document.body.appendChild(overlay);
+    
+    setTimeout(() => input.focus(), 100);
 
     input.focus();
   });
@@ -538,6 +546,10 @@ async function checkAccess(){
   // DEV MODE
   if(window.location.search.includes("dev=1")){
     let devPass = await askPassword("Developer Password");
+    if(devPass !== DEV_PASSWORD){
+    alert("❌ Wrong developer password");
+    return checkAccess();
+  }
     
     if(devPass !== DEV_PASSWORD){
       document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>DEV ACCESS DENIED</h1>";

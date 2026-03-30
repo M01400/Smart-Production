@@ -478,6 +478,60 @@ function getDeviceId(){
   return id;
 }
 
+function askPassword(title){
+
+  return new Promise((resolve) => {
+
+    const overlay = document.createElement("div");
+    overlay.style.position = "fixed";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "rgba(0,0,0,0.6)";
+    overlay.style.display = "flex";
+    overlay.style.alignItems = "center";
+    overlay.style.justifyContent = "center";
+    overlay.style.zIndex = "9999";
+
+    const box = document.createElement("div");
+    box.style.background = "#111";
+    box.style.padding = "20px";
+    box.style.borderRadius = "10px";
+    box.style.textAlign = "center";
+    box.style.color = "white";
+
+    const label = document.createElement("div");
+    label.innerText = title;
+    label.style.marginBottom = "10px";
+
+    const input = document.createElement("input");
+    input.type = "password"; // 🔥 HIDDEN INPUT
+    input.placeholder = "Enter password";
+    input.style.padding = "8px";
+    input.style.width = "200px";
+
+    const btn = document.createElement("button");
+    btn.innerText = "Submit";
+    btn.style.marginTop = "10px";
+    btn.style.padding = "6px 12px";
+
+    btn.onclick = () => {
+      document.body.removeChild(overlay);
+      resolve(input.value);
+    };
+
+    box.appendChild(label);
+    box.appendChild(input);
+    box.appendChild(document.createElement("br"));
+    box.appendChild(btn);
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+    input.focus();
+  });
+}
+
 /* ===== CHECK ACCESS ===== */
 async function checkAccess(){
 
@@ -499,7 +553,7 @@ async function checkAccess(){
   }
 
   // NORMAL USER
-  let input = prompt("Enter System Password:");
+  let input = await askPassword("System Password");
   if(input !== SYSTEM_PASSWORD){
     document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
     return false;

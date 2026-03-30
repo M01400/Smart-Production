@@ -628,7 +628,6 @@ document.getElementById("scanTable").innerHTML="";
   
 setStatus("READY","status-blue");
 updateDisplay();
-window.hasRestored = true;
 updateLiveStateOnly();
 
 }
@@ -1314,7 +1313,6 @@ const isMonitor = window.location.search.includes("monitor");
 // Hantar state live setiap saat (MAIN PC sahaja)
 function updateLiveStateOnly(){
 
-  if(!window.hasRestored) return;
   if(isMonitor) return; // monitor tak hantar data
 
   const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
@@ -1599,48 +1597,7 @@ else{
     .catch(err => console.log("Monitor load error:", err));
 }
 
-function restoreStateFromSheet(){
-
-  fetch(API_URL)
-    .then(res => res.json())
-    .then(data => {
-
-      if(!data || !data.state || data.state.length < 2) return;
-
-      const state = data.state[1]; // latest saved row
-
-      if(!state) return;
-
-      const plan = parseInt(state[0]) || 0;
-      const actual = parseInt(state[1]) || 0;
-      const totalDowntime = parseInt(state[4]) || 0;
-      const countdown = parseInt(state[5]) || 0;
-
-      // ✅ RESTORE VALUES
-      document.getElementById("dailyPlanTarget").value = plan;
-      actualCount = actual;
-      downtimeSeconds = totalDowntime;
-      countdownValue = countdown;
-
-      // ✅ IMPORTANT: restore startTime
-      startTime = new Date();
-
-      // ✅ resume timer if needed
-      if(countdownValue > 0){
-        startProduction();
-      }
-
-      updateDisplay();
-      if(!window.hasRestored) return;
-      
-    })
-    
-    .catch(err => console.log("Restore error:", err));
-}
-  
 /* ===== INITIALIZE SYSTEM ===== */
-
-window.onload = function(){
   
  if(!isMonitor){
     restoreStateFromSheet();

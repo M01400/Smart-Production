@@ -455,6 +455,21 @@ function updateDateTime(){
 }
 
 /* ===== VARIABLES ===== */
+  
+  // 🔐 PASSWORD SYSTEM
+const SYSTEM_PASSWORD = "M01400";
+
+// 🔐 UNIQUE PC ID (identify each PC)
+let pcId = localStorage.getItem("pcId");
+
+if(!pcId){
+  pcId = "PC-" + Math.random().toString(36).substr(2,9);
+  localStorage.setItem("pcId", pcId);
+}
+
+// 🔐 LOCK STATE
+let currentLock = null;
+let lastLockTime = 0;  
 
 let ramadanMode=false;
 let timer=null;
@@ -584,6 +599,33 @@ function calculateExpectedOutput(){
   return expected;
 
 }
+
+function requirePassword(){
+
+  // Skip for monitor mode (optional)
+  if(isMonitor) return true;
+
+  const saved = sessionStorage.getItem("accessGranted");
+
+  // If already entered before → allow
+  if(saved === "true") return true;
+
+  const input = prompt("Enter Password to Access System:");
+
+  if(input === SYSTEM_PASSWORD){
+    sessionStorage.setItem("accessGranted", "true");
+    return true;
+  }
+
+  // ❌ WRONG PASSWORD → BLOCK PAGE
+  document.body.innerHTML = `
+    <h1 style="color:red;text-align:center;margin-top:100px;">
+      ❌ ACCESS DENIED
+    </h1>
+  `;
+
+  return false;
+}
   
 /* ===== STATUS ===== */
 
@@ -596,8 +638,25 @@ el.className="big-number "+color;
 /* ===== START ===== */
 
 function startProduction(){
+
+    // 🔒 BLOCK IF OTHER PC OWNS LOCK
+    if(currentLock && currentLock !== pcId){
+      alert("⚠️ SYSTEM LOCKED by another PC");
+      return;
+    }
+  
     if(isMonitor) return;
     if(timer) return;
+
+      // 🔒 TAKE LOCK
+    fetch(API_URL,{
+      method:"POST",
+      body: JSON.stringify({
+        lock: true,
+        pcId: pcId,
+        timestamp: Date.now()
+      })
+    });
 
     // Set start time if first run
     if(!startTime){
@@ -1350,6 +1409,21 @@ const API_URL = "https://script.google.com/macros/s/AKfycbyYD3UX0cv4DxEHEdpf31OJ
 // Detect monitor mode (?monitor)
 const isMonitor = window.location.search.includes("monitor");
 
+function enforceLock(){
+
+      if(isMonitor) return;
+    
+      if(currentLock && currentLock !== pcId){
+
+    // 🔴 Disable all controls
+    document.querySelectorAll("input, button").forEach(el=>{
+      el.disabled = true;
+    });
+
+    setStatus("LOCKED BY OTHER PC","status-red blink");
+
+  }
+
 // Hantar state live setiap saat (MAIN PC sahaja)
 function updateLiveStateOnly(){
 
@@ -1371,6 +1445,9 @@ function updateLiveStateOnly(){
     method:"POST",
     body: JSON.stringify({
       liveOnly: true,
+      pcId: pcId,
+      lock: true,
+      timestamp: Date.now(),
       plan: plan,
       actual: actual,
       balance: balance,
@@ -1449,6 +1526,16 @@ function loadLiveData(){
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
+        // 🔐 GET LOCK INFO
+    if(data.lock){
+      currentLock = data.lock.pcId;
+      lastLockTime = data.lock.timestamp;
+    }
+    // 🔓 AUTO RELEASE LOCK (10 sec no update)
+    if(lastLockTime && (Date.now() - lastLockTime > 10000)){
+      currentLock = null;
+    }
+      
     const now = Date.now();
     if(now - lastUpdateTime < 1000) return;
     lastUpdateTime = now;
@@ -1477,6 +1564,8 @@ function loadLiveData(){
       
     const scanRows = data.scan.slice(1);
     const table = document.getElementById("scanTable");
+
+} 
     
     // Convert to string for comparison
     const newTableData = JSON.stringify(scanRows);
@@ -1641,6 +1730,9 @@ else{
   
  window.onload = function(){
 
+   // 🔐 REQUIRE PASSWORD FIRST
+  if(!requirePassword()) return;
+
   updateDateTime();
   setInterval(updateDateTime,1000);
 
@@ -1661,6 +1753,7 @@ else{
 
     // MAIN PC live sync only
     setInterval(updateLiveStateOnly,1000);
+    setInterval(enforceLock,1000);
 
   }
 

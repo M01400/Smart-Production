@@ -543,7 +543,7 @@ function askPassword(title){
 /* ===== CHECK ACCESS ===== */
 async function checkAccess(){
 
-  // DEV MODE
+  // 🔥 DEV MODE (NO LOCK AT ALL)
   if(window.location.search.includes("dev=1")){
     let devPass = prompt("Developer Password:");
     
@@ -552,27 +552,23 @@ async function checkAccess(){
       return false;
     }
 
-    return true;
+    return true; // 🚀 EXIT HERE → NO LOCK SYSTEM
   }
 
-  // MONITOR
+  // 🔥 MONITOR MODE (NO LOCK)
   if(window.location.search.includes("monitor")){
     return true;
   }
 
-  // NORMAL USER
+  // 🔐 NORMAL USER (MAIN PC ONLY)
   let input = await askPassword("System Password");
+
   if(input !== SYSTEM_PASSWORD){
-  alert("❌ Wrong password");
-  return checkAccess(); // retry
-}
-  
-  if(input !== SYSTEM_PASSWORD){
-    document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
-    return false;
+    alert("❌ Wrong password");
+    return checkAccess();
   }
 
-  // LOCK SYSTEM (unchanged)
+  // 🔒 ONLY MAIN PC USE LOCK SYSTEM
   const deviceId = getDeviceId();
 
   try{

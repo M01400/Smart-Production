@@ -574,29 +574,44 @@ el.className="big-number "+color;
 
 function startProduction(){
     if(isMonitor) return;
-    if(timer) return; // Jika timer sudah jalan, jangan buat apa-apa
-    
-    // Set masa permulaan jika baru bermula
-    if(countdownValue === 0){
-        countdownValue = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+    if(timer) return;
+
+    // Set start time if first run
+    if(!startTime){
         startTime = new Date();
     }
 
+    // If no scan yet, set initial countdown
+    if(countdownValue === 0){
+        countdownValue = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+    }
+
     timer = setInterval(() => {
+
         if(isBreakTime()){
             setStatus("BREAK TIME", "status-orange");
             updateDisplay();
             return;
         }
-        
-        if(countdownValue > 0){
-            countdownValue--;
-        } else {
-          isDowntime = true;
-    
+
+        const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+
+        // 🔥 USE REAL TIME (IMPORTANT)
+        if(lastScanTime){
+            const now = new Date();
+            const diff = Math.floor((now - lastScanTime) / 1000);
+
+            countdownValue = Math.max(cycleTimeSec - diff, 0);
+
+            if(countdownValue === 0){
+                isDowntime = true;
+            } else {
+                isDowntime = false;
+            }
         }
-        
+
         updateDisplay();
+
     }, 1000);
 }
 

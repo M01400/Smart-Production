@@ -1641,6 +1641,8 @@ function loadLiveData(){
       actualCount = actual;
       countdownValue = countdown;
       downtimeSeconds = totalDowntime;
+      startTime = new Date(); 
+      lastScanTime = new Date();
       
       // 🔥 Sync plan input (so updateDisplay uses same value)
       document.getElementById("dailyPlanTarget").value = plan;

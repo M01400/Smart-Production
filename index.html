@@ -456,24 +456,26 @@ function updateDateTime(){
 
 /* ================= SECURITY SYSTEM ================= */
 
+// 🔐 PASSWORD
+const SYSTEM_PASSWORD = "1234";
+
+// Device ID
 const DEVICE_ID_KEY = "DEVICE_ID";
 
+// Tab ID (IMPORTANT)
+const TAB_ID = "TAB-" + Math.random().toString(36).substr(2,9);
+
+// Generate device ID
 function getDeviceId(){
-let id = localStorage.getItem(DEVICE_ID_KEY);
+  let id = localStorage.getItem(DEVICE_ID_KEY);
 
-if(!id){
-  id = "DEV-" + Math.random().toString(36).substr(2,9);
-  localStorage.setItem(DEVICE_ID_KEY, id);
+  if(!id){
+    id = "DEV-" + Math.random().toString(36).substr(2,9);
+    localStorage.setItem(DEVICE_ID_KEY, id);
+  }
+
+  return id;
 }
-
-return id;
-}
-
-// 🔐 SET YOUR PASSWORD HERE
-const SYSTEM_PASSWORD = "1234"; 
-
-// Unique device ID key
-const DEVICE_KEY = "MAIN_PC_LOCK";
 
 /* ===== CHECK ACCESS ===== */
 async function checkAccess(){
@@ -483,6 +485,7 @@ async function checkAccess(){
     return true;
   }
 
+  // password
   let input = prompt("Enter System Password:");
   if(input !== SYSTEM_PASSWORD){
     document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
@@ -496,53 +499,15 @@ async function checkAccess(){
       method:"POST",
       body: JSON.stringify({
         lockRequest:true,
-        deviceId: deviceId
+        deviceId: deviceId,
+        tabId: TAB_ID   // 🔥 IMPORTANT
       })
     });
 
     let data = await res.json();
 
     if(!data.allowed){
-      document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED (MAIN PC IN USE)</h1>";
-      return false;
-    }
-
-    return true;
-
-  }catch(err){
-    alert("Connection error");
-    return false;
-  }
-}
- async function checkAccess(){
-
-  // allow monitor
-  if(window.location.search.includes("monitor")){
-    return true;
-  }
-
-  // 🔐 ask password FIRST
-  let input = prompt("Enter System Password:");
-  if(input !== SYSTEM_PASSWORD){
-    document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
-    return false;
-  }
-
-  const deviceId = getDeviceId();
-
-  try{
-    let res = await fetch(API_URL,{
-      method:"POST",
-      body: JSON.stringify({
-        lockRequest:true,
-        deviceId: deviceId
-      })
-    });
-
-    let data = await res.json();
-
-    if(!data.allowed){
-      document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED (MAIN PC IN USE)</h1>";
+      document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED (MAIN PC ACTIVE)</h1>";
       return false;
     }
 

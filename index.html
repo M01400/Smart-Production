@@ -630,6 +630,8 @@ scannedKey.clear();
 isDowntime=false;
 duplicateLock=false;
 document.getElementById("scanTable").innerHTML="";
+
+localStorage.removeItem("tf2_state");
   
 setStatus("READY","status-blue");
 updateDisplay();
@@ -638,6 +640,34 @@ updateLiveStateOnly();
 
 }
 
+function saveLocalState(){
+  const data = {
+  actualCount,
+  countdownValue,
+  downtimeSeconds,
+  startTime: startTime ? startTime.getTime() : null,
+  lastScanTime: lastScanTime ? lastScanTime.getTime() : null
+};
+
+  localStorage.setItem("tf2_state", JSON.stringify(data));
+}
+
+function loadLocalState(){
+  const saved = localStorage.getItem("tf2_state");
+  if(!saved) return;
+
+  const data = JSON.parse(saved);
+
+  actualCount = data.actualCount || 0;
+  countdownValue = data.countdownValue || 0;
+  downtimeSeconds = data.downtimeSeconds || 0;
+
+  startTime = data.startTime ? new Date(data.startTime) : null;
+  lastScanTime = data.lastScanTime ? new Date(data.lastScanTime) : null;
+}
+
+  saveLocalState();
+  
 /* ===== SCAN CHASSIS ===== */
 
 document.getElementById("chassisInput").addEventListener("keydown", function(e) {
@@ -810,6 +840,8 @@ statusCell.classList.add("status-green");
 actualCount++;
 countdownValue=cycleTimeSec;
 isDowntime=false;
+  
+saveLocalState();
 
 updateDisplay();
 
@@ -1700,8 +1732,14 @@ document.getElementById("efficiency").innerText = efficiency + "%";
 window.onload = function(){
   
  if(!isMonitor){
+
+    // ✅ LOAD LOCAL FIRST (FAST)
+    loadLocalState();
+
+    // ✅ THEN restore from sheet (backup)
     restoreStateFromSheet();
-    setTimeout(updateDisplay, 1000); // fallback
+
+    setTimeout(updateDisplay, 1000);
 }
   
   updateDateTime();
@@ -1722,9 +1760,10 @@ window.onload = function(){
 
   } else {
 
-    // MAIN PC push live state setiap 1 saat
-    setInterval(updateLiveStateOnly,1000);
-
+  setInterval(() => {
+  updateLiveStateOnly();
+  saveLocalState(); // 🔥 ADD THIS
+}, 1000);
   }
 
 };

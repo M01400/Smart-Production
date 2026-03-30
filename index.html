@@ -1600,9 +1600,10 @@ function loadLiveData(){
 
     // ✅ CHECK FIRST (IMPORTANT)
     if(!data || !data.state || data.state.length === 0) return;
+    console.log("STATE DATA:", data.state);
 
 // ✅ THEN ONLY PROCESS
-    let newState = data.state[1]; // always latest row
+    let newState = data.state[data.state.length - 1];
       
     // ✅ ONLY update if valid
     if(newState && newState.length >= 9){

@@ -778,6 +778,7 @@ function startProduction(){
         }
 
         updateDisplay();
+        updateLiveStateOnly(); // 🔥 ADD HERE
 
     }, 1000);
 }
@@ -988,7 +989,8 @@ countdownValue=cycleTimeSec;
 isDowntime=false;
 
 updateDisplay();
-
+updateLiveStateOnly(); // 🔥 ADD HERE
+  
 sendToSheet(
   chassis,
   model,
@@ -1117,6 +1119,7 @@ function updateDisplay() {
 
     const downtimeCard = document.getElementById("downtimeCard");
     const downtimeText = document.getElementById("downtime");
+  
     if (isDowntime) {
         downtimeCard.classList.add("downtime-alert", "blink");
         downtimeText.classList.add("status-red", "blink");
@@ -1124,10 +1127,10 @@ function updateDisplay() {
         downtimeCard.classList.remove("downtime-alert", "blink");
         downtimeText.classList.remove("status-red", "blink");
     }
+    updateLiveStateOnly(); 
 }
+  
 /* ===== DAILY SUMMARY ===== */
-
-/* ===== DAILY SUMMARY (VERSI DIKEMASKINI: SAMA PERSIH DENGAN DASHBOARD) ===== */
 
 function openSummary() {
     let plan = parseInt(document.getElementById("plan").innerText) || 0;

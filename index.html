@@ -516,6 +516,12 @@ function askPassword(title){
     btn.style.marginTop = "10px";
     btn.style.padding = "6px 12px";
 
+    input.addEventListener("keypress", function(e){
+    if(e.key === "Enter"){
+      btn.click();
+    }
+  });
+
     btn.onclick = () => {
       document.body.removeChild(overlay);
       resolve(input.value);
@@ -527,6 +533,8 @@ function askPassword(title){
     box.appendChild(btn);
     overlay.appendChild(box);
     document.body.appendChild(overlay);
+
+    setTimeout(() => input.focus(), 100);
 
     input.focus();
   });
@@ -554,6 +562,11 @@ async function checkAccess(){
 
   // NORMAL USER
   let input = await askPassword("System Password");
+  if(input !== SYSTEM_PASSWORD){
+  alert("❌ Wrong password");
+  return checkAccess(); // retry
+}
+  
   if(input !== SYSTEM_PASSWORD){
     document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
     return false;

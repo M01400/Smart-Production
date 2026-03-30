@@ -933,7 +933,7 @@ document.getElementById("chassisInput").focus();
 /* ===== UPDATE DISPLAY ===== */
 
 function updateDisplay() {
-    if(isMonitor) return;
+    if(isMonitor && !window.forceMonitorUpdate) return;
     let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
     let balance = actualCount - plan;
     let displayBalance = balance > 0 ? ("+" + balance) : balance;
@@ -1441,7 +1441,9 @@ function updateLiveStateOnly(){
   const actual = actualCount;
   const balance = actual - plan;
   const status = document.getElementById("status").innerText.trim();
-  const expected = calculateExpectedOutput();
+  const expected = Math.floor(
+  (actualCount > 0) ? calculateExpectedOutput() : 0
+  );
   const delay = actual - expected;
 
   let efficiency = 0;
@@ -1550,7 +1552,7 @@ function loadLiveData(){
 
     // ✅ CHECK FIRST (IMPORTANT)
     if(!data || !data.state || data.state.length === 0) return;
-    if(!data.scan || data.scan.length === 0) return;
+    if(!data.scan) data.scan = [];
 
 // ✅ THEN ONLY PROCESS
     let newState = data.state[data.state.length - 1];
@@ -1655,6 +1657,7 @@ function loadLiveData(){
       document.getElementById("countdown").innerText = format(countdownValue);
       document.getElementById("downtime").innerText = format(totalDowntime);
       document.getElementById("expected").innerText = expected;
+      updateDisplay();
 
       // Balance
       const balanceEl = document.getElementById("balance");

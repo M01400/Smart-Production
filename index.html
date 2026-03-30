@@ -1455,7 +1455,6 @@ function loadLiveData(){
 
     // ✅ CHECK FIRST (IMPORTANT)
     if(!data || !data.state || data.state.length === 0) return;
-    if(!data.scan || data.scan.length === 0) return;
 
 // ✅ THEN ONLY PROCESS
     let newState = data.state[1]; // always latest row

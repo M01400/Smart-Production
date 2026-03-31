@@ -456,138 +456,93 @@ function updateDateTime(){
 
 /* ================= SECURITY SYSTEM ================= */
 
-// 🔐 PASSWORD
-const SYSTEM_PASSWORD = "1234";
-const DEV_PASSWORD = "admin123";
-  
-// Device ID
 const DEVICE_ID_KEY = "DEVICE_ID";
 
-// Tab ID (IMPORTANT)
-const TAB_ID = "TAB-" + Math.random().toString(36).substr(2,9);
-
-// Generate device ID
 function getDeviceId(){
-  let id = localStorage.getItem(DEVICE_ID_KEY);
+let id = localStorage.getItem(DEVICE_ID_KEY);
 
-  if(!id){
-    id = "DEV-" + Math.random().toString(36).substr(2,9);
-    localStorage.setItem(DEVICE_ID_KEY, id);
-  }
-
-  return id;
+if(!id){
+  id = "DEV-" + Math.random().toString(36).substr(2,9);
+  localStorage.setItem(DEVICE_ID_KEY, id);
 }
 
-function askPassword(title){
-
-  return new Promise((resolve) => {
-
-    const overlay = document.createElement("div");
-    overlay.style.position = "fixed";
-    overlay.style.top = "0";
-    overlay.style.left = "0";
-    overlay.style.width = "100%";
-    overlay.style.height = "100%";
-    overlay.style.background = "rgba(0,0,0,0.6)";
-    overlay.style.display = "flex";
-    overlay.style.alignItems = "center";
-    overlay.style.justifyContent = "center";
-    overlay.style.zIndex = "9999";
-
-    const box = document.createElement("div");
-    box.style.background = "#111";
-    box.style.padding = "20px";
-    box.style.borderRadius = "10px";
-    box.style.textAlign = "center";
-    box.style.color = "white";
-
-    const label = document.createElement("div");
-    label.innerText = title;
-    label.style.marginBottom = "10px";
-
-    const input = document.createElement("input");
-    input.type = "password"; // 🔥 HIDDEN INPUT
-    input.placeholder = "Enter password";
-    input.style.padding = "8px";
-    input.style.width = "200px";
-
-    const btn = document.createElement("button");
-    btn.innerText = "Submit";
-    btn.style.marginTop = "10px";
-    btn.style.padding = "6px 12px";
-
-    input.addEventListener("keypress", function(e){
-    if(e.key === "Enter"){
-      btn.click();
-    }
-  });
-
-    btn.onclick = () => {
-      document.body.removeChild(overlay);
-      resolve(input.value);
-    };
-
-    box.appendChild(label);
-    box.appendChild(input);
-    box.appendChild(document.createElement("br"));
-    box.appendChild(btn);
-    overlay.appendChild(box);
-    document.body.appendChild(overlay);
-
-    setTimeout(() => input.focus(), 100);
-
-    input.focus();
-  });
+return id;
 }
+
+// 🔐 SET YOUR PASSWORD HERE
+const SYSTEM_PASSWORD = "1234"; 
+
+// Unique device ID key
+const DEVICE_KEY = "MAIN_PC_LOCK";
 
 /* ===== CHECK ACCESS ===== */
 async function checkAccess(){
 
-  // 🔥 DEV MODE (NO LOCK AT ALL)
-  if(window.location.search.includes("dev=1")){
-    let devPass = prompt("Developer Password:");
-    
-    if(devPass !== DEV_PASSWORD){
-      document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>DEV ACCESS DENIED</h1>";
-      return false;
-    }
-
-    return true; // 🚀 EXIT HERE → NO LOCK SYSTEM
-  }
-
-  // 🔥 MONITOR MODE (NO LOCK)
+  // allow monitor
   if(window.location.search.includes("monitor")){
     return true;
   }
 
-  // 🔐 NORMAL USER (MAIN PC ONLY)
-  let input = await askPassword("System Password");
-
+  let input = prompt("Enter System Password:");
   if(input !== SYSTEM_PASSWORD){
-    alert("❌ Wrong password");
-    return checkAccess();
+    document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
+    return false;
   }
 
-  // 🔒 ONLY MAIN PC USE LOCK SYSTEM
   const deviceId = getDeviceId();
 
   try{
-   let res = await fetch(API_URL,{
-    method:"POST",
-    headers: {
-    "Content-Type": "application/x-www-form-urlencoded"
-  },
-    body: "data=" + encodeURIComponent(JSON.stringify({
-    lockRequest:true,
-    deviceId: deviceId,
-    tabId: TAB_ID
-  }))
-});
+    let res = await fetch(API_URL,{
+      method:"POST",
+      body: JSON.stringify({
+        lockRequest:true,
+        deviceId: deviceId
+      })
+    });
 
     let data = await res.json();
 
     if(!data.allowed){
-      document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED (MAIN PC ACTIVE)</h1>";
+      document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED (MAIN PC IN USE)</h1>";
+      return false;
+    }
+
+    return true;
+
+  }catch(err){
+    alert("Connection error");
+    return false;
+  }
+}
+ async function checkAccess(){
+
+  // allow monitor
+  if(window.location.search.includes("monitor")){
+    return true;
+  }
+
+  // 🔐 ask password FIRST
+  let input = prompt("Enter System Password:");
+  if(input !== SYSTEM_PASSWORD){
+    document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
+    return false;
+  }
+
+  const deviceId = getDeviceId();
+
+  try{
+    let res = await fetch(API_URL,{
+      method:"POST",
+      body: JSON.stringify({
+        lockRequest:true,
+        deviceId: deviceId
+      })
+    });
+
+    let data = await res.json();
+
+    if(!data.allowed){
+      document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED (MAIN PC IN USE)</h1>";
       return false;
     }
 
@@ -781,7 +736,6 @@ function startProduction(){
         }
 
         updateDisplay();
-        updateLiveStateOnly(); // 🔥 ADD HERE
 
     }, 1000);
 }
@@ -992,8 +946,7 @@ countdownValue=cycleTimeSec;
 isDowntime=false;
 
 updateDisplay();
-updateLiveStateOnly(); // 🔥 ADD HERE
-  
+
 sendToSheet(
   chassis,
   model,
@@ -1122,7 +1075,6 @@ function updateDisplay() {
 
     const downtimeCard = document.getElementById("downtimeCard");
     const downtimeText = document.getElementById("downtime");
-  
     if (isDowntime) {
         downtimeCard.classList.add("downtime-alert", "blink");
         downtimeText.classList.add("status-red", "blink");
@@ -1130,10 +1082,10 @@ function updateDisplay() {
         downtimeCard.classList.remove("downtime-alert", "blink");
         downtimeText.classList.remove("status-red", "blink");
     }
-    updateLiveStateOnly(); 
 }
-  
 /* ===== DAILY SUMMARY ===== */
+
+/* ===== DAILY SUMMARY (VERSI DIKEMASKINI: SAMA PERSIH DENGAN DASHBOARD) ===== */
 
 function openSummary() {
     let plan = parseInt(document.getElementById("plan").innerText) || 0;
@@ -1493,7 +1445,7 @@ function toggleRamadan(){
 /* ================= GOOGLE SHEET MIRROR LAYER ================= */
 
 // 🔴 GANTI DENGAN LINK /exec WEB APP ANDA
-const API_URL = "https://script.google.com/macros/s/AKfycbwchJEPe3l4Opid_ni9YgmZaZsnXyOkEmNUeCc0XyQtlSEibcvzn0AXPeQbF-uMKZqn-w/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyYD3UX0cv4DxEHEdpf31OJI3hUA-UuhqfqB6ZkDysfsWnsSh3MxB3FraU0TRij89Ew6A/exec";
 
 // Detect monitor mode (?monitor)
 const isMonitor = window.location.search.includes("monitor");
@@ -1516,11 +1468,8 @@ function updateLiveStateOnly(){
   }
   
   fetch(API_URL,{
-      method:"POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: "data=" + encodeURIComponent(JSON.stringify({
+    method:"POST",
+    body: JSON.stringify({
       liveOnly: true,
       plan: plan,
       actual: actual,
@@ -1531,9 +1480,8 @@ function updateLiveStateOnly(){
       expected: expected,
       delay: delay,
       efficiency: efficiency
-    }))
-  })
-    .catch(err => console.log("Live state error:", err));
+    })
+  }).catch(err => console.log("Live state error:", err));
 
 }
   
@@ -1544,10 +1492,7 @@ function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
 
   fetch(API_URL,{
     method:"POST",
-    headers: {
-    "Content-Type": "application/x-www-form-urlencoded"
-},
-      body: "data=" + encodeURIComponent(JSON.stringify({
+    body: JSON.stringify({
       lot: lot,
       model: model,
       chassis: chassis,
@@ -1560,7 +1505,7 @@ function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
       downtimeEvent: downtimeEvent,
       totalDowntime: downtimeSeconds,
       countdown: countdownValue
-    }))
+    })
   })
   .catch(err=>console.log("Sheet error:",err));
 
@@ -1610,10 +1555,9 @@ function loadLiveData(){
 
     // ✅ CHECK FIRST (IMPORTANT)
     if(!data || !data.state || data.state.length === 0) return;
-    console.log("STATE DATA:", data.state);
 
 // ✅ THEN ONLY PROCESS
-    let newState = data.state[data.state.length - 1];
+    let newState = data.state[1]; // always latest row
       
     // ✅ ONLY update if valid
     if(newState && newState.length >= 9){
@@ -1799,32 +1743,6 @@ window.onload = async function(){
   // 🔐 SECURITY CHECK FIRST
   if(!(await checkAccess())) return;
 
-  // 🟡 DEV MODE UI
-  if(window.location.search.includes("dev=1")){
-
-  // Blue border
-  document.body.style.border = "6px solid";
-  document.body.style.borderImage = "linear-gradient(45deg, #00f, #0ff, #00f) 1";
-
-  // Banner
-  const banner = document.createElement("div");
-  banner.innerText = "🛠️ DEV MODE";
-  
-  banner.style.position = "fixed";
-  banner.style.top = "0";
-  banner.style.left = "0";
-  banner.style.width = "100%";
-  banner.style.background = "grey";
-  banner.style.color = "black";
-  banner.style.textAlign = "center";
-  banner.style.padding = "8px";
-  banner.style.fontWeight = "bold";
-  banner.style.zIndex = "9999";
-  banner.style.fontSize = "18px";
-
-  document.body.appendChild(banner);
-}
-  
   updateDateTime();
   setInterval(updateDateTime,1000);
 

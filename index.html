@@ -496,8 +496,16 @@ function checkPassword(){
 
   if(input !== SYSTEM_PASSWORD){
     document.body.innerHTML = `
-      <div style="height:100vh;display:flex;justify-content:center;align-items:center;font-size:40px;color:red;background:black;">
-        ACCESS DENIED
+      <div style="
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-size:40px;
+        color:red;
+        background:black;
+      ">
+        WRONG PASSWORD
       </div>
     `;
     return false;
@@ -520,10 +528,18 @@ async function checkAccess(){
 
     let lockedDevice = data.lock;
 
-    // 🔴 BLOCK if other device using
+    // 🔴 BLOCK other device
     if(lockedDevice && lockedDevice !== deviceId){
       document.body.innerHTML = `
-        <div style="height:100vh;display:flex;justify-content:center;align-items:center;font-size:40px;color:red;background:black;">
+        <div style="
+          height:100vh;
+          display:flex;
+          justify-content:center;
+          align-items:center;
+          font-size:40px;
+          color:red;
+          background:black;
+        ">
           ACCESS DENIED (SYSTEM IN USE)
         </div>
       `;
@@ -533,7 +549,7 @@ async function checkAccess(){
     // 🔐 ALWAYS ask password (even after refresh)
     if(!checkPassword()) return false;
 
-    // 🔒 SET LOCK only first time
+    // 🔒 FIRST TIME → SET LOCK
     if(!lockedDevice){
       fetch(API_URL,{
         method:"POST",

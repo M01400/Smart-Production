@@ -459,6 +459,7 @@ function updateDateTime(){
 /* ===== VARIABLES ===== */
 
 let ramadanMode=false;
+let accessGranted = false; // 🔥 ADD THIS
 let timer=null;
 let countdownValue=0;
 let actualCount=0;
@@ -485,15 +486,6 @@ function getDeviceId(){
   if(!id){
     id = "PC_" + Math.random().toString(36).substr(2,9);
     localStorage.setItem("deviceId", id);
-  }
-  return id;
-}
-
-function getTabId(){
-  let id = sessionStorage.getItem("tabId");
-  if(!id){
-    id = "TAB_" + Math.random().toString(36).substr(2,9);
-    sessionStorage.setItem("tabId", id);
   }
   return id;
 }
@@ -528,9 +520,12 @@ function checkPassword(){
   
 async function checkAccess(){
 
+  // 🔥 PREVENT RUNNING AGAIN
+  if(accessGranted) return true;
+
   if(isMonitor) return true;
 
-  const tabId = getTabId();
+  const tabId = getDeviceId(); // 🔥 USE DEVICE, NOT TAB
 
   try{
     // 🔐 ALWAYS ask password FIRST
@@ -569,7 +564,8 @@ async function checkAccess(){
       return false;
     }
 
-    return true;
+  accessGranted = true; // 🔥 ADD THIS
+  return true;
 
   }catch(err){
     console.log("Access error:", err);

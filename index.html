@@ -1484,6 +1484,20 @@ function updateLiveStateOnly(){
   }).catch(err => console.log("Live state error:", err));
 
 }
+
+/* ===== AUTO-SYNC FOR MONITOR MODE ===== */
+
+if(isMonitor){
+  // Poll for live data every 500ms
+  setInterval(() => {
+    loadLiveData();
+  }, 500);
+  
+  // Load initial data
+  loadLiveData();
+  
+  console.log("Monitor mode: syncing every 500ms");
+}
   
 function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
   const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;

@@ -1,17 +1,1673 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Smart Production</title>
+<meta charset="UTF-8">
+<title>TF 2 Production Monitoring</title>
+
+<style>
+:root{
+  --big-number-size: 50px;
+  --card-title-size: 25px;
+  --clock-size: 70px;
+  --header-size: 60px;
+
+  --bg:#050b18;
+  --panel:#0f172a;
+  --glass:rgba(255,255,255,0.05);
+  --border:rgba(255,255,255,0.08);
+  --text:#e2e8f0;
+  --blue:#38bdf8;
+  --green:#22c55e;
+  --red:#ef4444;
+  --orange:#f97316;
+}
+
+/* BACKGROUND */
+body{
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background: radial-gradient(circle at top, #0b1220, #020617);
+  color:var(--text);
+}
+
+/* HEADER */
+.header{
+  font-size:var(--header-size);
+  font-weight:900;
+  text-align:center;
+  padding:20px;
+  color:var(--blue);
+  letter-spacing:2px;
+  text-shadow:none;
+}
+
+/* CLOCK */
+#clock{
+  font-size:var(--clock-size);
+  font-weight:500;
+  color:#22d3ee;
+  text-shadow:none;
+}
+  
+  /* DATE */
+#dateDisplay{
+  font-size:30px;
+  color:#94a3b8;
+}
+
+.datetime{
+  display:flex;
+  flex-direction:column;
+  align-items:center;   
+  justify-content:center;
+  margin-top:10px;
+}
+  
+/* CONTROL PANEL */
+.controls{
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  flex-wrap:wrap;
+  padding:15px;
+  background:var(--glass);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--border);
+  border-radius:15px;
+  margin:20px;
+}
+
+/* 🔥 MAKE LINE STATUS WIDE */
+.wide{
+  grid-column: span 2;
+}
+  
+/* CARD STYLE (SCADA LOOK) */
+.card{
+  background:linear-gradient(145deg,#0f172a,#020617);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:15px;
+  text-align:center;
+  box-shadow:
+  inset 0 0 15px rgba(255,255,255,0.05),
+  0 0 20px rgba(0,0,0,0.8);
+  position:relative;
+  overflow:hidden;
+  display:flex;                /* 🔥 ADD */
+  flex-direction:column;       /* 🔥 ADD */
+  justify-content:flex-start;  /* 🔥 TOP align */
+  align-items:center;          /* 🔥 CENTER horizontally */
+  min-height:90px;            /* optional for consistency */
+}
+
+/* GLOW BORDER */
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,0.05);
+  pointer-events:none;
+}
+
+/* STATUS COLORS */
+.status-green{color:var(--green);}
+.status-red{color:var(--red);}
+.status-blue{color:var(--blue);}
+.status-orange{color:var(--orange);}
+
+/* RUNNING GLOW */
+.pulse{
+  animation:pulseGlow 1.5s infinite;
+}
+@keyframes pulseGlow{
+  0%{text-shadow:0 0 5px #22c55e;}
+  50%{text-shadow:0 0 25px #22c55e;}
+  100%{text-shadow:0 0 5px #22c55e;}
+}
+
+/* ALERT BLINK */
+.blink{
+  animation:blink 1s infinite;
+}
+@keyframes blink{
+  50%{opacity:0.3;}
+}
+
+/* STATUS BAR (BOTTOM) */
+
+.bottom-row{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:15px;
+  margin:15px;
+}
+
+.scan-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+/* DOWNTIME ALERT */
+.downtime-alert{
+  box-shadow:0 0 30px rgba(239,68,68,0.7);
+  background:#2a0b0b !important;
+}
+
+/* TABLE */
+table{
+  background:#020617;
+  border:1px solid var(--border);
+}
+th{
+  background:#0f172a;
+}
+
+/* ================= CONTROLS SETTINGS ================= */
+
+.controls input{
+padding:6px;
+width:90px;
+font-size:18px;
+font-weight:bold;
+border-radius:10px;
+border:1px solid #334155;background:#0f172a;color:white;text-align:center;
+}
+
+.controls button{
+padding:8px 18px;
+font-size:16px;
+border:none;
+border-radius:50px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.start{background:#16a34a;color:white;}
+.stop{background:#dc2626;color:white;}
+.reset{background:#f59e0b;color:white;}
+.summary{background:#2563eb;color:white;}
+
+.dashboard{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+margin:15px;
+}
+
+.card h3{
+color:#9ca3af;
+margin:0;              
+margin-bottom:4px;    
+font-size:var(--card-title-size);
+}
+
+.big-number
+{font-size:var(--big-number-size);
+font-weight:900;}
+
+.bottom{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+margin:15px;
+}
+
+.fullscreen-btn{
+position:absolute;
+right:20px;
+top:20px;
+padding:5px 10px;
+font-size:14px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+.fullscreen-btn:hover{
+background:#1d4ed8;
+}
+
+.pulse{animation:pulse 1.5s infinite;}
+@keyframes pulse{0%{text-shadow:0 0 5px #22c55e;}50%{text-shadow:0 0 20px #22c55e;}100%{text-shadow:0 0 5px #22c55e;}}
+
+.blink{animation:blink 1.5s infinite;}
+@keyframes blink{0%{opacity:1;}50%{opacity:0.3;}100%{opacity:1;}}
+
+.downtime-alert{background:#3f0d0d !important;box-shadow:0 0 25px rgba(239,68,68,0.8);}
+
+.scan-container{
+display:flex;
+justify-content:center;
+gap:15px;
+margin:15px;
+flex-wrap:wrap;
+}
+
+.scan-box{
+width:300px;
+padding:10px;
+font-size:18px;
+border-radius:40px;
+background:#0f172a;
+border:1px solid #334155;
+color:white;
+text-align:center;
+}
+
+table{
+width:95%;
+margin:30px auto;
+border-collapse:collapse;
+background:#111827;
+border-radius:15px;
+overflow:hidden;
+}
+
+th,td{
+padding:12px;
+text-align:center;
+font-size:14px;
+}
+
+th{
+background:#1f2937;
+color:#60a5fa;
+}
+tr:nth-child(even){background:#0f172a;}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 </head>
+
 <body>
-    <script>
-        function loadLiveData() {
-            // Function logic here...
-            // other code...
+
+<div class="header">
+    TF 2 PRODUCTION MONITORING SYSTEM
+    <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
+</div>
+
+<div class="datetime">
+<div id="dateDisplay"></div>
+<div id="clock"></div>
+</div>
+
+<div class="controls">
+
+Cycle Time (min):
+<input type="number" id="cycleTarget" min="1">
+
+Daily Plan:
+<input type="number" id="dailyPlanTarget" min="Daily Plan">
+
+Lot:
+<input type="number" id="lotInput" placeholder="Lot No">
+
+<button class="start" onclick="startProduction()">Start</button>
+<button class="stop" onclick="stopProduction()">Stop</button>
+<button class="reset" onclick="resetProduction()">Reset</button>
+<button class="summary" onclick="openSummary()">Daily Summary</button>
+<button class="summary" onclick="downloadExcel()">Download Excel</button>
+
+<button class="summary" id="ramadanToggle" onclick="toggleRamadan()">
+🌙 Ramadhan : OFF
+</button>
+
+</div>
+
+<div class="dashboard">
+
+<!-- 🔹 ROW 1 -->
+<div class="card"><h3>COUNTDOWN</h3><div class="big-number" id="countdown">00:00</div></div>
+<div class="card"><h3>ACTUAL OUTPUT</h3><div class="big-number status-green" id="actual">0</div></div>
+<div class="card"><h3>EXPECTED OUTPUT</h3><div class="big-number status-blue" id="expected">0</div></div>
+<div class="card"><h3>DELAY / AHEAD</h3><div class="big-number" id="delay">0</div></div>
+
+<!-- 🔹 ROW 2 -->
+<div class="card"><h3>DAILY PLAN</h3><div class="big-number" id="plan">0</div></div>
+<div class="card"><h3>BALANCE</h3><div class="big-number" id="balance">0</div></div>
+
+<!-- LINE STATUS -->
+<div class="card wide">
+<h3>LINE STATUS</h3>
+<div class="big-number" id="status">READY</div>
+</div>
+</div>
+  
+<div class="bottom-row">
+<!-- LEFT: SCAN -->
+<div class="card wide">
+<h3>SCAN INPUT</h3>
+
+<div class="scan-grid">
+<input type="text" id="chassisInput" class="scan-box" placeholder="Scan Chassis" autofocus>
+<input type="text" id="modelInput" class="scan-box" placeholder="Scan Model">
+<input type="text" id="engineInput" class="scan-box" placeholder="Scan Engine No">
+<input type="text" id="keyInput" class="scan-box" placeholder="Scan Key No">
+</div>
+
+</div>
+
+<!-- RIGHT: DOWNTIME -->
+<div class="card" id="downtimeCard">
+<h3>ACCUMULATED DOWNTIME</h3>
+<div class="big-number" id="downtime">00:00</div>
+</div>
+
+<div class="card">
+<h3>EFFICIENCY</h3>
+<div class="big-number" id="efficiency">0%</div> 
+</div>
+  
+</div>
+  
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Time</th>
+<th>Lot</th>
+<th>Model</th>
+<th>Chassis</th>
+<th>Engine No</th>
+<th>Key No</th>
+<th>Status</th>
+<th>Downtime</th>
+</tr>
+</thead>
+<tbody id="scanTable"></tbody>
+</table>
+
+<script>
+
+/* ================= SYSTEM SETTINGS ================= */
+
+const SETTINGS = {
+
+  defaultCycle: 16,
+  defaultPlan: 1,
+
+  breakTime: {
+    normal: {
+      weekday: [
+        { start: 600, end: 620 },
+        { start: 780, end: 840 }
+      ],
+      friday: [
+        { start: 600, end: 620 },
+        { start: 750, end: 870 }
+      ]
+    },
+    ramadan: {
+      weekday: [
+        { start: 600, end: 610 },
+        { start: 780, end: 830 }
+      ],
+      friday: [
+        { start: 600, end: 610 },
+        { start: 750, end: 860 }
+      ]
+    }
+  }
+
+};
+
+/* Apply defaults */
+document.getElementById("cycleTarget").value = SETTINGS.defaultCycle;
+document.getElementById("dailyPlanTarget").value = SETTINGS.defaultPlan;
+// 🔥 LIVE UPDATE WHEN USER CHANGE INPUT
+document.getElementById("cycleTarget").addEventListener("input", () => {
+if(!timer){
+    countdownValue = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+}
+  
+updateDisplay();
+});
+
+document.getElementById("dailyPlanTarget").addEventListener("input", () => {
+updateDisplay();
+});
+
+/* ===== ORIGINAL LOGIC BELOW (UNCHANGED) ===== */
+
+function updateDateTime(){
+
+  const now = new Date();
+
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
+
+  const dateEl = document.getElementById("dateDisplay");
+  const clockEl = document.getElementById("clock");
+
+  if(dateEl && clockEl){
+    dateEl.innerText = now.toLocaleDateString("en-MY", options);
+    clockEl.innerText = now.toLocaleTimeString("en-MY");
+  }
+}
+
+/* ================= SECURITY SYSTEM ================= */
+
+const DEVICE_ID_KEY = "DEVICE_ID";
+
+function getDeviceId(){
+let id = localStorage.getItem(DEVICE_ID_KEY);
+
+if(!id){
+  id = "DEV-" + Math.random().toString(36).substr(2,9);
+  localStorage.setItem(DEVICE_ID_KEY, id);
+}
+
+return id;
+}
+
+// 🔐 SET YOUR PASSWORD HERE
+const SYSTEM_PASSWORD = "1234"; 
+
+// Unique device ID key
+const DEVICE_KEY = "MAIN_PC_LOCK";
+
+/* ===== CHECK ACCESS ===== */
+async function checkAccess(){
+
+  // allow monitor
+  if(window.location.search.includes("monitor")){
+    return true;
+  }
+
+  let input = prompt("Enter System Password:");
+  if(input !== SYSTEM_PASSWORD){
+    document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
+    return false;
+  }
+
+  const deviceId = getDeviceId();
+
+  try{
+    let res = await fetch(API_URL,{
+      method:"POST",
+      body: JSON.stringify({
+        lockRequest:true,
+        deviceId: deviceId
+      })
+    });
+
+    let data = await res.json();
+
+    if(!data.allowed){
+      document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED (MAIN PC IN USE)</h1>";
+      return false;
+    }
+
+    return true;
+
+  }catch(err){
+    alert("Connection error");
+    return false;
+  }
+}
+ async function checkAccess(){
+
+  // allow monitor
+  if(window.location.search.includes("monitor")){
+    return true;
+  }
+
+  // 🔐 ask password FIRST
+  let input = prompt("Enter System Password:");
+  if(input !== SYSTEM_PASSWORD){
+    document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
+    return false;
+  }
+
+  const deviceId = getDeviceId();
+
+  try{
+    let res = await fetch(API_URL,{
+      method:"POST",
+      body: JSON.stringify({
+        lockRequest:true,
+        deviceId: deviceId
+      })
+    });
+
+    let data = await res.json();
+
+    if(!data.allowed){
+      document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED (MAIN PC IN USE)</h1>";
+      return false;
+    }
+
+    return true;
+
+  }catch(err){
+    alert("Connection error");
+    return false;
+  }
+}
+  
+/* ===== VARIABLES ===== */
+
+let ramadanMode=false;
+let timer=null;
+let countdownValue=0;
+let actualCount=0;
+let downtimeSeconds=0;
+let lastScanTime=null;
+let startTime=null;
+let isDowntime=false;
+let pendingChassis="";
+let pendingModel="";
+let pendingEngine="";
+let pendingKey="";
+let scannedChassis = new Set();
+let scannedModel = new Set();
+let scannedEngine = new Set();
+let scannedKey = new Set();
+let duplicateLock=false;
+let lastUpdateTime = 0;
+let lastTableData = "";
+  
+/* ===== DATE TIME ===== */
+
+function updateDateTime(){
+  const now = new Date();
+
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
+
+  document.getElementById("dateDisplay").innerText =
+    now.toLocaleDateString("en-MY", options);
+
+  document.getElementById("clock").innerText =
+    now.toLocaleTimeString("en-MY");
+}
+
+/* ===== FORMAT ===== */
+
+function format(s){
+const m=Math.floor(s/60);
+const sec=s%60;
+return (m<10?"0"+m:m)+":"+(sec<10?"0"+sec:sec);
+}
+
+/* ===== RAMADAN + BREAK ===== */
+
+function isBreakTime(){
+
+  let now = new Date();
+  let current = now.getHours()*60 + now.getMinutes();
+  let day = now.getDay();
+
+  let breaks = [];
+
+  if(ramadanMode){
+
+    if(day === 5){
+      breaks = SETTINGS.breakTime.ramadan.friday;
+    }else{
+      breaks = SETTINGS.breakTime.ramadan.weekday;
+    }
+
+  }else{
+
+    if(day === 5){
+      breaks = SETTINGS.breakTime.normal.friday;
+    }else{
+      breaks = SETTINGS.breakTime.normal.weekday;
+    }
+
+  }
+
+  for(let b of breaks){
+    if(current >= b.start && current < b.end){
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function calculateExpectedOutput(){
+    if(isMonitor) return 0;
+    if(!startTime) return 0;
+    if(!timer){
+    return actualCount;
+    }
+
+  // ✅ STOP expected when target achieved
+    let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+    if(actualCount >= plan && plan > 0){
+    return plan;
+}
+
+    const now = new Date();
+    let elapsedSec = Math.floor((now - startTime) / 1000);
+
+    const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+
+    // 🚫 Tolak break Stime
+    let breakSeconds = 0;
+
+    let tempTime = new Date(startTime);
+
+    while(tempTime < now){
+        if(isBreakTime()){
+            breakSeconds += 60;
+        }
+        tempTime.setMinutes(tempTime.getMinutes() + 1);
+    }
+
+   let netTime = elapsedSec - breakSeconds;
+
+    if(netTime < 0) netTime = 0;
+    
+    let expected = Math.floor(netTime / cycleTimeSec);
+    
+    // 🔥 START SHOW AFTER FIRST SCAN
+    if(actualCount > 0 && expected === 0){
+        expected = 1;
+    }
+  
+  return expected;
+
+}
+  
+/* ===== STATUS ===== */
+
+function setStatus(text,color){
+const el=document.getElementById("status");
+el.innerText=text;
+el.className="big-number "+color;
+}
+
+/* ===== START ===== */
+
+function startProduction(){
+    if(isMonitor) return;
+    if(timer) return;
+
+    // Set start time if first run
+    if(!startTime){
+        startTime = new Date();
+    }
+
+    // If no scan yet, set initial countdown
+    if(countdownValue === 0){
+        countdownValue = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+    }
+
+    timer = setInterval(() => {
+
+        if(isBreakTime()){
+            setStatus("BREAK TIME", "status-orange");
+            updateDisplay();
+            return;
         }
 
-        // Error handling
-        loadLiveData()
-            .catch(function(err) { console.log("Monitor error:", err); });
-    </script>
+        const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+
+        // 🔥 USE REAL TIME (FIXED)
+        const now = new Date();
+        
+        // use startTime if no scan yet
+        const baseTime = lastScanTime || startTime;
+        
+        const diff = Math.floor((now - baseTime) / 1000);
+        
+        countdownValue = Math.max(cycleTimeSec - diff, 0);
+        
+        if(countdownValue === 0){
+            isDowntime = true;
+        } else {
+            isDowntime = false;
+        }
+
+        updateDisplay();
+
+    }, 1000);
+}
+
+/* STOP */
+function stopProduction(){
+clearInterval(timer);
+timer=null;
+setStatus("PAUSED","status-orange");
+}
+
+/* RESET */
+function resetProduction(){
+  
+clearInterval(timer);
+timer=null;
+countdownValue=0;
+actualCount=0;
+downtimeSeconds=0;
+lastScanTime=null;
+startTime=null;
+pendingChassis="";
+scannedChassis.clear();
+scannedModel.clear();
+scannedEngine.clear();
+scannedKey.clear();
+isDowntime=false;
+duplicateLock=false;
+document.getElementById("scanTable").innerHTML="";
+  
+setStatus("READY","status-blue");
+updateDisplay();
+updateLiveStateOnly();
+
+}
+
+/* ===== SCAN CHASSIS ===== */
+
+document.getElementById("chassisInput").addEventListener("keydown", function(e) {
+if (e.key === "Enter" && this.value.trim() !== "") {
+let value = this.value.trim();
+
+/* DUPLICATE CHECK */
+if (scannedChassis.has(value)) {
+duplicateLock = true;
+setStatus("DUPLICATE CHASSIS", "status-red blink");
+this.value = "";
+return;
+}
+
+/* --- START COUNTDOWN ON FIRST SCAN --- */
+if (!timer) {
+startProduction(); 
+}
+
+duplicateLock = false;
+pendingChassis = value;
+scannedChassis.add(value);
+
+this.value = "";
+document.getElementById("modelInput").focus();
+}
+});
+  
+/* ===== SCAN MODEL ===== */
+
+document.getElementById("modelInput").addEventListener("keydown",function(e){
+
+if(e.key==="Enter" && this.value.trim()!==""){
+
+if(pendingChassis==="") return;
+
+let model=this.value.trim();
+
+duplicateLock=false;
+
+pendingModel=model;
+scannedModel.add(model);
+
+this.value="";
+document.getElementById("engineInput").focus();
+
+}
+
+});
+
+/* ===== SCAN ENGINE NO ===== */
+
+document.getElementById("engineInput").addEventListener("keydown",function(e){
+
+if(e.key==="Enter" && this.value.trim()!==""){
+
+if(pendingModel==="") return;
+
+let value=this.value.trim();
+
+/* DUPLICATE CHECK */
+if(scannedEngine.has(value)){
+duplicateLock=true;
+setStatus("DUPLICATE ENGINE","status-red blink");
+this.value="";
+return;
+}
+
+duplicateLock=false;
+
+pendingEngine=value;
+scannedEngine.add(value);
+
+this.value="";
+document.getElementById("keyInput").focus();
+
+}
+
+});
+  
+/* ===== SCAN KEY ===== */
+
+document.getElementById("keyInput").addEventListener("keydown",function(e){
+
+if(e.key==="Enter" && this.value.trim()!==""){
+
+if(pendingChassis==="" || pendingModel==="" || pendingEngine==="") return;
+
+let key=this.value.trim();
+
+/* ===== DUPLICATE CHECK KEY ===== */
+if(scannedKey.has(key)){
+duplicateLock=true;
+setStatus("DUPLICATE KEY","status-red blink");
+this.value="";
+return;
+}
+
+duplicateLock=false;
+
+pendingKey=key;
+scannedKey.add(key);
+  
+let chassis = pendingChassis;
+let model = pendingModel;
+let engine = pendingEngine;
+let lot = document.getElementById("lotInput").value || "-";
+  
+
+const now = new Date();
+const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+
+let downtimeEvent = "";
+
+if(lastScanTime){
+    let diffSec = Math.floor((now - lastScanTime) / 1000);
+
+    if(diffSec > cycleTimeSec){
+    let actualDowntime = diffSec - cycleTimeSec;
+
+    let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+
+    // ✅ ONLY BEFORE TARGET
+    if((actualCount + 1) <= plan){
+        downtimeEvent = format(actualDowntime);
+        downtimeSeconds += actualDowntime;
+        isDowntime = true;
+    } else {
+        downtimeEvent = "";
+        isDowntime = false;
+    }
+
+        // ✅ TRIGGER STATUS
+        isDowntime = true;
+
+    } else {
+        // ✅ TAK DOWNTIME
+        isDowntime = false;
+    }
+} else {
+    isDowntime = false;
+}
+
+lastScanTime = now;
+
+let row=document.getElementById("scanTable").insertRow(0);
+
+row.insertCell(0).innerText=now.toLocaleDateString();
+row.insertCell(1).innerText=now.toLocaleTimeString();
+row.insertCell(2).innerText=lot;
+row.insertCell(3).innerText=model;
+row.insertCell(4).innerText=chassis;
+row.insertCell(5).innerText=engine;
+row.insertCell(6).innerText=key;
+
+let statusCell=row.insertCell(7);
+let downtimeCell=row.insertCell(8);
+
+if(downtimeEvent){
+statusCell.innerText="DOWN TIME";
+statusCell.classList.add("status-red");
+downtimeCell.innerText=downtimeEvent;
+downtimeCell.classList.add("status-red");
+}
+else{
+statusCell.innerText="SCANNED";
+statusCell.classList.add("status-green");
+}
+
+actualCount++;
+countdownValue=cycleTimeSec;
+isDowntime=false;
+
+updateDisplay();
+
+sendToSheet(
+  chassis,
+  model,
+  engine,
+  key,
+  lot,
+  statusCell.innerText,
+  downtimeEvent
+);
+
+pendingChassis="";
+pendingModel="";
+pendingEngine="";
+pendingKey="";
+
+this.value="";
+
+setTimeout(()=>{
+document.getElementById("chassisInput").focus();
+},50);
+  
+}
+});
+  
+/* ===== UPDATE DISPLAY ===== */
+
+function updateDisplay() {
+    if(isMonitor) return;
+    let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+    let balance = actualCount - plan;
+    let displayBalance = balance > 0 ? ("+" + balance) : balance;
+
+    //  EXPECTED CALCULATION
+    let expected = calculateExpectedOutput();
+
+    // ✅ FORCE CORRECT LOGIC AFTER TARGET
+    if(actualCount >= plan && plan > 0){
+        expected = plan;
+}
+    let delay = actualCount - expected;
+    let delayEl = document.getElementById("delay");
+
+    delayEl.className = "big-number";
+    
+    if(delay < 0){
+        delayEl.classList.add("status-red");
+    } 
+    else if(delay > 0){
+        delayEl.classList.add("status-green");
+    } 
+    else{
+        delayEl.classList.add("status-blue");
+    }
+    
+    delayEl.innerText = delay > 0 ? ("+" + delay) : delay;
+      
+    let efficiency = 0;
+
+    if(expected > 0){
+    efficiency = (actualCount / expected) * 100;
+    }
+    
+    efficiency = Math.floor(efficiency);
+    
+    let effEl = document.getElementById("efficiency");
+    effEl.innerText = efficiency + "%";
+
+    if(efficiency < 90){
+    effEl.className = "big-number status-red";
+    }
+    else if(efficiency < 100){
+    effEl.className = "big-number status-orange";
+    }
+    else{
+    effEl.className = "big-number status-green";
+    }
+    
+    // Display Expected
+    document.getElementById("expected").innerText = expected;
+    document.getElementById("plan").innerText = plan;
+    document.getElementById("actual").innerText = actualCount;
+    document.getElementById("countdown").innerText = format(countdownValue);
+    document.getElementById("downtime").innerText = format(downtimeSeconds);
+
+    let balanceEl = document.getElementById("balance");
+    if (balance < 0) { balanceEl.className = "big-number status-red"; } 
+    else if (balance > 0) { balanceEl.className = "big-number status-green"; } 
+    else { balanceEl.className = "big-number status-blue"; }
+    balanceEl.innerText = displayBalance;
+    if(delay < 0){
+    setStatus("BEHIND SCHEDULE","status-red blink");
+}
+
+    /* ================= LOGIK STATUS BARU ================= */
+    if (isBreakTime()) {
+        setStatus("BREAK TIME", "status-orange");
+    } 
+    else if (duplicateLock) {
+        setStatus("DUPLICATE SCAN", "status-red blink");
+    } 
+    else if (isDowntime) {
+        setStatus("DOWN TIME", "status-red blink");
+    } 
+    else if (actualCount >= plan && plan > 0) {
+        clearInterval(timer); timer = null; countdownValue = 0; isDowntime = false;
+        setStatus("TARGET ACHIEVED", "status-green");
+    } 
+    // Jika sedang dalam proses scan (salah satu input sudah diisi tapi belum lengkap semua)
+    else if (pendingChassis !== "" && pendingModel === "") {
+        setStatus("WAITING MODEL", "status-orange");
+    } 
+    else if (pendingModel !== "" && pendingEngine === "") {
+        setStatus("WAITING ENGINE", "status-orange");
+    } 
+    else if (pendingEngine !== "" && pendingKey === "") {
+        setStatus("WAITING KEY", "status-orange");
+    } 
+    // Jika timer sedang jalan dan tiada proses scan yang tertunggak, status adalah RUNNING
+    else if (timer) {
+        setStatus("RUNNING", "status-green pulse");
+    } 
+    else {
+        setStatus("READY", "status-blue");
+    }
+    /* ===================================================== */
+
+    const downtimeCard = document.getElementById("downtimeCard");
+    const downtimeText = document.getElementById("downtime");
+    if (isDowntime) {
+        downtimeCard.classList.add("downtime-alert", "blink");
+        downtimeText.classList.add("status-red", "blink");
+    } else {
+        downtimeCard.classList.remove("downtime-alert", "blink");
+        downtimeText.classList.remove("status-red", "blink");
+    }
+}
+/* ===== DAILY SUMMARY ===== */
+
+/* ===== DAILY SUMMARY (VERSI DIKEMASKINI: SAMA PERSIH DENGAN DASHBOARD) ===== */
+
+function openSummary() {
+    let plan = parseInt(document.getElementById("plan").innerText) || 0;
+    let actual = parseInt(document.getElementById("actual").innerText) || 0;
+    let downtime = document.getElementById("downtime").innerText;
+    let diff = actual - plan;
+    let diffDisplay = diff > 0 ? ("+" + diff) : diff;
+
+    // Ambil semua baris dari jadual papan pemuka
+    let rows = document.querySelectorAll("#scanTable tr");
+    let tableRows = "";
+
+    // Gelung setiap baris papan pemuka untuk mengekstrak data dan kelas warna
+    rows.forEach(row => {
+        let cells = row.querySelectorAll("td");
+        if (cells.length > 0) {
+            // Ambil sel Status dan sel Downtime untuk mengekstrak kelas warna
+            let statusCell = cells[7];
+            let downtimeCell = cells[8];
+
+            // Tentukan kelas warna status yang betul
+            let statusClass = "";
+            if (statusCell.classList.contains("status-red")) {
+                statusClass = "status-red";
+            } else if (statusCell.classList.contains("status-green")) {
+                statusClass = "status-green";
+            }
+
+            // Tentukan kelas warna downtime yang betul
+            let downtimeClass = "";
+            if (downtimeCell.classList.contains("status-red")) {
+                downtimeClass = "status-red";
+            }
+
+            // Bina HTML baris untuk laporan, memindahkan data DAN kelas warna
+            tableRows += `
+<tr>
+<td>${cells[0].innerText}</td> <td>${cells[1].innerText}</td> <td>${cells[2].innerText}</td> <td>${cells[3].innerText}</td> <td>${cells[4].innerText}</td> <td>${cells[5].innerText}</td> <td>${cells[6].innerText}</td> <td class="${statusClass}">${cells[7].innerText}</td> <td class="${downtimeClass}">${cells[8].innerText}</td> </tr>`;
+        }
+    });
+
+    // Kandungan HTML Laporan Larian Harian
+    let htmlContent = `
+<html>
+<head>
+<title>Daily Summary Report</title>
+<style>
+/* --- Gaya Asas (Sama seperti Dashboard) --- */
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#0b1220; /* Warna latar belakang gelap */
+color:#e5e7eb;
+padding:40px;
+}
+
+h1{
+text-align:center;
+color:#60a5fa; /* Warna biru tajuk */
+margin-bottom:30px;
+font-size:36px;
+font-weight: 800;
+}
+
+/* --- Gaya Jadual Ringkasan (Atas) --- */
+.summary-card {
+    border-radius: 20px;
+    background: #111827;
+    width: 450px;
+    margin: 0 auto 50px auto;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.summary-table{
+width:100%;
+border-collapse:collapse;
+}
+
+.summary-table th,
+.summary-table td{
+padding:14px;
+text-align:center;
+}
+
+.summary-table th{
+background:#1f2937;
+color:#60a5fa;
+font-weight:bold;
+text-align: left;
+width: 50%;
+border-radius: 10px 0 0 10px;
+}
+
+.summary-table td {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* --- Gaya Jadual Butiran (Bawah) --- */
+.detail-table-container {
+    background: #111827;
+    border-radius: 15px;
+    padding: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+table.detail-table{
+width:100%;
+border-collapse:collapse;
+}
+
+.detail-table th, .detail-table td{
+padding:12px;
+text-align:center;
+border-bottom: 1px solid #1f2937;
+font-size: 14px;
+}
+
+.detail-table th{
+background:#1f2937;
+color:#60a5fa;
+font-weight:bold;
+text-transform: uppercase;
+}
+
+.detail-table tr:last-child td {
+    border-bottom: none;
+}
+
+.detail-table tr:nth-child(even){
+background:#0f172a;
+}
+
+/* --- Gaya Warna Status (SAMA SEPERTI DASHBOARD) --- */
+.status-green{
+color:#22c55e !important; /* Warna hijau */
+font-weight:bold;
+}
+
+.status-red{
+color:#ef4444 !important; /* Warna merah */
+font-weight:bold;
+}
+
+/* --- Gaya Butang Tindakan --- */
+.action-buttons{
+text-align:center;
+margin-top:40px;
+}
+
+.action-buttons button{
+padding:12px 28px;
+margin:0 12px;
+border:none;
+border-radius:30px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+background:#2563eb;
+color:white;
+transition: background 0.2s;
+}
+
+.action-buttons button:hover{
+background:#1d4ed8;
+}
+
+/* --- Gaya MOD CETAK (Memastikan warna kekal dalam PDF) --- */
+@media print{
+body{
+background:white !important;
+color:black !important;
+padding:20px !important;
+}
+
+h1{ color: black !important; }
+
+.summary-card, .detail-table-container {
+background:white !important;
+color:black !important;
+box-shadow:none !important;
+border: 1px solid #ccc;
+}
+
+.summary-table th, .detail-table th {
+background:#f0f0f0 !important;
+color:black !important;
+border: 1px solid #ccc !important;
+}
+
+.summary-table td, .detail-table td{
+color:black !important;
+border:1px solid #ccc !important;
+}
+
+/* Memaksa cetakan warna untuk status */
+.status-green{
+color:#22c55e !important;
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
+}
+
+.status-red{
+color:#ef4444 !important;
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
+}
+
+.action-buttons{ display:none !important; }
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>DAILY SUMMARY REPORT</h1>
+
+<div class="summary-card">
+<table class="summary-table">
+<tr>
+<th>Date</th>
+<td>${new Date().toLocaleDateString()}</td>
+</tr>
+<tr>
+<th>Plan</th>
+<td>${plan}</td>
+</tr>
+<tr>
+<th>Actual</th>
+<td>${actual}</td>
+</tr>
+<tr>
+<th>Difference</th>
+<td>${diffDisplay}</td>
+</tr>
+<tr>
+<th>Total Downtime</th>
+<td class="${downtime !== '00:00' ? 'status-red' : ''}">${downtime}</td>
+</tr>
+<tr>
+<th>Total Units Scanned</th>
+<td>${actual}</td>
+</tr>
+</table>
+</div>
+
+<div class="detail-table-container">
+<table class="detail-table">
+<thead>
+<tr>
+<th>Date</th>
+<th>Time</th>
+<th>Lot</th>
+<th>Model</th>
+<th>Chassis</th>
+<th>Engine No</th>
+<th>Key No</th>
+<th>Status</th>
+<th>Downtime</th>
+</tr>
+</thead>
+<tbody>
+${tableRows}
+</tbody>
+</table>
+</div>
+
+<div class="action-buttons">
+<button onclick="window.print()">Print Report / Save PDF</button>
+<button onclick="window.opener.downloadExcel()">Download Excel</button>
+</div>
+
+</body>
+</html>
+`;
+
+    // Buka tetingkap laporan baru
+    let newWindow = window.open();
+    newWindow.document.write(htmlContent);
+    newWindow.document.close();
+}
+
+/* ===== EXCEL ===== */
+
+function downloadExcel(){
+let wb=XLSX.utils.book_new();
+let data=[["Date","Time","Lot","Model","Chassis","Engine No","Key No","Status","Downtime"]];
+
+document.querySelectorAll("#scanTable tr").forEach(row=>{
+let cells=row.querySelectorAll("td");
+if(cells.length>0){
+data.push([
+cells[0].innerText,
+cells[1].innerText,
+cells[2].innerText,
+cells[3].innerText,
+cells[4].innerText,
+cells[5].innerText,
+cells[6].innerText,
+cells[7].innerText,
+cells[8].innerText
+]);
+}
+});
+
+let ws=XLSX.utils.aoa_to_sheet(data);
+
+for(let i=1;i<data.length;i++){
+let cell="E"+(i+1);
+if(ws[cell]){
+if(ws[cell].v==="DOWN TIME"){
+ws[cell].s={font:{color:{rgb:"FF0000"},bold:true}};
+}
+if(ws[cell].v==="SCANNED"){
+ws[cell].s={font:{color:{rgb:"00AA00"},bold:true}};
+}
+}
+}
+
+XLSX.utils.book_append_sheet(wb,ws,"Daily Report");
+XLSX.writeFile(wb,"Daily_Summary_Report.xlsx");
+}
+
+/* ===== FULL SCREEN ===== */
+
+function toggleFullScreen(){
+
+if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen();
+}else{
+    document.exitFullscreen();
+}
+
+}
+
+/* ===== RAMADHAN TOGGLE ===== */
+
+function toggleRamadan(){
+  ramadanMode = !ramadanMode;
+
+  const btn = document.getElementById("ramadanToggle");
+
+  if(ramadanMode){
+    btn.innerText = "🌙 Ramadhan : ON";
+    btn.style.background = "#16a34a";
+  }else{
+    btn.innerText = " 🌙 Ramadhan : OFF";
+    btn.style.background = "#2563eb";
+  }
+
+  updateDisplay();
+}
+
+/* ================= GOOGLE SHEET MIRROR LAYER ================= */
+
+// 🔴 GANTI DENGAN LINK /exec WEB APP ANDA
+const API_URL = "https://script.google.com/macros/s/AKfycbyYD3UX0cv4DxEHEdpf31OJI3hUA-UuhqfqB6ZkDysfsWnsSh3MxB3FraU0TRij89Ew6A/exec";
+
+// Detect monitor mode (?monitor)
+const isMonitor = window.location.search.includes("monitor");
+
+// Hantar state live setiap saat (MAIN PC sahaja)
+function updateLiveStateOnly(){
+
+  if(isMonitor) return; // monitor tak hantar data
+
+  const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+  const actual = actualCount;
+  const balance = actual - plan;
+  const status = document.getElementById("status").innerText.trim();
+  const expected = calculateExpectedOutput();
+  const delay = actual - expected;
+
+  let efficiency = 0;
+  if(expected > 0){
+    efficiency = Math.floor((actual / expected) * 100);
+  }
+  
+  fetch(API_URL,{
+    method:"POST",
+    body: JSON.stringify({
+      liveOnly: true,
+      plan: plan,
+      actual: actual,
+      balance: balance,
+      status: status,
+      countdown: countdownValue,
+      totalDowntime: downtimeSeconds,
+      expected: expected,
+      delay: delay,
+      efficiency: efficiency
+    })
+  }).catch(err => console.log("Live state error:", err));
+
+}
+
+/* ===== AUTO-SYNC FOR MONITOR MODE ===== */
+
+if(isMonitor){
+  // Poll for live data every 500ms
+  setInterval(() => {
+    loadLiveData();
+  }, 500);
+  
+  // Load initial data
+  loadLiveData();
+  
+  console.log("Monitor mode: syncing every 500ms");
+}
+  
+function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
+  const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+  const actual = actualCount;
+  const balance = actual - plan;
+
+  fetch(API_URL,{
+    method:"POST",
+    body: JSON.stringify({
+      lot: lot,
+      model: model,
+      chassis: chassis,
+      engine: engine,
+      key: key,
+      status: status,
+      plan: plan,
+      actual: actual,
+      balance: balance,
+      downtimeEvent: downtimeEvent,
+      totalDowntime: downtimeSeconds,
+      countdown: countdownValue
+    })
+  })
+  .catch(err=>console.log("Sheet error:",err));
+
+}
+
+function cleanDowntime(raw){
+  if(!raw) return "";
+
+  let text = raw.toString().trim();
+
+  // ✅ If already correct mm:ss AND minutes < 1 (safe)
+  if(/^\d{2}:\d{2}$/.test(text)){
+    
+    let parts = text.split(":");
+    let min = parseInt(parts[0]);
+    let sec = parseInt(parts[1]);
+
+    // 🔥 FIX: if looks like "11:00" → convert to seconds
+    if(sec === 0 && min > 0){
+      return "00:" + String(min).padStart(2,'0');
+    }
+
+    return text;
+  }
+
+  // ✅ If number → convert to mm:ss
+  if(!isNaN(text)){
+    let sec = parseInt(text);
+    let m = Math.floor(sec / 60);
+    let s = sec % 60;
+
+    return String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
+  }
+
+  return text;
+}
+  
+// Ambil data untuk MONITOR PC
+function loadLiveData(){
+
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => {
+    const now = Date.now();
+    if(now - lastUpdateTime < 1000) return;
+    lastUpdateTime = now;
+
+    if(!data || !data.state || data.state.length === 0) return;
+
+    let newState = data.state[1];
+      
+    if(newState && newState.length >= 9){
+        window.lastValidState = newState;
+    }
+    
+    if(!window.lastValidState) return;
+    
+    const state = window.lastValidState;
+    
+    if(!state || state.length < 9){
+    console.log("⚠️ Invalid state");
+    return;
+  }  
+    
+    // === UPDATE DASHBOARD CARDS ===
+    document.getElementById("plan").innerText = state[0] || "0";
+    document.getElementById("actual").innerText = state[1] || "0";
+    document.getElementById("balance").innerText = state[2] || "0";
+    document.getElementById("countdown").innerText = format(state[5]) || "00:00";
+    document.getElementById("downtime").innerText = format(state[4]) || "00:00";
+    document.getElementById("expected").innerText = state[6] || "0";
+    document.getElementById("delay").innerText = state[7] || "0";
+    document.getElementById("efficiency").innerText = (state[8] || "0") + "%";
+    
+    // Color status
+    const delayEl = document.getElementById("delay");
+    delayEl.className = "big-number";
+    const delayVal = parseInt(state[7]) || 0;
+    if(delayVal < 0) delayEl.classList.add("status-red");
+    else if(delayVal > 0) delayEl.classList.add("status-green");
+    else delayEl.classList.add("status-blue");
+    
+    // === UPDATE TABLE ===
+    const scanRows = data.scan.slice(1);
+    const table = document.getElementById("scanTable");
+    const newTableData = JSON.stringify(scanRows);
+    
+    if(newTableData !== lastTableData){
+      lastTableData = newTableData;
+      table.innerHTML="";
+      
+      scanRows.reverse().forEach(row => {
+        let newRow = table.insertRow();
+        newRow.insertCell(0).innerText = row[7] || "-";
+        newRow.insertCell(1).innerText = row[8] || "-";
+        newRow.insertCell(2).innerText = row[0] || "-";
+        newRow.insertCell(3).innerText = row[1] || "-";
+        newRow.insertCell(4).innerText = row[2] || "-";
+        newRow.insertCell(5).innerText = row[3] || "-";
+        newRow.insertCell(6).innerText = row[4] || "-";
+        
+        let statusCell = newRow.insertCell(7);
+        statusCell.innerText = row[5] || "SCANNED";
+        if(row[5] === "DOWN TIME") statusCell.className = "status-red";
+        else statusCell.className = "status-green";
+        
+        let downtimeCell = newRow.insertCell(8);
+        downtimeCell.innerText = row[6] || "";
+        if(row[6]) downtimeCell.className = "status-red";
+      });
+    }
+    
+    // === UPDATE STATUS ===
+    setStatus(state[3] || "READY", "status-blue");
+    
+    })
+    .catch(err => console.log("Monitor error:", err));
+}
+/* ===== INITIALIZE SYSTEM ===== */
+  
+window.onload = async function(){
+
+  // 🔐 SECURITY CHECK FIRST
+  if(!(await checkAccess())) return;
+
+  updateDateTime();
+  setInterval(updateDateTime,1000);
+
+  if(isMonitor){
+
+    document.body.classList.add("monitor-mode");
+
+    document.getElementById("chassisInput").style.display="none";
+    document.getElementById("modelInput").style.display="none";
+    document.getElementById("engineInput").style.display="none";
+    document.getElementById("keyInput").style.display="none";
+
+    loadLiveData();
+    setInterval(loadLiveData,1000);
+
+  } else {
+
+    setInterval(updateLiveStateOnly,1000);
+
+  }
+
+};
+  
+</script>
 </body>
 </html>

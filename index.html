@@ -530,17 +530,29 @@ async function checkAccess(){
 
   if(isMonitor) return true;
 
-  const deviceId = getDeviceId(); // still keep (optional)
-  const tabId = getTabId();       // 🔥 NEW
+  const tabId = getTabId();
 
   try{
+    // 🔐 ALWAYS ask password FIRST
+    if(!checkPassword()) return false;
+
+    // 🔄 TRY TO LOCK SYSTEM
+    await fetch(API_URL,{
+      method:"POST",
+      body: JSON.stringify({
+        setLock:true,
+        deviceId:tabId
+      })
+    });
+
+    // 🔍 CHECK WHO OWNS LOCK
     let res = await fetch(API_URL);
     let data = await res.json();
 
     let lock = data.lock;
 
-    // 🔴 BLOCK if another TAB already active
-    if(lock && lock !== tabId){
+    // ❌ IF NOT THIS TAB → BLOCK
+    if(lock !== tabId){
       document.body.innerHTML = `
         <div style="
           height:100vh;
@@ -551,24 +563,10 @@ async function checkAccess(){
           color:red;
           background:black;
         ">
-          ACCESS DENIED (ANOTHER TAB ACTIVE)
+          ACCESS DENIED (SYSTEM IN USE)
         </div>
       `;
       return false;
-    }
-
-    // 🔐 PASSWORD
-    if(!checkPassword()) return false;
-
-    // 🔒 SET LOCK (FIRST TAB ONLY)
-    if(!lock){
-      fetch(API_URL,{
-        method:"POST",
-        body: JSON.stringify({
-          setLock:true,
-          deviceId:tabId   // 🔥 IMPORTANT CHANGE
-        })
-      });
     }
 
     return true;

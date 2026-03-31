@@ -534,12 +534,13 @@ async function checkAccess(){
   const sessionId = getSessionId();
 
   try{
+    // 🔍 STEP 1: CHECK LOCK FIRST
     let res = await fetch(API_URL);
     let data = await res.json();
 
     let lock = data.lock;
 
-    // ❌ BLOCK ANYONE IF LOCK EXISTS AND NOT SAME TAB
+    // ❌ STEP 2: BLOCK IMMEDIATELY (NO PASSWORD)
     if(lock && lock !== sessionId){
       document.body.innerHTML = `
         <div style="
@@ -557,11 +558,11 @@ async function checkAccess(){
       return false;
     }
 
-    // 🔐 ALWAYS ASK PASSWORD
-    if(!checkPassword()) return false;
-
-    // 🔒 SET LOCK IF FIRST USER
+    // 🔐 STEP 3: ONLY FIRST USER ENTER PASSWORD
     if(!lock){
+      if(!checkPassword()) return false;
+
+      // 🔒 STEP 4: SET LOCK
       await fetch(API_URL,{
         method:"POST",
         body: JSON.stringify({

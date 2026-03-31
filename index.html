@@ -520,55 +520,44 @@ function checkPassword(){
   
 async function checkAccess(){
 
-  // 🔥 PREVENT RUNNING AGAIN
-  if(accessGranted) return true;
-
   if(isMonitor) return true;
 
-  const tabId = getDeviceId(); // 🔥 USE DEVICE, NOT TAB
+  const deviceId = getDeviceId();
 
   try{
-    // 🔐 ALWAYS ask password FIRST
-    if(!checkPassword()) return false;
-
-    // 🔄 TRY TO LOCK SYSTEM
-    await fetch(API_URL,{
-      method:"POST",
-      body: JSON.stringify({
-        setLock:true,
-        deviceId:tabId
-      })
-    });
-
-    // 🔍 CHECK WHO OWNS LOCK
     let res = await fetch(API_URL);
     let data = await res.json();
 
     let lock = data.lock;
 
-    // ❌ IF NOT THIS TAB → BLOCK
-    if(lock !== tabId){
+    // ❌ BLOCK if other device using
+    if(lock && lock !== deviceId){
       document.body.innerHTML = `
-        <div style="
-          height:100vh;
-          display:flex;
-          justify-content:center;
-          align-items:center;
-          font-size:40px;
-          color:red;
-          background:black;
-        ">
+        <div style="height:100vh;display:flex;justify-content:center;align-items:center;font-size:40px;color:red;background:black;">
           ACCESS DENIED (SYSTEM IN USE)
         </div>
       `;
       return false;
     }
 
-  accessGranted = true; // 🔥 ADD THIS
-  return true;
+    // 🔐 ALWAYS ask password
+    if(!checkPassword()) return false;
+
+    // 🔒 SET LOCK if empty
+    if(!lock){
+      fetch(API_URL,{
+        method:"POST",
+        body: JSON.stringify({
+          setLock:true,
+          deviceId:deviceId
+        })
+      });
+    }
+
+    return true;
 
   }catch(err){
-    console.log("Access error:", err);
+    console.log(err);
     return false;
   }
 }

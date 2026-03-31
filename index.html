@@ -489,26 +489,28 @@ function getDeviceId(){
 }
 
 // 🔐 PASSWORD CHECK
+  
 function checkPassword(){
+
   let input = prompt("Enter System Password:");
+
   if(input !== SYSTEM_PASSWORD){
     document.body.innerHTML = `
       <div style="height:100vh;display:flex;justify-content:center;align-items:center;font-size:40px;color:red;background:black;">
-        WRONG PASSWORD
+        ACCESS DENIED
       </div>
     `;
     return false;
   }
+
   return true;
 }
 
 // 🔒 LOCK + ACCESS CONTROL
+  
 async function checkAccess(){
 
-  if(isMonitor) return true; // monitor bypass
-
-  // 🔐 password first
-  if(!checkPassword()) return false;
+  if(isMonitor) return true;
 
   const deviceId = getDeviceId();
 
@@ -518,7 +520,20 @@ async function checkAccess(){
 
     let lockedDevice = data.lock;
 
-    // FIRST USER
+    // 🔴 BLOCK if other device using
+    if(lockedDevice && lockedDevice !== deviceId){
+      document.body.innerHTML = `
+        <div style="height:100vh;display:flex;justify-content:center;align-items:center;font-size:40px;color:red;background:black;">
+          ACCESS DENIED (SYSTEM IN USE)
+        </div>
+      `;
+      return false;
+    }
+
+    // 🔐 ALWAYS ask password (even after refresh)
+    if(!checkPassword()) return false;
+
+    // 🔒 SET LOCK only first time
     if(!lockedDevice){
       fetch(API_URL,{
         method:"POST",
@@ -527,22 +542,9 @@ async function checkAccess(){
           deviceId:deviceId
         })
       });
-      return true;
     }
 
-    // SAME DEVICE
-    if(lockedDevice === deviceId){
-      return true;
-    }
-
-    // BLOCK OTHER USER
-    document.body.innerHTML = `
-      <div style="height:100vh;display:flex;justify-content:center;align-items:center;font-size:40px;color:red;background:black;">
-        ACCESS DENIED (IN USE)
-      </div>
-    `;
-
-    return false;
+    return true;
 
   }catch(err){
     console.log("Access error:", err);

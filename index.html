@@ -490,6 +490,15 @@ function getDeviceId(){
   return id;
 }
 
+  function getSessionId(){
+  let id = sessionStorage.getItem("sessionId");
+  if(!id){
+    id = "SESSION_" + Math.random().toString(36).substr(2,9);
+    sessionStorage.setItem("sessionId", id);
+  }
+  return id;
+}
+
 // 🔐 PASSWORD CHECK
   
 function checkPassword(){
@@ -522,46 +531,53 @@ async function checkAccess(){
 
   if(isMonitor) return true;
 
-  const deviceId = getDeviceId();
+  const sessionId = getSessionId();
 
   try{
-    // 🔍 CHECK LOCK FIRST
     let res = await fetch(API_URL);
     let data = await res.json();
 
     let lock = data.lock;
 
-    // ❌ IF ALREADY LOCKED → BLOCK IMMEDIATELY
-    if(lock){
-  document.body.innerHTML = `
-    <div style="
-      height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      font-size:40px;
-      color:red;
-      background:black;
-    ">
-      ACCESS DENIED (SYSTEM IN USE)
-    </div>
-  `;
-  return false;
-}
+    // ❌ BLOCK ANYONE IF LOCK EXISTS AND NOT SAME TAB
+    if(lock && lock !== sessionId){
+      document.body.innerHTML = `
+        <div style="
+          height:100vh;
+          display:flex;
+          justify-content:center;
+          align-items:center;
+          font-size:40px;
+          color:red;
+          background:black;
+        ">
+          ACCESS DENIED (SYSTEM IN USE)
+        </div>
+      `;
+      return false;
+    }
 
-    // 🔐 ONLY FIRST USER CAN ENTER PASSWORD
+    // 🔐 ALWAYS ASK PASSWORD
+    if(!checkPassword()) return false;
+
+    // 🔒 SET LOCK IF FIRST USER
     if(!lock){
-      if(!checkPassword()) return false;
-
-      // 🔒 SET LOCK
       await fetch(API_URL,{
         method:"POST",
         body: JSON.stringify({
           setLock:true,
-          deviceId:deviceId
+          deviceId: sessionId
         })
       });
     }
+
+    return true;
+
+  }catch(err){
+    console.log("Access error:", err);
+    return false;
+  }
+}
 
     // ✅ SAME DEVICE (refresh) → allow
     return true;
@@ -1761,6 +1777,15 @@ window.onload = async function(){
   }
 
 };
+
+window.addEventListener("beforeunload", function () {
+
+  navigator.sendBeacon(API_URL, JSON.stringify({
+    releaseLock: true,
+    deviceId: getSessionId()
+  }));
+
+});
   
 </script>
 </body>

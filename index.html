@@ -479,11 +479,21 @@ let lastUpdateTime = 0;
 let lastTableData = "";
 
 // 🔐 DEVICE ID
+  
 function getDeviceId(){
   let id = localStorage.getItem("deviceId");
   if(!id){
     id = "PC_" + Math.random().toString(36).substr(2,9);
     localStorage.setItem("deviceId", id);
+  }
+  return id;
+}
+
+function getTabId(){
+  let id = sessionStorage.getItem("tabId");
+  if(!id){
+    id = "TAB_" + Math.random().toString(36).substr(2,9);
+    sessionStorage.setItem("tabId", id);
   }
   return id;
 }
@@ -520,16 +530,17 @@ async function checkAccess(){
 
   if(isMonitor) return true;
 
-  const deviceId = getDeviceId();
+  const deviceId = getDeviceId(); // still keep (optional)
+  const tabId = getTabId();       // 🔥 NEW
 
   try{
     let res = await fetch(API_URL);
     let data = await res.json();
 
-    let lockedDevice = data.lock;
+    let lock = data.lock;
 
-    // 🔴 BLOCK other device
-    if(lockedDevice && lockedDevice !== deviceId){
+    // 🔴 BLOCK if another TAB already active
+    if(lock && lock !== tabId){
       document.body.innerHTML = `
         <div style="
           height:100vh;
@@ -540,22 +551,22 @@ async function checkAccess(){
           color:red;
           background:black;
         ">
-          ACCESS DENIED (SYSTEM IN USE)
+          ACCESS DENIED (ANOTHER TAB ACTIVE)
         </div>
       `;
       return false;
     }
 
-    // 🔐 ALWAYS ask password (even after refresh)
+    // 🔐 PASSWORD
     if(!checkPassword()) return false;
 
-    // 🔒 FIRST TIME → SET LOCK
-    if(!lockedDevice){
+    // 🔒 SET LOCK (FIRST TAB ONLY)
+    if(!lock){
       fetch(API_URL,{
         method:"POST",
         body: JSON.stringify({
           setLock:true,
-          deviceId:deviceId
+          deviceId:tabId   // 🔥 IMPORTANT CHANGE
         })
       });
     }

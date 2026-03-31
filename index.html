@@ -525,27 +525,36 @@ async function checkAccess(){
   const deviceId = getDeviceId();
 
   try{
+    // 🔍 CHECK LOCK FIRST
     let res = await fetch(API_URL);
     let data = await res.json();
 
     let lock = data.lock;
 
-    // ❌ BLOCK if other device using
-    if(lock && lock !== deviceId){
-      document.body.innerHTML = `
-        <div style="height:100vh;display:flex;justify-content:center;align-items:center;font-size:40px;color:red;background:black;">
-          ACCESS DENIED (SYSTEM IN USE)
-        </div>
-      `;
-      return false;
-    }
+    // ❌ IF ALREADY LOCKED → BLOCK IMMEDIATELY
+    if(lock){
+  document.body.innerHTML = `
+    <div style="
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-size:40px;
+      color:red;
+      background:black;
+    ">
+      ACCESS DENIED (SYSTEM IN USE)
+    </div>
+  `;
+  return false;
+}
 
-    // 🔐 ALWAYS ask password
-    if(!checkPassword()) return false;
-
-    // 🔒 SET LOCK if empty
+    // 🔐 ONLY FIRST USER CAN ENTER PASSWORD
     if(!lock){
-      fetch(API_URL,{
+      if(!checkPassword()) return false;
+
+      // 🔒 SET LOCK
+      await fetch(API_URL,{
         method:"POST",
         body: JSON.stringify({
           setLock:true,
@@ -554,10 +563,11 @@ async function checkAccess(){
       });
     }
 
+    // ✅ SAME DEVICE (refresh) → allow
     return true;
 
   }catch(err){
-    console.log(err);
+    console.log("Access error:", err);
     return false;
   }
 }

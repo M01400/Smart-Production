@@ -533,15 +533,35 @@ async function checkAccess(){
 
   const sessionId = getSessionId();
 
+  // 🚀 STEP 0: INSTANT LOCAL BLOCK (NO DELAY)
+  let localLock = localStorage.getItem("MAIN_LOCK");
+  
+  if(localLock){
+    document.body.innerHTML = `
+      <div style="
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        font-size:40px;
+        color:red;
+        background:black;
+      ">
+        ACCESS DENIED (SYSTEM IN USE)
+      </div>
+    `;
+    return false;
+  }
+
   try{
-    // 🔍 STEP 1: CHECK LOCK FIRST
+    // 🔍 SERVER CHECK (backup)
     let res = await fetch(API_URL);
     let data = await res.json();
 
     let lock = data.lock;
 
-    // ❌ STEP 2: BLOCK IMMEDIATELY (NO PASSWORD)
-    if(lock && lock !== sessionId){
+    // ❌ BLOCK (SERVER)
+    if(lock){
       document.body.innerHTML = `
         <div style="
           height:100vh;
@@ -558,11 +578,11 @@ async function checkAccess(){
       return false;
     }
 
-    // 🔐 STEP 3: ONLY FIRST USER ENTER PASSWORD
+    // 🔐 PASSWORD
     if(!lock){
       if(!checkPassword()) return false;
 
-      // 🔒 STEP 4: SET LOCK
+      // 🔒 SET SERVER LOCK
       await fetch(API_URL,{
         method:"POST",
         body: JSON.stringify({
@@ -570,6 +590,9 @@ async function checkAccess(){
           deviceId: sessionId
         })
       });
+
+    // 🚀 ADD THIS LINE
+      localStorage.setItem("MAIN_LOCK", "LOCKED");
     }
 
     return true;
@@ -579,7 +602,6 @@ async function checkAccess(){
     return false;
   }
 }
-
 /* ===== DATE TIME ===== */
 
 function updateDateTime(){
@@ -1771,6 +1793,8 @@ window.onload = async function(){
 };
 
 window.addEventListener("beforeunload", function () {
+
+  localStorage.removeItem("MAIN_LOCK");
 
   navigator.sendBeacon(API_URL, JSON.stringify({
     releaseLock: true,

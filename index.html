@@ -1674,8 +1674,8 @@ else{
 }
 
 /* ===== INITIALIZE SYSTEM ===== */
-  
- window.onload = function(){
+
+window.onload = function(){
 
   // 🔐 SECURITY CHECK FIRST
   if(!checkAccess()) return;
@@ -1697,31 +1697,6 @@ else{
 
   } else {
 
-    setInterval(updateLiveStateOnly,1000);
-
-  }
-
-};
-
-  updateDateTime();
-  setInterval(updateDateTime,1000);
-
-  if(isMonitor){
-
-    document.body.classList.add("monitor-mode");
-
-    // Hide scan input
-    document.getElementById("chassisInput").style.display="none";
-    document.getElementById("modelInput").style.display="none";
-    document.getElementById("engineInput").style.display="none";
-    document.getElementById("keyInput").style.display="none";
-
-    loadLiveData();
-    setInterval(loadLiveData,1000);
-
-  } else {
-
-    // MAIN PC live sync only
     setInterval(updateLiveStateOnly,1000);
 
   }

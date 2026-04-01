@@ -1500,7 +1500,7 @@ function loadLiveData(){
     if(!data || !data.state || data.state.length === 0) return;
 
 // ✅ THEN ONLY PROCESS
-    let newState = data.state[1]; // always latest row
+    let newState = data.state;
       
     // ✅ ONLY update if valid
     if(newState && newState.length >= 9){

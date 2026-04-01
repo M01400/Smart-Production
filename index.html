@@ -534,7 +534,7 @@ async function checkAccess(){
   const sessionId = getSessionId();
 
   try{
-    // 🔥 SINGLE REQUEST (NO DELAY LOGIC)
+    // 🔥 STEP 1: REQUEST LOCK
     let res = await fetch(API_URL,{
       method:"POST",
       body: JSON.stringify({
@@ -545,7 +545,7 @@ async function checkAccess(){
 
     let data = await res.json();
 
-    // ❌ BLOCK IMMEDIATELY (NO PASSWORD)
+    // ❌ STEP 2: BLOCK IMMEDIATELY
     if(!data.allowed){
       document.body.innerHTML = `
         <div style="
@@ -563,9 +563,16 @@ async function checkAccess(){
       return false;
     }
 
-    // 🔐 ONLY FIRST USER SEE PASSWORD
+    // 🔐 STEP 3: ASK PASSWORD
     let input = prompt("Enter System Password:");
     if(input !== SYSTEM_PASSWORD){
+
+      // 🔓 RELEASE LOCK IF WRONG PASSWORD
+      navigator.sendBeacon(API_URL, JSON.stringify({
+        releaseLock:true,
+        deviceId: sessionId
+      }));
+
       document.body.innerHTML = `
         <div style="
           height:100vh;
@@ -589,6 +596,7 @@ async function checkAccess(){
     return false;
   }
 }
+  
 /* ===== DATE TIME ===== */
 
 function updateDateTime(){
@@ -1780,8 +1788,6 @@ window.onload = async function(){
 };
 
 window.addEventListener("beforeunload", function () {
-
-  localStorage.removeItem("MAIN_LOCK");
 
   navigator.sendBeacon(API_URL, JSON.stringify({
     releaseLock: true,

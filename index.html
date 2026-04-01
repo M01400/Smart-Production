@@ -1444,197 +1444,96 @@ function cleanDowntime(raw){
 }
   
 // Ambil data untuk MONITOR PC
-function loadLiveData(){
-
+function loadLiveData() {
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
-    const now = Date.now();
-    if(now - lastUpdateTime < 1000) return;
-    lastUpdateTime = now;
+      // 1. Validation: Ensure we have data
+      if (!data || !data.state) {
+          console.log("Waiting for data...");
+          return;
+      }
 
-    // ✅ CHECK FIRST (IMPORTANT)
-    if(!data || !data.state || data.state.length === 0) return;
+      // 2. DATA MAPPING (Directly from the Row 2 array)
+      const state = data.state; 
 
-// ✅ THEN ONLY PROCESS
-    let newState = data.state[data.state.length - 1];
-      
-    // ✅ ONLY update if valid
-    if(newState && newState.length >= 9){
-        window.lastValidState = newState;
-    }
-    
-    // ✅ NEVER allow null overwrite
-    if(!window.lastValidState){
-    console.log("Waiting first valid state...");
-    return;
-}
-    
-    const state = window.lastValidState;
-    
-    if(!state || state.length < 9){
-    console.log("⚠️ Invalid state skipped");
-    return;
-  }  
-      
-    const scanRows = data.scan.slice(1);
-    const table = document.getElementById("scanTable");
-    
-    // Convert to string for comparison
-    const newTableData = JSON.stringify(scanRows);
-    
-    if(newTableData !== lastTableData){
-
-  lastTableData = newTableData;
-
-  table.innerHTML="";
-
-  scanRows.reverse().forEach(row => {
-
-    let newRow = table.insertRow();
-
-    let fullDateTime = new Date(row[0]);
-    newRow.insertCell(0).innerText = fullDateTime.toLocaleDateString("en-GB");
-    newRow.insertCell(1).innerText = fullDateTime.toLocaleTimeString("en-GB", {
-        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true 
-    }).toLowerCase();
-
-    newRow.insertCell(2).innerText = row[1] || "-";
-    newRow.insertCell(3).innerText = row[2] || "-";
-    newRow.insertCell(4).innerText = row[3] || "-";
-    newRow.insertCell(5).innerText = row[4] || "-";
-    newRow.insertCell(6).innerText = row[5] || "-";
-
-    let statusCell = newRow.insertCell(7);
-    let statusText = row[6] || "";
-    statusCell.innerText = statusText;
-
-    console.log("FULL ROW:", row);
-    console.log("DowntimeEvent (row[10]):", row[10]);
-    console.log("TotalDowntime (row[11]):", row[11]);
-
-    if(statusText === "SCANNED") statusCell.className = "status-green";
-    if(statusText === "DOWN TIME") statusCell.className = "status-red";
-
-    let downtimeCell = newRow.insertCell(8);
-
-// ✅ ONLY show downtime if status is DOWN TIME
-    if(statusText === "DOWN TIME"){
-    let rawDowntime = row[9] || "";
-    downtimeCell.innerText = cleanDowntime(rawDowntime);
-    downtimeCell.className = "status-red";
-    }else{
-    downtimeCell.innerText = ""; // 🔥 IMPORTANT (no carry over)
-}
-
-    if(statusText === "DOWN TIME") downtimeCell.className = "status-red";
-  });
-
-}
-      
-      const plan = parseInt(state[0]) || 0;
-      const actual = parseInt(state[1]) || 0;
-      const balance = parseInt(state[2]) || 0;
-      const status = state[3] || "READY";
+      // Matches your Sheet Columns: A=0, B=1, C=2, D=3, E=4, F=5, G=6, H=7, I=8
+      const plan          = parseInt(state[0]) || 0;
+      const actual        = parseInt(state[1]) || 0;
+      const balance       = parseInt(state[2]) || 0;
+      const status        = state[3] || "READY";
       const totalDowntime = parseInt(state[4]) || 0;
-      const countdown = parseInt(state[5]) || 0;
-      const expected = parseInt(state[6]) || 0;
-      const delay = parseInt(state[7]) || 0;
-      const efficiency = parseInt(state[8]) || 0;
+      const countdown     = parseInt(state[5]) || 0;
+      const expected      = parseInt(state[6]) || 0;
+      const delay         = parseInt(state[7]) || 0;
+      const efficiency    = parseInt(state[8]) || 0;
 
-      let effEl = document.getElementById("efficiency");
-      effEl.innerText = efficiency + "%";
-      
-      if(efficiency < 90){
-        effEl.className = "big-number status-red";
-      }
-      else if(efficiency < 100){
-        effEl.className = "big-number status-orange";
-      }
-      else{
-        effEl.className = "big-number status-green";
-      }
-      
-      // Update dashboard
+      // 3. UPDATE NUMBERS ON DASHBOARD
       document.getElementById("plan").innerText = plan;
       document.getElementById("actual").innerText = actual;
-      countdownValue = countdown;
-      document.getElementById("countdown").innerText = format(countdownValue);
-      document.getElementById("downtime").innerText = format(totalDowntime);
       document.getElementById("expected").innerText = expected;
+      document.getElementById("countdown").innerText = format(countdown);
+      document.getElementById("downtime").innerText = format(totalDowntime);
 
-      // Balance
+      // 4. UPDATE COLORS & CLASSES
+      let effEl = document.getElementById("efficiency");
+      effEl.innerText = efficiency + "%";
+      effEl.className = "big-number " + (efficiency < 90 ? "status-red" : (efficiency < 100 ? "status-orange" : "status-green"));
+
       const balanceEl = document.getElementById("balance");
-      if(balance < 0){
-        balanceEl.className="big-number status-red";
-        balanceEl.innerText = balance;
+      balanceEl.innerText = balance > 0 ? "+" + balance : balance;
+      balanceEl.className = "big-number " + (balance < 0 ? "status-red" : (balance > 0 ? "status-green" : "status-blue"));
+
+      const delayEl = document.getElementById("delay");
+      delayEl.innerText = delay > 0 ? ("+" + delay) : delay;
+      delayEl.className = "big-number " + (delay < 0 ? "status-red" : (delay > 0 ? "status-green" : "status-blue"));
+
+      // 5. STATUS MIRRORING (Animations)
+      const downtimeCard = document.getElementById("downtimeCard");
+      const downtimeText = document.getElementById("downtime");
+
+      if (status === "DOWN TIME" || status === "BEHIND SCHEDULE") {
+          setStatus(status, "status-red blink");
+          downtimeCard.classList.add("downtime-alert", "blink");
+          downtimeText.classList.add("status-red", "blink");
+      } else if (status === "RUNNING" || status === "TARGET ACHIEVED") {
+          setStatus(status, "status-green pulse");
+          downtimeCard.classList.remove("downtime-alert", "blink");
+          downtimeText.classList.remove("status-red", "blink");
+      } else {
+          setStatus(status, "status-blue");
+          downtimeCard.classList.remove("downtime-alert", "blink");
+          downtimeText.classList.remove("status-red", "blink");
       }
-      else if(balance > 0){
-        balanceEl.className="big-number status-green";
-        balanceEl.innerText = "+" + balance;
+
+      // 6. UPDATE HISTORY TABLE
+      const scanRows = data.scan.slice(1); // Remove header row
+      const newTableData = JSON.stringify(scanRows);
+      
+      if (newTableData !== lastTableData) {
+          lastTableData = newTableData;
+          const table = document.getElementById("scanTable");
+          table.innerHTML = "";
+          scanRows.reverse().forEach(row => {
+              let newRow = table.insertRow();
+              let fullDateTime = new Date(row[0]);
+              newRow.insertCell(0).innerText = fullDateTime.toLocaleDateString("en-GB");
+              newRow.insertCell(1).innerText = fullDateTime.toLocaleTimeString("en-GB", {hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true}).toLowerCase();
+              newRow.insertCell(2).innerText = row[1] || "-"; // Lot
+              newRow.insertCell(3).innerText = row[2] || "-"; // Model
+              newRow.insertCell(4).innerText = row[3] || "-"; // Chassis
+              newRow.insertCell(5).innerText = row[4] || "-"; // Engine
+              newRow.insertCell(6).innerText = row[5] || "-"; // Key
+              
+              let statusCell = newRow.insertCell(7);
+              statusCell.innerText = row[6] || "";
+              statusCell.className = (row[6] === "SCANNED") ? "status-green" : (row[6] === "DOWN TIME" ? "status-red" : "");
+              
+              let downtimeCell = newRow.insertCell(8);
+              downtimeCell.innerText = (row[6] === "DOWN TIME") ? cleanDowntime(row[9]) : "";
+              if(row[6] === "DOWN TIME") downtimeCell.className = "status-red";
+          });
       }
-      else{
-        balanceEl.className="big-number status-blue";
-        balanceEl.innerText = "0";
-      }
-
-      //  ALWAYS APPLY DELAY COLOR (MOVE HERE)
-let delayEl = document.getElementById("delay");
-
-// reset first
-delayEl.className = "big-number";
-
-if(delay < 0){
-    delayEl.classList.add("status-red");
-} 
-else if(delay > 0){
-    delayEl.classList.add("status-green");
-} 
-else{
-    delayEl.classList.add("status-blue");
-}
-
-delayEl.innerText = delay > 0 ? ("+" + delay) : delay;
-
-// Status mirror (FULL SAME AS MAIN PC)
-
-const downtimeCard = document.getElementById("downtimeCard");
-const downtimeText = document.getElementById("downtime");
-
-if(status === "DOWN TIME"){
-    setStatus("DOWN TIME","status-red blink");
-
-    downtimeCard.classList.add("downtime-alert","blink");
-    downtimeText.classList.add("status-red","blink");
-}
-else if(status === "RUNNING"){
-    setStatus("RUNNING","status-green pulse");
-
-    downtimeCard.classList.remove("downtime-alert","blink");
-    downtimeText.classList.remove("status-red","blink");
-}
-else if(status === "TARGET ACHIEVED"){
-    setStatus("TARGET ACHIEVED","status-green");
-
-    downtimeCard.classList.remove("downtime-alert","blink");
-    downtimeText.classList.remove("status-red","blink");
-}
-else if(status === "BEHIND SCHEDULE"){
-    setStatus("BEHIND SCHEDULE","status-red blink");
-}
-else if(status === "BREAK TIME"){
-    setStatus("BREAK TIME","status-orange");
-}
-else if(status === "PAUSED"){
-    setStatus("PAUSED","status-orange");
-}
-else{
-    setStatus(status,"status-blue");
-
-    downtimeCard.classList.remove("downtime-alert","blink");
-    downtimeText.classList.remove("status-red","blink");
-
-}
     })
     .catch(err => console.log("Monitor load error:", err));
 }

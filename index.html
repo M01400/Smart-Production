@@ -544,8 +544,8 @@ function calculateExpectedOutput(){
     if(isMonitor) return 0;
     if(!startTime) return 0;
     if(!timer){
-    return actualCount;
-    }
+    return 0; // freeze expected when stopped
+}
 
   // ✅ STOP expected when target achieved
     let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
@@ -1457,7 +1457,7 @@ function loadLiveData(){
     if(!data || !data.state || data.state.length === 0) return;
 
 // ✅ THEN ONLY PROCESS
-    let newState = data.state[1]; // always latest row
+    let newState = data.state[data.state.length - 1];
       
     // ✅ ONLY update if valid
     if(newState && newState.length >= 9){
@@ -1465,7 +1465,10 @@ function loadLiveData(){
     }
     
     // ✅ NEVER allow null overwrite
-    if(!window.lastValidState) return;
+    if(!window.lastValidState){
+    console.log("Waiting first valid state...");
+    return;
+}
     
     const state = window.lastValidState;
     

@@ -1396,14 +1396,20 @@ function updateLiveStateOnly(){
   const actual = actualCount;
   const balance = actual - plan;
   const status = document.getElementById("status").innerText.trim();
-  const expected = calculateExpectedOutput();
-  const delay = actual - expected;
-
-  let efficiency = 0;
-  if(expected > 0){
-    efficiency = Math.floor((actual / expected) * 100);
-  }
   
+  let expected = 0;
+  let delay = 0;
+  let efficiency = 0;
+  
+  if(!isMonitor){
+    expected = calculateExpectedOutput();
+    delay = actual - expected;
+  
+    if(expected > 0){
+      efficiency = Math.floor((actual / expected) * 100);
+    }
+  }
+    
   fetch(API_URL,{
     method:"POST",
     body: JSON.stringify({
@@ -1466,7 +1472,7 @@ function cleanDowntime(raw){
     }
 
     return text;
-  }
+    }
 
   // ✅ If number → convert to mm:ss
   if(!isNaN(text)){

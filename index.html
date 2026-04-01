@@ -459,38 +459,49 @@ function updateDateTime(){
 // 🔐 SET YOUR PASSWORD HERE
 const SYSTEM_PASSWORD = "1234"; 
 
-// Unique device ID key
-const DEVICE_KEY = "MAIN_PC_LOCK";
-
 /* ===== CHECK ACCESS ===== */
-function checkAccess(){
+const TAB_ID = "TAB-" + Math.random().toString(36).substr(2,9);
 
-  // If monitor mode → allow
+async function checkAccess(){
+
+  // allow monitor
   if(window.location.search.includes("monitor")){
     return true;
   }
 
-  let savedDevice = localStorage.getItem(DEVICE_KEY);
-
-  // If already registered → allow
-  if(savedDevice){
-    return true;
-  }
-
-  // Ask password
+  // 🔐 password
   let input = prompt("Enter System Password:");
-
   if(input !== SYSTEM_PASSWORD){
     document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
     return false;
   }
 
-  // Register THIS PC as main
-  localStorage.setItem(DEVICE_KEY, "AUTHORIZED");
+  const deviceId = navigator.userAgent;
 
-  return true;
+  try{
+    let res = await fetch(API_URL,{
+      method:"POST",
+      body: JSON.stringify({
+        lockRequest:true,
+        deviceId: deviceId,
+        tabId: TAB_ID
+      })
+    });
+
+    let data = await res.json();
+
+    if(!data.allowed){
+      document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED (MAIN PC ACTIVE)</h1>";
+      return false;
+    }
+
+    return true;
+
+  }catch(err){
+    alert("Connection error");
+    return false;
+  }
 }
-  
 /* ===== VARIABLES ===== */
 
 let ramadanMode=false;

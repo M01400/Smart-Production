@@ -465,34 +465,67 @@ const SYSTEM_PASSWORD = "1234";
 const DEVICE_KEY = "MAIN_PC_LOCK";
 
 /* ===== CHECK ACCESS ===== */
-function checkAccess(){
+async function checkAccess(){
 
-  // If monitor mode → allow
+  // ✅ Monitor always allowed
   if(window.location.search.includes("monitor")){
     return true;
   }
 
-  let savedDevice = localStorage.getItem(DEVICE_KEY);
+  /* ================= PASSWORD CHECK ================= */
 
-  // If already registered → allow
-  if(savedDevice){
-    return true;
+  let alreadyAuthorized = localStorage.getItem("AUTH_OK");
+
+  if(!alreadyAuthorized){
+
+    let input = prompt("Enter System Password:");
+
+    if(input !== SYSTEM_PASSWORD){
+      document.body.innerHTML = `
+        <h1 style="color:red;text-align:center;margin-top:100px;">
+          WRONG PASSWORD
+        </h1>
+      `;
+      return false;
+    }
+
+    // Save password pass
+    localStorage.setItem("AUTH_OK","YES");
   }
 
-  // Ask password
-  let input = prompt("Enter System Password:");
+  /* ================= DEVICE ID ================= */
 
-  if(input !== SYSTEM_PASSWORD){
-    document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
+  let deviceId = localStorage.getItem("DEVICE_ID");
+
+  if(!deviceId){
+    deviceId = "DEV_" + Math.random().toString(36).substring(2,9);
+    localStorage.setItem("DEVICE_ID", deviceId);
+  }
+
+  /* ================= LOCK REQUEST ================= */
+
+  let res = await fetch(API_URL,{
+    method:"POST",
+    body: JSON.stringify({
+      lockRequest:true,
+      deviceId: deviceId
+    })
+  });
+
+  let data = await res.json();
+
+  // ❌ BLOCK if already used
+  if(!data.allowed){
+    document.body.innerHTML = `
+      <h1 style="color:red;text-align:center;margin-top:100px;">
+        ACCESS DENIED (SYSTEM IN USE)
+      </h1>
+    `;
     return false;
   }
 
-  // Register THIS PC as main
-  localStorage.setItem(DEVICE_KEY, "AUTHORIZED");
-
   return true;
 }
-  
 /* ===== VARIABLES ===== */
 
 let ramadanMode=false;
@@ -1679,11 +1712,13 @@ else{
 
 /* ===== INITIALIZE SYSTEM ===== */
 
-window.onload = function(){
+window.onload = async function(){
 
-  // 🔐 SECURITY CHECK FIRST
-  if(!checkAccess()) return;
+  // 🔐 WAIT for password + lock check
+  const allowed = await checkAccess();
+  if(!allowed) return;
 
+  // ✅ Only run system AFTER access approved
   updateDateTime();
   setInterval(updateDateTime,1000);
 

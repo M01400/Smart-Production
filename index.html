@@ -504,14 +504,17 @@ async function checkAccess(){
 
   /* ================= LOCK REQUEST ================= */
 
-  let res = await fetch(API_URL,{
-    method:"POST",
-    body: JSON.stringify({
-      lockRequest:true,
-      deviceId: deviceId
-    })
-  });
-
+ let res = await fetch(API_URL,{
+  method:"POST",
+  headers:{
+    "Content-Type":"application/json"
+  },
+  body: JSON.stringify({
+    lockRequest:true,
+    deviceId: deviceId
+  })
+});
+  
   let data = await res.json();
 
   // ❌ BLOCK if already used

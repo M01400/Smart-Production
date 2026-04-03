@@ -472,27 +472,6 @@ async function checkAccess(){
     return true;
   }
 
-  /* ================= PASSWORD CHECK ================= */
-
- let alreadyAuthorized = null;
-
-  if(!alreadyAuthorized){
-
-    let input = prompt("Enter System Password:");
-
-    if(input !== SYSTEM_PASSWORD){
-      document.body.innerHTML = `
-        <h1 style="color:red;text-align:center;margin-top:100px;">
-          WRONG PASSWORD
-        </h1>
-      `;
-      return false;
-    }
-
-    // Save password pass
-    localStorage.setItem("AUTH_OK","YES");
-  }
-
   /* ================= DEVICE ID ================= */
 
   let deviceId = localStorage.getItem("DEVICE_ID");
@@ -502,30 +481,48 @@ async function checkAccess(){
     localStorage.setItem("DEVICE_ID", deviceId);
   }
 
-  /* ================= LOCK REQUEST ================= */
+  /* ================= LOCK CHECK FIRST ================= */
 
- let res = await fetch(API_URL,{
-  method:"POST",
-  headers:{
-    "Content-Type":"application/json"
-  },
-  body: JSON.stringify({
-    lockRequest:true,
-    deviceId: deviceId
-  })
-});
+  let res = await fetch(API_URL,{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body: JSON.stringify({
+      lockRequest:true,
+      deviceId: deviceId
+    })
+  });
 
-if(!res.ok){
-  throw new Error("Server error");
-}
+  if(!res.ok){
+    document.body.innerHTML = `
+      <h1 style="color:red;text-align:center;margin-top:100px;">
+        SERVER ERROR
+      </h1>
+    `;
+    return false;
+  }
 
-let data = await res.json();
-  
-  // ❌ BLOCK if already used
+  let data = await res.json();
+
+  // ❌ If locked → BLOCK IMMEDIATELY (NO PASSWORD)
   if(!data.allowed){
     document.body.innerHTML = `
       <h1 style="color:red;text-align:center;margin-top:100px;">
         ACCESS DENIED (SYSTEM IN USE)
+      </h1>
+    `;
+    return false;
+  }
+
+  /* ================= ALWAYS ASK PASSWORD ================= */
+
+  let input = prompt("Enter System Password:");
+
+  if(input !== SYSTEM_PASSWORD){
+    document.body.innerHTML = `
+      <h1 style="color:red;text-align:center;margin-top:100px;">
+        WRONG PASSWORD
       </h1>
     `;
     return false;

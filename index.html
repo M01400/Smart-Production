@@ -506,6 +506,9 @@ async function checkAccess(){
 
  let res = await fetch(API_URL,{
   method:"POST",
+  headers:{
+    "Content-Type":"application/json"
+  },
   body: JSON.stringify({
     lockRequest:true,
     deviceId: deviceId
@@ -1412,7 +1415,7 @@ function toggleRamadan(){
 /* ================= GOOGLE SHEET MIRROR LAYER ================= */
 
 // 🔴 GANTI DENGAN LINK /exec WEB APP ANDA
-const API_URL = "https://script.google.com/macros/s/AKfycby8Nw_ViRXBqgusL2XZ-nEU9BG6iuSJQBoW345WbuWjlVbjvBt0dpeyrqVjLhu6-x9XSw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyYD3UX0cv4DxEHEdpf31OJI3hUA-UuhqfqB6ZkDysfsWnsSh3MxB3FraU0TRij89Ew6A/exec";
 
 // Detect monitor mode (?monitor)
 const isMonitor = window.location.search.includes("monitor");

@@ -383,6 +383,47 @@ Lot:
 <tbody id="scanTable"></tbody>
 </table>
 
+<!-- 🔐 PASSWORD MODAL -->
+<div id="passwordModal" style="
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0,0,0,0.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+">
+
+  <div style="
+    background:#0f172a;
+    padding:25px;
+    border-radius:12px;
+    text-align:center;
+    color:white;
+    width:300px;
+    box-shadow:0 0 20px rgba(0,0,0,0.8);
+  ">
+    <h3>System Password</h3>
+
+    <input id="passwordInput" type="password" placeholder="Enter password"
+      style="width:100%;padding:10px;margin:10px 0;border-radius:8px;border:none;">
+
+    <br>
+
+    <button onclick="submitPassword()" style="
+      padding:8px 20px;
+      background:#38bdf8;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:bold;
+    ">Submit</button>
+
+  </div>
+</div>
+  
+
 <script>
 
 /* ================= SYSTEM SETTINGS ================= */
@@ -472,27 +513,6 @@ async function checkAccess(){
     return true;
   }
 
-  /* ================= PASSWORD CHECK ================= */
-
- let alreadyAuthorized = null;
-
-  if(!alreadyAuthorized){
-
-    let input = prompt("Enter System Password:");
-
-    if(input !== SYSTEM_PASSWORD){
-      document.body.innerHTML = `
-        <h1 style="color:red;text-align:center;margin-top:100px;">
-          WRONG PASSWORD
-        </h1>
-      `;
-      return false;
-    }
-
-    // Save password pass
-    localStorage.setItem("AUTH_OK","YES");
-  }
-
   /* ================= DEVICE ID ================= */
 
   let deviceId = localStorage.getItem("DEVICE_ID");
@@ -504,20 +524,16 @@ async function checkAccess(){
 
   /* ================= LOCK REQUEST ================= */
 
- let res = await fetch(API_URL,{
-  method:"POST",
-  body: JSON.stringify({
-    lockRequest:true,
-    deviceId: deviceId
-  })
-});
+  let res = await fetch(API_URL,{
+    method:"POST",
+    body: JSON.stringify({
+      lockRequest:true,
+      deviceId: deviceId
+    })
+  });
 
-if(!res.ok){
-  throw new Error("Server error");
-}
+  let data = await res.json();
 
-let data = await res.json();
-  
   // ❌ BLOCK if already used
   if(!data.allowed){
     document.body.innerHTML = `
@@ -528,7 +544,55 @@ let data = await res.json();
     return false;
   }
 
-  return true;
+  // ✅ ONLY SHOW PASSWORD AFTER LOCK SUCCESS
+  document.getElementById("passwordModal").style.display = "flex";
+
+  return false; // wait for password
+}
+
+  function submitPassword(){
+
+  const input = document.getElementById("passwordInput").value;
+
+  if(input !== SYSTEM_PASSWORD){
+    alert("Wrong password");
+    return;
+  }
+
+  document.getElementById("passwordModal").style.display = "none";
+
+  startSystem();
+}
+
+  document.getElementById("passwordInput").addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    submitPassword();
+  }
+});
+
+  
+  function startSystem(){
+
+  updateDateTime();
+  setInterval(updateDateTime,1000);
+
+  if(isMonitor){
+
+    document.body.classList.add("monitor-mode");
+
+    document.getElementById("chassisInput").style.display="none";
+    document.getElementById("modelInput").style.display="none";
+    document.getElementById("engineInput").style.display="none";
+    document.getElementById("keyInput").style.display="none";
+
+    loadLiveData();
+    setInterval(loadLiveData,1000);
+
+  } else {
+
+    setInterval(updateLiveStateOnly,1000);
+
+  }
 }
 /* ===== VARIABLES ===== */
 
@@ -1718,13 +1782,9 @@ else{
 
 window.onload = async function(){
 
-  // 🔐 WAIT for password + lock check
   const allowed = await checkAccess();
   if(!allowed) return;
 
-  // ✅ Only run system AFTER access approved
-  updateDateTime();
-  setInterval(updateDateTime,1000);
 
   if(isMonitor){
 

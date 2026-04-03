@@ -474,7 +474,7 @@ async function checkAccess(){
 
   /* ================= PASSWORD CHECK ================= */
 
-  let alreadyAuthorized = localStorage.getItem("AUTH_OK");
+ let alreadyAuthorized = null;
 
   if(!alreadyAuthorized){
 
@@ -514,9 +514,13 @@ async function checkAccess(){
     deviceId: deviceId
   })
 });
-  
-  let data = await res.json();
 
+if(!res.ok){
+  throw new Error("Server error");
+}
+
+let data = await res.json();
+  
   // ❌ BLOCK if already used
   if(!data.allowed){
     document.body.innerHTML = `

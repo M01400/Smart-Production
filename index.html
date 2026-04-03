@@ -506,9 +506,6 @@ async function checkAccess(){
 
  let res = await fetch(API_URL,{
   method:"POST",
-  headers:{
-    "Content-Type":"application/json"
-  },
   body: JSON.stringify({
     lockRequest:true,
     deviceId: deviceId

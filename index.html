@@ -1415,8 +1415,11 @@ function updateLiveStateOnly(){
   const status = document.getElementById("status").innerText.trim();
 
   fetch(API_URL,{
-    method:"POST",
-    body: JSON.stringify({
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({
       liveOnly: true,
       plan: plan,
       actual: actual,
@@ -1439,8 +1442,11 @@ function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
   const balance = actual - plan;
 
   fetch(API_URL,{
-    method:"POST",
-    body: JSON.stringify({
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({
       lot: lot,
       model: model,
       chassis: chassis,
@@ -1505,12 +1511,12 @@ function loadLiveData(){
     if(!data || !data.state || data.state.length === 0) return;
 
 // ✅ THEN ONLY PROCESS
-    let newState = data.state[1]; // always latest row
+    let newState = data.state[0];
       
     // ✅ ONLY update if valid
-    if(newState && newState.length >= 9){
-        window.lastValidState = newState;
-    }
+    if(newState){
+    window.lastValidState = newState;
+}
     
     // ✅ NEVER allow null overwrite
     if(!window.lastValidState) return;

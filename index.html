@@ -1495,35 +1495,34 @@ function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
 }
 
 function cleanDowntime(raw){
+
   if(!raw) return "";
 
-  let text = raw.toString().trim();
+  // 🔥 CASE 1: Google Date object
+  if(typeof raw === "string" && raw.includes("1899")){
+    let date = new Date(raw);
 
-  // ✅ If already correct mm:ss AND minutes < 1 (safe)
-  if(/^\d{2}:\d{2}$/.test(text)){
-    
-    let parts = text.split(":");
-    let min = parseInt(parts[0]);
-    let sec = parseInt(parts[1]);
+    let m = date.getMinutes();
+    let s = date.getSeconds();
 
-    // 🔥 FIX: if looks like "11:00" → convert to seconds
-    if(sec === 0 && min > 0){
-      return "00:" + String(min).padStart(2,'0');
-    }
-
-    return text;
+    return String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
   }
 
-  // ✅ If number → convert to mm:ss
-  if(!isNaN(text)){
-    let sec = parseInt(text);
+  // 🔥 CASE 2: Already mm:ss
+  if(/^\d{2}:\d{2}$/.test(raw)){
+    return raw;
+  }
+
+  // 🔥 CASE 3: number (seconds)
+  if(!isNaN(raw)){
+    let sec = parseInt(raw);
     let m = Math.floor(sec / 60);
     let s = sec % 60;
 
     return String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
   }
 
-  return text;
+  return raw;
 }
   
 // Ambil data untuk MONITOR PC

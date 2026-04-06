@@ -1590,7 +1590,7 @@ function loadLiveData(){
     statusCell.innerText = statusText;
 
     console.log("FULL ROW:", row);
-    console.log("DowntimeEvent (row[10]):", row[10]);
+    console.log("DowntimeEvent (row[10]):", row[7]);
     console.log("TotalDowntime (row[11]):", row[11]);
 
     if(statusText === "SCANNED") statusCell.className = "status-green";
@@ -1600,11 +1600,11 @@ function loadLiveData(){
 
 // ✅ ONLY show downtime if status is DOWN TIME
     if(statusText === "DOWN TIME"){
-    let rawDowntime = row[9] || "";
+    let rawDowntime = row[7] || "";
     downtimeCell.innerText = cleanDowntime(rawDowntime);
     downtimeCell.className = "status-red";
     }else{
-    downtimeCell.innerText = ""; // 🔥 IMPORTANT (no carry over)
+    downtimeCell.innerText = ""; // IMPORTANT (no carry over)
 }
 
     if(statusText === "DOWN TIME") downtimeCell.className = "status-red";

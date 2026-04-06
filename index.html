@@ -454,39 +454,60 @@ function updateDateTime(){
   }
 }
 
-/* ================= SECURITY SYSTEM ================= */
+/* ================= GLOBAL LOCK SYSTEM ================= */
 
-// 🔐 SET YOUR PASSWORD HERE
-const SYSTEM_PASSWORD = "1234"; 
+async function checkAccess(){
 
-// Unique device ID key
-const DEVICE_KEY = "MAIN_PC_LOCK";
-
-/* ===== CHECK ACCESS ===== */
-function checkAccess(){
-
-  // If monitor mode → allow
+  // ✅ Allow monitor screen always
   if(window.location.search.includes("monitor")){
     return true;
   }
 
-  let savedDevice = localStorage.getItem(DEVICE_KEY);
+  // 🔹 Generate unique device ID (only once per browser)
+  let deviceId = localStorage.getItem("DEVICE_ID");
 
-  // If already registered → allow
-  if(savedDevice){
-    return true;
+  if(!deviceId){
+    deviceId = Date.now() + "_" + Math.random();
+    localStorage.setItem("DEVICE_ID", deviceId);
   }
 
-  // Ask password
-  let input = prompt("Enter System Password:");
+  try{
 
-  if(input !== SYSTEM_PASSWORD){
-    document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
-    return false;
+    // 🔹 STEP 1: CHECK CURRENT LOCK
+    let res = await fetch(API_URL + "?checkLock=true");
+    let data = await res.json();
+
+    // ❌ IF LOCKED BY OTHER DEVICE → BLOCK
+    if(data.lock && data.lock !== deviceId){
+      document.body.innerHTML = `
+        <h1 style="
+          color:red;
+          text-align:center;
+          margin-top:100px;
+          font-size:40px;
+        ">
+          SYSTEM IN USE ON ANOTHER PC
+        </h1>
+      `;
+      return false;
+    }
+
+    // 🔹 STEP 2: CLAIM LOCK
+    await fetch(API_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({
+        lockRequest:true,
+        deviceId: deviceId
+      })
+    });
+
+  }catch(err){
+    console.log("Lock error:", err);
   }
-
-  // Register THIS PC as main
-  localStorage.setItem(DEVICE_KEY, "AUTHORIZED");
 
   return true;
 }

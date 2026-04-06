@@ -1498,22 +1498,26 @@ function cleanDowntime(raw){
 
   if(!raw) return "";
 
-  // 🔥 CASE 1: Google Date object
+  // 🔥 CASE 1: Google Date object (1899 bug)
   if(typeof raw === "string" && raw.includes("1899")){
+    
     let date = new Date(raw);
 
-    let m = date.getMinutes();
-    let s = date.getSeconds();
+    // ✅ FIX: convert from milliseconds correctly
+    let totalSeconds = Math.round((date.getTime() / 1000));
+
+    let m = Math.floor(totalSeconds / 60);
+    let s = totalSeconds % 60;
 
     return String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
   }
 
-  // 🔥 CASE 2: Already mm:ss
+  // Already correct format
   if(/^\d{2}:\d{2}$/.test(raw)){
     return raw;
   }
 
-  // 🔥 CASE 3: number (seconds)
+  // If number
   if(!isNaN(raw)){
     let sec = parseInt(raw);
     let m = Math.floor(sec / 60);

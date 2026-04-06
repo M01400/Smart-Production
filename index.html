@@ -77,12 +77,12 @@ body{
   margin:20px;
 }
 
-/* MAKE LINE STATUS WIDE */
+/* 🔥 MAKE LINE STATUS WIDE */
 .wide{
   grid-column: span 2;
 }
   
-/* CARD STYLE */
+/* CARD STYLE (SCADA LOOK) */
 .card{
   background:linear-gradient(145deg,#0f172a,#020617);
   border:1px solid var(--border);
@@ -94,11 +94,11 @@ body{
   0 0 20px rgba(0,0,0,0.8);
   position:relative;
   overflow:hidden;
-  display:flex;                
-  flex-direction:column;      
-  justify-content:flex-start;  /* TOP align */
-  align-items:center;          /* CENTER horizontally */
-  min-height:90px;            
+  display:flex;                /* 🔥 ADD */
+  flex-direction:column;       /* 🔥 ADD */
+  justify-content:flex-start;  /* 🔥 TOP align */
+  align-items:center;          /* 🔥 CENTER horizontally */
+  min-height:90px;            /* optional for consistency */
 }
 
 /* GLOW BORDER */
@@ -321,13 +321,13 @@ Lot:
 
 <div class="dashboard">
 
-<!-- ROW 1 -->
+<!-- 🔹 ROW 1 -->
 <div class="card"><h3>COUNTDOWN</h3><div class="big-number" id="countdown">00:00</div></div>
 <div class="card"><h3>ACTUAL OUTPUT</h3><div class="big-number status-green" id="actual">0</div></div>
 <div class="card"><h3>EXPECTED OUTPUT</h3><div class="big-number status-blue" id="expected">0</div></div>
 <div class="card"><h3>DELAY / AHEAD</h3><div class="big-number" id="delay">0</div></div>
 
-<!-- ROW 2 -->
+<!-- 🔹 ROW 2 -->
 <div class="card"><h3>DAILY PLAN</h3><div class="big-number" id="plan">0</div></div>
 <div class="card"><h3>BALANCE</h3><div class="big-number" id="balance">0</div></div>
 
@@ -339,7 +339,6 @@ Lot:
 </div>
   
 <div class="bottom-row">
-  
 <!-- LEFT: SCAN -->
 <div class="card wide">
 <h3>SCAN INPUT</h3>
@@ -420,8 +419,7 @@ const SETTINGS = {
 /* Apply defaults */
 document.getElementById("cycleTarget").value = SETTINGS.defaultCycle;
 document.getElementById("dailyPlanTarget").value = SETTINGS.defaultPlan;
-  
-// LIVE UPDATE WHEN USER CHANGE INPUT
+// 🔥 LIVE UPDATE WHEN USER CHANGE INPUT
 document.getElementById("cycleTarget").addEventListener("input", () => {
 if(!timer){
     countdownValue = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
@@ -458,78 +456,41 @@ function updateDateTime(){
 
 /* ================= SECURITY SYSTEM ================= */
 
-// SET YOUR PASSWORD HERE
+// 🔐 SET YOUR PASSWORD HERE
 const SYSTEM_PASSWORD = "1234"; 
 
 // Unique device ID key
 const DEVICE_KEY = "MAIN_PC_LOCK";
 
 /* ===== CHECK ACCESS ===== */
-async function checkAccess(){
+function checkAccess(){
 
-  // ✅ Monitor always allowed
+  // If monitor mode → allow
   if(window.location.search.includes("monitor")){
     return true;
   }
 
-  /* ================= PASSWORD CHECK ================= */
+  let savedDevice = localStorage.getItem(DEVICE_KEY);
 
- let alreadyAuthorized = null;
-
-  if(!alreadyAuthorized){
-
-    let input = prompt("Enter System Password:");
-
-    if(input !== SYSTEM_PASSWORD){
-      document.body.innerHTML = `
-        <h1 style="color:red;text-align:center;margin-top:100px;">
-          WRONG PASSWORD
-        </h1>
-      `;
-      return false;
-    }
-
-    // Save password pass
-    localStorage.setItem("AUTH_OK","YES");
+  // If already registered → allow
+  if(savedDevice){
+    return true;
   }
 
-  /* ================= DEVICE ID ================= */
+  // Ask password
+  let input = prompt("Enter System Password:");
 
-  let deviceId = localStorage.getItem("DEVICE_ID");
-
-  if(!deviceId){
-    deviceId = "DEV_" + Math.random().toString(36).substring(2,9);
-    localStorage.setItem("DEVICE_ID", deviceId);
-  }
-
-  /* ================= LOCK REQUEST ================= */
-
- let res = await fetch(API_URL,{
-  method:"POST",
-  body: JSON.stringify({
-    lockRequest:true,
-    deviceId: deviceId
-  })
-});
-
-if(!res.ok){
-  throw new Error("Server error");
-}
-
-let data = await res.json();
-  
-  // ❌ BLOCK if already used
-  if(!data.allowed){
-    document.body.innerHTML = `
-      <h1 style="color:red;text-align:center;margin-top:100px;">
-        ACCESS DENIED (SYSTEM IN USE)
-      </h1>
-    `;
+  if(input !== SYSTEM_PASSWORD){
+    document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:100px;'>ACCESS DENIED</h1>";
     return false;
   }
 
+  // Register THIS PC as main
+  localStorage.setItem(DEVICE_KEY, "AUTHORIZED");
+
   return true;
 }
+  
 /* ===== VARIABLES ===== */
 
 let ramadanMode=false;
@@ -555,20 +516,20 @@ let lastTableData = "";
 /* ===== DATE TIME ===== */
 
 function updateDateTime(){
-const now = new Date();
+  const now = new Date();
 
-const options = {
-  weekday: 'long',
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric'
-};
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
 
   document.getElementById("dateDisplay").innerText =
-  now.toLocaleDateString("en-MY", options);
+    now.toLocaleDateString("en-MY", options);
 
   document.getElementById("clock").innerText =
-  now.toLocaleTimeString("en-MY");
+    now.toLocaleTimeString("en-MY");
 }
 
 /* ===== FORMAT ===== */
@@ -583,34 +544,37 @@ return (m<10?"0"+m:m)+":"+(sec<10?"0"+sec:sec);
 
 function isBreakTime(){
 
-let now = new Date();
-let current = now.getHours()*60 + now.getMinutes();
-let day = now.getDay();
-let breaks = [];
+  let now = new Date();
+  let current = now.getHours()*60 + now.getMinutes();
+  let day = now.getDay();
 
-if(ramadanMode){
-if(day === 5){
-   breaks = SETTINGS.breakTime.ramadan.friday;
-}else{
-   breaks = SETTINGS.breakTime.ramadan.weekday;
-}
+  let breaks = [];
 
-}else{
+  if(ramadanMode){
 
-if(day === 5){
-   breaks = SETTINGS.breakTime.normal.friday;
-}else{
-   breaks = SETTINGS.breakTime.normal.weekday;
-   }
-}
+    if(day === 5){
+      breaks = SETTINGS.breakTime.ramadan.friday;
+    }else{
+      breaks = SETTINGS.breakTime.ramadan.weekday;
+    }
 
-for(let b of breaks){
-if(current >= b.start && current < b.end){
-return true;
-   }
-}
+  }else{
 
-return false;
+    if(day === 5){
+      breaks = SETTINGS.breakTime.normal.friday;
+    }else{
+      breaks = SETTINGS.breakTime.normal.weekday;
+    }
+
+  }
+
+  for(let b of breaks){
+    if(current >= b.start && current < b.end){
+      return true;
+    }
+  }
+
+  return false;
 }
 
 function calculateExpectedOutput(){
@@ -620,7 +584,7 @@ function calculateExpectedOutput(){
     return actualCount;
     }
 
-  // STOP Expected when Target Achieved
+  // ✅ STOP expected when target achieved
     let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
     if(actualCount >= plan && plan > 0){
     return plan;
@@ -631,8 +595,9 @@ function calculateExpectedOutput(){
 
     const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
 
-    // Minus  Break Time
+    // 🚫 Tolak break Stime
     let breakSeconds = 0;
+
     let tempTime = new Date(startTime);
 
     while(tempTime < now){
@@ -643,10 +608,12 @@ function calculateExpectedOutput(){
     }
 
    let netTime = elapsedSec - breakSeconds;
-      if(netTime < 0) netTime = 0;
-  let expected = Math.floor(netTime / cycleTimeSec);
+
+    if(netTime < 0) netTime = 0;
     
-    //  START SHOW AFTER FIRST SCAN
+    let expected = Math.floor(netTime / cycleTimeSec);
+    
+    // 🔥 START SHOW AFTER FIRST SCAN
     if(actualCount > 0 && expected === 0){
         expected = 1;
     }
@@ -658,9 +625,9 @@ function calculateExpectedOutput(){
 /* ===== STATUS ===== */
 
 function setStatus(text,color){
-    const el=document.getElementById("status");
-    el.innerText=text;
-    el.className="big-number "+color;
+const el=document.getElementById("status");
+el.innerText=text;
+el.className="big-number "+color;
 }
 
 /* ===== START ===== */
@@ -689,7 +656,7 @@ function startProduction(){
 
         const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
 
-        // USE REAL TIME (FIXED)
+        // 🔥 USE REAL TIME (FIXED)
         const now = new Date();
         
         // use startTime if no scan yet
@@ -864,7 +831,7 @@ if(lastScanTime){
 
     let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
 
-    //  ONLY BEFORE TARGET
+    // ✅ ONLY BEFORE TARGET
     if((actualCount + 1) <= plan){
         downtimeEvent = format(actualDowntime);
         downtimeSeconds += actualDowntime;
@@ -874,11 +841,11 @@ if(lastScanTime){
         isDowntime = false;
     }
 
-        // TRIGGER STATUS
+        // ✅ TRIGGER STATUS
         isDowntime = true;
 
     } else {
-        // TAK DOWNTIME
+        // ✅ TAK DOWNTIME
         isDowntime = false;
     }
 } else {
@@ -952,7 +919,7 @@ function updateDisplay() {
     //  EXPECTED CALCULATION
     let expected = calculateExpectedOutput();
 
-    // FORCE CORRECT LOGIC AFTER TARGET
+    // ✅ FORCE CORRECT LOGIC AFTER TARGET
     if(actualCount >= plan && plan > 0){
         expected = plan;
 }
@@ -1008,7 +975,6 @@ function updateDisplay() {
     balanceEl.innerText = displayBalance;
     if(delay < 0){
     setStatus("BEHIND SCHEDULE","status-red blink");
-      
 }
 
     /* ================= LOGIK STATUS BARU ================= */
@@ -1025,7 +991,7 @@ function updateDisplay() {
         clearInterval(timer); timer = null; countdownValue = 0; isDowntime = false;
         setStatus("TARGET ACHIEVED", "status-green");
     } 
-    
+    // Jika sedang dalam proses scan (salah satu input sudah diisi tapi belum lengkap semua)
     else if (pendingChassis !== "" && pendingModel === "") {
         setStatus("WAITING MODEL", "status-orange");
     } 
@@ -1035,7 +1001,7 @@ function updateDisplay() {
     else if (pendingEngine !== "" && pendingKey === "") {
         setStatus("WAITING KEY", "status-orange");
     } 
-    // If timer running and no pending scan process, status RUNNING
+    // Jika timer sedang jalan dan tiada proses scan yang tertunggak, status adalah RUNNING
     else if (timer) {
         setStatus("RUNNING", "status-green pulse");
     } 
@@ -1054,8 +1020,9 @@ function updateDisplay() {
         downtimeText.classList.remove("status-red", "blink");
     }
 }
-  
 /* ===== DAILY SUMMARY ===== */
+
+/* ===== DAILY SUMMARY (VERSI DIKEMASKINI: SAMA PERSIH DENGAN DASHBOARD) ===== */
 
 function openSummary() {
     let plan = parseInt(document.getElementById("plan").innerText) || 0;
@@ -1068,57 +1035,60 @@ function openSummary() {
     let rows = document.querySelectorAll("#scanTable tr");
     let tableRows = "";
 
-rows.forEach(row => {
-    let cells = row.querySelectorAll("td");
-    if (cells.length > 0) {
-          
-    let statusCell = cells[7];
-    let downtimeCell = cells[8];
+    // Gelung setiap baris papan pemuka untuk mengekstrak data dan kelas warna
+    rows.forEach(row => {
+        let cells = row.querySelectorAll("td");
+        if (cells.length > 0) {
+            // Ambil sel Status dan sel Downtime untuk mengekstrak kelas warna
+            let statusCell = cells[7];
+            let downtimeCell = cells[8];
 
-    // Determine the right status colour
-    let statusClass = "";
-    if (statusCell.classList.contains("status-red")) {
-        statusClass = "status-red";
-  } else if (statusCell.classList.contains("status-green")) {
-             statusClass = "status-green";
-  }
-    let downtimeClass = "";
-    if (downtimeCell.classList.contains("status-red")) {
-        downtimeClass = "status-red";
-  }
+            // Tentukan kelas warna status yang betul
+            let statusClass = "";
+            if (statusCell.classList.contains("status-red")) {
+                statusClass = "status-red";
+            } else if (statusCell.classList.contains("status-green")) {
+                statusClass = "status-green";
+            }
 
-    // Build HTML Line for report and transfer data and colour
-        tableRows += `
-        <tr>
-        <td>${cells[0].innerText}</td> <td>${cells[1].innerText}</td> <td>${cells[2].innerText}</td> <td>${cells[3].innerText}</td> <td>${cells[4].innerText}</td> <td>${cells[5].innerText}</td> <td>${cells[6].innerText}</td> <td class="${statusClass}">${cells[7].innerText}</td> <td class="${downtimeClass}">${cells[8].innerText}</td> </tr>`;
+            // Tentukan kelas warna downtime yang betul
+            let downtimeClass = "";
+            if (downtimeCell.classList.contains("status-red")) {
+                downtimeClass = "status-red";
+            }
+
+            // Bina HTML baris untuk laporan, memindahkan data DAN kelas warna
+            tableRows += `
+<tr>
+<td>${cells[0].innerText}</td> <td>${cells[1].innerText}</td> <td>${cells[2].innerText}</td> <td>${cells[3].innerText}</td> <td>${cells[4].innerText}</td> <td>${cells[5].innerText}</td> <td>${cells[6].innerText}</td> <td class="${statusClass}">${cells[7].innerText}</td> <td class="${downtimeClass}">${cells[8].innerText}</td> </tr>`;
         }
-  });
+    });
 
     // Kandungan HTML Laporan Larian Harian
     let htmlContent = `
-    <html>
-    <head>
-    <title>Daily Summary Report</title>
-    <style>
-    /* --- Gaya Asas (Sama seperti Dashboard) --- */
-    body{
-    margin:0;
-    font-family:'Segoe UI',sans-serif;
-    background:#0b1220; /* Warna latar belakang gelap */
-    color:#e5e7eb;
-    padding:40px;
+<html>
+<head>
+<title>Daily Summary Report</title>
+<style>
+/* --- Gaya Asas (Sama seperti Dashboard) --- */
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#0b1220; /* Warna latar belakang gelap */
+color:#e5e7eb;
+padding:40px;
 }
 
-    h1{
-    text-align:center;
-    color:#60a5fa; /* Warna biru tajuk */
-    margin-bottom:30px;
-    font-size:36px;
-    font-weight: 800;
+h1{
+text-align:center;
+color:#60a5fa; /* Warna biru tajuk */
+margin-bottom:30px;
+font-size:36px;
+font-weight: 800;
 }
 
 /* --- Gaya Jadual Ringkasan (Atas) --- */
-    .summary-card {
+.summary-card {
     border-radius: 20px;
     background: #111827;
     width: 450px;
@@ -1127,33 +1097,33 @@ rows.forEach(row => {
     box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
-    .summary-table{
-    width:100%;
-    border-collapse:collapse;
+.summary-table{
+width:100%;
+border-collapse:collapse;
 }
 
-    .summary-table th,
-    .summary-table td{
-    padding:14px;
-    text-align:center;
+.summary-table th,
+.summary-table td{
+padding:14px;
+text-align:center;
 }
 
-    .summary-table th{
-    background:#1f2937;
-    color:#60a5fa;
-    font-weight:bold;
-    text-align: left;
-    width: 50%;
-    border-radius: 10px 0 0 10px;
+.summary-table th{
+background:#1f2937;
+color:#60a5fa;
+font-weight:bold;
+text-align: left;
+width: 50%;
+border-radius: 10px 0 0 10px;
 }
 
-    .summary-table td {
+.summary-table td {
     font-size: 18px;
     font-weight: bold;
 }
 
 /* --- Gaya Jadual Butiran (Bawah) --- */
-    .detail-table-container {
+.detail-table-container {
     background: #111827;
     border-radius: 15px;
     padding: 10px;
@@ -1161,109 +1131,109 @@ rows.forEach(row => {
     box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
-    table.detail-table{
-    width:100%;
-    border-collapse:collapse;
+table.detail-table{
+width:100%;
+border-collapse:collapse;
 }
 
-    .detail-table th, .detail-table td{
-    padding:12px;
-    text-align:center;
-    border-bottom: 1px solid #1f2937;
-    font-size: 14px;
+.detail-table th, .detail-table td{
+padding:12px;
+text-align:center;
+border-bottom: 1px solid #1f2937;
+font-size: 14px;
 }
 
-    .detail-table th{
-    background:#1f2937;
-    color:#60a5fa;
-    font-weight:bold;
-    text-transform: uppercase;
+.detail-table th{
+background:#1f2937;
+color:#60a5fa;
+font-weight:bold;
+text-transform: uppercase;
 }
 
-    .detail-table tr:last-child td {
+.detail-table tr:last-child td {
     border-bottom: none;
 }
 
-    .detail-table tr:nth-child(even){
-    background:#0f172a;
+.detail-table tr:nth-child(even){
+background:#0f172a;
 }
 
 /* --- Gaya Warna Status (SAMA SEPERTI DASHBOARD) --- */
-    .status-green{
-    color:#22c55e !important; /* Warna hijau */
-    font-weight:bold;
+.status-green{
+color:#22c55e !important; /* Warna hijau */
+font-weight:bold;
 }
 
-    .status-red{
-    color:#ef4444 !important; /* Warna merah */
-    font-weight:bold;
+.status-red{
+color:#ef4444 !important; /* Warna merah */
+font-weight:bold;
 }
 
 /* --- Gaya Butang Tindakan --- */
-    .action-buttons{
-    text-align:center;
-    margin-top:40px;
+.action-buttons{
+text-align:center;
+margin-top:40px;
 }
 
-    .action-buttons button{
-    padding:12px 28px;
-    margin:0 12px;
-    border:none;
-    border-radius:30px;
-    font-size:15px;
-    font-weight:bold;
-    cursor:pointer;
-    background:#2563eb;
-    color:white;
-    transition: background 0.2s;
+.action-buttons button{
+padding:12px 28px;
+margin:0 12px;
+border:none;
+border-radius:30px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+background:#2563eb;
+color:white;
+transition: background 0.2s;
 }
 
-    .action-buttons button:hover{
-    background:#1d4ed8;
+.action-buttons button:hover{
+background:#1d4ed8;
 }
 
-/* --- Gaya MOD CETAK (Ensure colour in PDF) --- */
-    @media print{
-    body{
-    background:white !important;
-    color:black !important;
-    padding:20px !important;
+/* --- Gaya MOD CETAK (Memastikan warna kekal dalam PDF) --- */
+@media print{
+body{
+background:white !important;
+color:black !important;
+padding:20px !important;
 }
 
-    h1{ color: black !important; }
-    
-    .summary-card, .detail-table-container {
-    background:white !important;
-    color:black !important;
-    box-shadow:none !important;
-    border: 1px solid #ccc;
+h1{ color: black !important; }
+
+.summary-card, .detail-table-container {
+background:white !important;
+color:black !important;
+box-shadow:none !important;
+border: 1px solid #ccc;
 }
 
-    .summary-table th, .detail-table th {
-    background:#f0f0f0 !important;
-    color:black !important;
-    border: 1px solid #ccc !important;
+.summary-table th, .detail-table th {
+background:#f0f0f0 !important;
+color:black !important;
+border: 1px solid #ccc !important;
 }
 
-    .summary-table td, .detail-table td{
-    color:black !important;
-    border:1px solid #ccc !important;
+.summary-table td, .detail-table td{
+color:black !important;
+border:1px solid #ccc !important;
 }
 
-/* Force print color for status */
-    .status-green{
-    color:#22c55e !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+/* Memaksa cetakan warna untuk status */
+.status-green{
+color:#22c55e !important;
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
 }
 
-    .status-red{
-    color:#ef4444 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+.status-red{
+color:#ef4444 !important;
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
 }
 
-    .action-buttons{ display:none !important; }
+.action-buttons{ display:none !important; }
 }
 
 </style>
@@ -1332,13 +1302,13 @@ ${tableRows}
 </html>
 `;
 
-  // Buka tetingkap laporan baru
-  let newWindow = window.open();
+    // Buka tetingkap laporan baru
+    let newWindow = window.open();
     newWindow.document.write(htmlContent);
     newWindow.document.close();
 }
 
-  /* ===== EXCEL ===== */
+/* ===== EXCEL ===== */
 
 function downloadExcel(){
 let wb=XLSX.utils.book_new();
@@ -1716,13 +1686,11 @@ else{
 
 /* ===== INITIALIZE SYSTEM ===== */
 
-window.onload = async function(){
+window.onload = function(){
 
-  // 🔐 WAIT for password + lock check
-  const allowed = await checkAccess();
-  if(!allowed) return;
+  // 🔐 SECURITY CHECK FIRST
+  if(!checkAccess()) return;
 
-  // ✅ Only run system AFTER access approved
   updateDateTime();
   setInterval(updateDateTime,1000);
 

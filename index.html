@@ -482,7 +482,7 @@ async function checkAccess(){
     console.log("LOCK DATA:", data);
 
     // ❌ STRICT MODE → BLOCK IF ANY LOCK EXISTS
-    if(data.lock){
+   if(data.lock && data.lock !== deviceId){
 
       document.body.innerHTML = `
         <h1 style="
@@ -1724,6 +1724,60 @@ else{
     .catch(err => console.log("Monitor load error:", err));
 }
 
+
+async function loadLastStateFromSheet(){
+
+  try{
+
+    let res = await fetch(API_URL);
+    let data = await res.json();
+
+    if(!data.state || data.state.length === 0) return;
+
+    let state = data.state[0];
+
+    if(!state) return;
+
+    // 🔥 RESTORE VALUES
+    actualCount = parseInt(state[1]) || 0;
+    downtimeSeconds = parseInt(state[4]) || 0;
+    
+    // Plan restore
+    document.getElementById("dailyPlanTarget").value = state[0] || 0;
+    
+    // 🔥 USE LAST SCAN TIME INSTEAD (BETTER)
+    let lastUpdate = new Date(state[9]);
+
+// ALSO restore lastScanTime
+    lastScanTime = lastUpdate;
+    let now = new Date();
+    
+    let diffSec = Math.floor((now - lastUpdate) / 1000);
+    
+    let cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+    
+    countdownValue = Math.max(cycleTimeSec - diffSec, 0);
+    
+    // 🔥 SAFE START TIME (DO NOT OVERWRITE)
+    if(!startTime){
+      startTime = new Date(state[9]);
+    }
+    
+    // Update UI
+    updateDisplay();
+    
+    // 🔥 AUTO RESUME TIMER
+    if(actualCount > 0 && !timer){
+    startProduction();
+  }
+
+    console.log("✅ State restored from sheet");
+
+  }catch(err){
+    console.log("Load state error:", err);
+  }
+}
+  
 /* ===== INITIALIZE SYSTEM ===== */
 
 window.onload = async function(){
@@ -1731,6 +1785,10 @@ window.onload = async function(){
   // 🔐 MUST WAIT ACCESS CHECK
   let allowed = await checkAccess();
   if(!allowed) return;
+  // 🔥 LOAD LAST STATE FROM SHEET
+  if(!isMonitor){
+  await loadLastStateFromSheet();
+}
 
   updateDateTime();
   setInterval(updateDateTime,1000);

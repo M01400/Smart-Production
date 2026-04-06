@@ -456,29 +456,34 @@ function updateDateTime(){
 
 /* ================= GLOBAL LOCK SYSTEM ================= */
 
+/* ================= STRICT GLOBAL LOCK ================= */
+
 async function checkAccess(){
 
-  // ✅ Allow monitor screen always
+  // ✅ Allow monitor screen
   if(window.location.search.includes("monitor")){
     return true;
   }
 
-  // 🔹 Generate unique device ID (only once per browser)
+  // 🔹 Create unique device ID (once only)
   let deviceId = localStorage.getItem("DEVICE_ID");
 
   if(!deviceId){
-    deviceId = Date.now() + "_" + Math.random();
+    deviceId = "DEV-" + Math.random().toString(36).substring(2);
     localStorage.setItem("DEVICE_ID", deviceId);
   }
 
   try{
 
-    // 🔹 STEP 1: CHECK CURRENT LOCK
+    // 🔹 STEP 1: CHECK LOCK
     let res = await fetch(API_URL + "?checkLock=true");
     let data = await res.json();
 
-    // ❌ IF LOCKED BY OTHER DEVICE → BLOCK
-    if(data.lock && data.lock !== deviceId){
+    console.log("LOCK DATA:", data);
+
+    // ❌ STRICT MODE → BLOCK IF ANY LOCK EXISTS
+    if(data.lock){
+
       document.body.innerHTML = `
         <h1 style="
           color:red;
@@ -486,9 +491,10 @@ async function checkAccess(){
           margin-top:100px;
           font-size:40px;
         ">
-          SYSTEM IN USE ON ANOTHER PC
+          SYSTEM ALREADY OPEN ON ANOTHER SCREEN
         </h1>
       `;
+
       return false;
     }
 
@@ -1715,10 +1721,11 @@ else{
 
 /* ===== INITIALIZE SYSTEM ===== */
 
-window.onload = function(){
+window.onload = async function(){
 
-  // 🔐 SECURITY CHECK FIRST
-  if(!checkAccess()) return;
+  // 🔐 MUST WAIT ACCESS CHECK
+  let allowed = await checkAccess();
+  if(!allowed) return;
 
   updateDateTime();
   setInterval(updateDateTime,1000);

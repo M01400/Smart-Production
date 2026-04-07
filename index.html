@@ -377,6 +377,10 @@ Lot:
 🌙 Ramadhan : OFF
 </button>
 
+<button id="adminLogoutBtn" onclick="logoutAdmin()" style="display:none; background:#ef4444; color:white;">
+🔓 Logout Admin
+</button>  
+
 </div>
 
 <div class="dashboard">
@@ -445,12 +449,14 @@ Lot:
 <script>
 
 /* 🔐 PASSWORD SYSTEM */
+  
 const SYSTEM_PASSWORD = "1234";
 let isAdmin = false;
+  
 const ADMIN_PASSWORD = "admin123"; // change this
 
 function checkPassword(){
-  const input = document.getElementById("passwordInput").value;
+const input = document.getElementById("passwordInput").value;
 
   if(input === SYSTEM_PASSWORD){
     document.getElementById("loginOverlay").style.display = "none";
@@ -474,14 +480,29 @@ function enterAdminMode(){
 
   if(pass === ADMIN_PASSWORD){
     isAdmin = true;
+
     alert("✅ ADMIN MODE ACTIVATED");
-    unlockControls();
+
+    document.getElementById("adminLogoutBtn").style.display = "inline-block";
+
+    setStatus("ADMIN MODE", "status-green"); 
+
   }else{
     alert("❌ Wrong Password");
   }
 }
+  
+function logoutAdmin(){
+  isAdmin = false;
 
+  alert("🔒 Admin mode deactivated");
 
+  document.getElementById("adminLogoutBtn").style.display = "none";
+
+  setStatus("RUNNING", "status-green");
+  
+}
+  
 /* ================= SYSTEM SETTINGS ================= */
 
 const SETTINGS = {

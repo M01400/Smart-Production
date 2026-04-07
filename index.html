@@ -9,7 +9,7 @@
   --big-number-size: 50px;
   --card-title-size: 25px;
   --clock-size: 70px;
-  --header-size: 60px;
+  --header-size: 80px;
 
   --bg:#050b18;
   --panel:#0f172a;
@@ -469,7 +469,14 @@ let isAdmin = false;
 const ADMIN_PASSWORD = "admin123"; // change this
 
 function checkPassword(){
-const input = document.getElementById("passwordInput").value;
+
+  // ✅ BYPASS PASSWORD FOR MONITOR
+  if(window.location.search.includes("monitor")){
+    document.getElementById("loginOverlay").style.display = "none";
+    return;
+  }
+
+  const input = document.getElementById("passwordInput").value;
 
   if(input === SYSTEM_PASSWORD){
     document.getElementById("loginOverlay").style.display = "none";
@@ -1921,7 +1928,9 @@ async function loadLastStateFromSheet(){
 
 window.onload = async function(){
 
-document.getElementById("loginOverlay").style.display = "flex";
+if(!window.location.search.includes("monitor")){
+  document.getElementById("loginOverlay").style.display = "flex";
+}
 document.documentElement.requestFullscreen().catch(()=>{});
   
   // 🔐 MUST WAIT ACCESS CHECK

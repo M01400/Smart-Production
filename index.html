@@ -1928,10 +1928,18 @@ async function loadLastStateFromSheet(){
 
 window.onload = async function(){
 
-if(!window.location.search.includes("monitor")){
+if(window.location.search.includes("monitor")){
+  document.getElementById("loginOverlay").style.display = "none";
+}else{
   document.getElementById("loginOverlay").style.display = "flex";
 }
 document.documentElement.requestFullscreen().catch(()=>{});
+
+if(window.location.search.includes("monitor")){
+  setTimeout(()=>{
+    document.getElementById("loginOverlay").style.display = "none";
+  }, 100);
+}
   
   // 🔐 MUST WAIT ACCESS CHECK
   let allowed = await checkAccess();

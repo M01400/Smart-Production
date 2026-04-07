@@ -177,12 +177,17 @@ border:1px solid #334155;background:#0f172a;color:white;text-align:center;
 }
 
 .controls button{
-padding:8px 18px;
-font-size:16px;
-border:none;
-border-radius:50px;
-font-weight:bold;
-cursor:pointer;
+  background:#020617;
+  border:1px solid #334155;
+  color:#e2e8f0;
+  border-radius:8px;
+  padding:10px 20px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.controls button:hover{
+  background:#0f172a;
 }
 
 .start{background:#16a34a;color:white;}
@@ -346,9 +351,19 @@ tr:nth-child(even){background:#0f172a;}
   </div>
 </div>
 
-<div class="header" ondblclick="enterAdminMode()">
+<div class="header" ondblclick="enterAdminMode()" 
+     style="display:flex; justify-content:space-between; align-items:center; padding:10px 20px;">
+
+  <div style="font-size:30px;">
     TF 2 PRODUCTION MONITORING SYSTEM
+  </div>
+
+  <div style="display:flex; align-items:center; gap:15px;">
+    <span style="font-size:14px; color:#94a3b8;">SYSTEM v1.0</span>
+
     <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
+  </div>
+
 </div>
 
 <div class="datetime">
@@ -1225,11 +1240,11 @@ function openSummary() {
 <style>
 /* --- Gaya Asas (Sama seperti Dashboard) --- */
 body{
-margin:0;
-font-family:'Segoe UI',sans-serif;
-background:#0b1220; /* Warna latar belakang gelap */
-color:#e5e7eb;
-padding:40px;
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background: radial-gradient(circle at top, #0b1220, #020617);
+  color:var(--text);
+  overflow:hidden; /* ✅ ADD THIS */
 }
 
 h1{
@@ -1909,6 +1924,7 @@ async function loadLastStateFromSheet(){
 window.onload = async function(){
 
 document.getElementById("loginOverlay").style.display = "flex";
+document.documentElement.requestFullscreen().catch(()=>{});
   
   // 🔐 MUST WAIT ACCESS CHECK
   let allowed = await checkAccess();

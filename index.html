@@ -343,15 +343,6 @@ tr:nth-child(even){background:#0f172a;}
 <body>
 
 <!-- 🔐 LOGIN OVERLAY -->
-<div id="adminOverlay" style="display:none;">
-  <div class="login-box">
-    <h2>🔐 ADMIN ACCESS</h2>
-    <input type="password" id="adminPasswordInput" placeholder="Enter Admin Password">
-    <button onclick="submitAdminPassword()">ENTER</button>
-    <p id="adminError"></p>
-  </div>
-</div>
-
 <div class="header" ondblclick="enterAdminMode()" style="position:relative; text-align:center; padding:15px 20px;">
 
 <div>
@@ -486,51 +477,23 @@ function checkPassword(){
   }
 }
 
-document.addEventListener("keydown", function(e){
-  if(e.key === "Enter"){
-    if(document.getElementById("loginOverlay").style.display !== "none"){
-      checkPassword();
-    }
-  }
-});
-
 function enterAdminMode(){
-  document.getElementById("adminOverlay").style.display = "flex";
 
-  // auto focus input
-  setTimeout(()=>{
-    document.getElementById("adminPasswordInput").focus();
-  },100);
-}
+  let pass = prompt("Enter Admin Password:");
 
-  
-function submitAdminPassword(){
-
-  const input = document.getElementById("adminPasswordInput").value;
-
-  if(input === ADMIN_PASSWORD){
+  if(pass === ADMIN_PASSWORD){
     isAdmin = true;
 
-    document.getElementById("adminOverlay").style.display = "none";
+    alert("✅ ADMIN MODE ACTIVATED");
+
     document.getElementById("adminLogoutBtn").style.display = "inline-block";
 
     setStatus("ADMIN MODE", "status-green");
 
-  } else {
-    document.getElementById("adminError").innerText = "Wrong Password!";
-    document.getElementById("adminPasswordInput").value = "";
+  }else{
+    alert("❌ Wrong Password");
   }
-}  
-
- document.addEventListener("keydown", function(e){
-
-  if(e.key === "Enter"){
-
-    if(document.getElementById("adminOverlay").style.display === "flex"){
-      submitAdminPassword();
-    }
-
-  }
+}
 }); 
   
 function logoutAdmin(){
@@ -1428,19 +1391,6 @@ print-color-adjust: exact;
 }
 
 .action-buttons{ display:none !important; }
-}
-
-#adminOverlay{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:linear-gradient(145deg,#020617,#020617);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
 }
 
 </style>

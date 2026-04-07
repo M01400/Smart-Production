@@ -346,7 +346,7 @@ tr:nth-child(even){background:#0f172a;}
   </div>
 </div>
 
-<div class="header">
+<div class="header" ondblclick="enterAdminMode()">
     TF 2 PRODUCTION MONITORING SYSTEM
     <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
 </div>
@@ -446,6 +446,8 @@ Lot:
 
 /* 🔐 PASSWORD SYSTEM */
 const SYSTEM_PASSWORD = "1234";
+let isAdmin = false;
+const ADMIN_PASSWORD = "admin123"; // change this
 
 function checkPassword(){
   const input = document.getElementById("passwordInput").value;
@@ -465,6 +467,20 @@ document.addEventListener("keydown", function(e){
     }
   }
 });
+
+function enterAdminMode(){
+
+  let pass = prompt("Enter Admin Password:");
+
+  if(pass === ADMIN_PASSWORD){
+    isAdmin = true;
+    alert("✅ ADMIN MODE ACTIVATED");
+    unlockControls();
+  }else{
+    alert("❌ Wrong Password");
+  }
+}
+
 
 /* ================= SYSTEM SETTINGS ================= */
 
@@ -742,6 +758,7 @@ el.className="big-number "+color;
 /* ===== START ===== */
 
 function startProduction(){
+  
     if(isMonitor) return;
     if(timer) return;
 
@@ -788,6 +805,7 @@ function startProduction(){
 
 /* STOP */
 function stopProduction(){
+  
 clearInterval(timer);
 timer=null;
 setStatus("PAUSED","status-orange");
@@ -795,6 +813,11 @@ setStatus("PAUSED","status-orange");
 
 /* RESET */
 function resetProduction(){
+
+if(!isAdmin){
+  alert("Admin access required");
+  return;
+}  
   
 clearInterval(timer);
 timer=null;

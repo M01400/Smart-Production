@@ -221,22 +221,23 @@ margin:15px;
 }
 
 .fullscreen-btn{
-position:absolute;
-right:20px;
-top:20px;
-padding:5px 10px;
-font-size:14px;
-border:none;
-border-radius:10px;
-background:#2563eb;
-color:white;
-cursor:pointer;
+  position:absolute;
+  right:20px;
+  top:15px;
+  padding:4px 8px;
+  font-size:12px;
+  border:1px solid rgba(255,255,255,0.2);
+  border-radius:8px;
+  background:transparent;
+  color:rgba(255,255,255,0.4);
+  cursor:pointer;
 }
 
 .fullscreen-btn:hover{
-background:#1d4ed8;
+  color:white;
+  border-color:rgba(255,255,255,0.5);
 }
-
+  
 .pulse{animation:pulse 1.5s infinite;}
 @keyframes pulse{0%{text-shadow:0 0 5px #22c55e;}50%{text-shadow:0 0 20px #22c55e;}100%{text-shadow:0 0 5px #22c55e;}}
 
@@ -351,18 +352,15 @@ tr:nth-child(even){background:#0f172a;}
   </div>
 </div>
 
-<div class="header" ondblclick="enterAdminMode()" 
-     style="display:flex; justify-content:space-between; align-items:center; padding:10px 20px;">
+<div class="header" ondblclick="enterAdminMode()" style="position:relative; text-align:center; padding:15px 20px;">
 
-  <div style="font-size:30px;">
+  <div style="font-size:40px; font-weight:900; letter-spacing:2px;">
     TF 2 PRODUCTION MONITORING SYSTEM
   </div>
 
-  <div style="display:flex; align-items:center; gap:15px;">
-    <span style="font-size:14px; color:#94a3b8;">SYSTEM v1.0</span>
+  <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
 
-    <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
-  </div>
+</div>
 
 </div>
 

@@ -542,9 +542,30 @@ function updateDateTime(){
   }
 }
 
-/* ================= GLOBAL LOCK SYSTEM ================= */
+// 🔥 BLOCK MULTIPLE TABS (SAME DEVICE)
+if(localStorage.getItem("APP_OPEN") === "true"){
+  document.body.innerHTML = `
+    <h1 style="
+      color:red;
+      text-align:center;
+      margin-top:100px;
+      font-size:40px;
+    ">
+      SYSTEM ALREADY OPEN IN ANOTHER TAB
+    </h1>
+  `;
+  return false;
+}
 
-/* ================= STRICT GLOBAL LOCK ================= */
+// Mark this tab as active
+localStorage.setItem("APP_OPEN", "true");
+
+// Remove lock when tab closes
+window.addEventListener("beforeunload", () => {
+  localStorage.removeItem("APP_OPEN");
+});
+  
+/* ================= GLOBAL LOCK SYSTEM ================= */
 
 async function checkAccess(){
 
@@ -554,13 +575,8 @@ async function checkAccess(){
   }
 
   // 🔹 Create unique device ID (once only)
-  let deviceId = localStorage.getItem("DEVICE_ID");
-
-  if(!deviceId){
-    deviceId = "DEV-" + Math.random().toString(36).substring(2);
-    localStorage.setItem("DEVICE_ID", deviceId);
-  }
-
+ let deviceId = "TAB-" + Math.random().toString(36).substring(2);
+  
   try{
 
     // 🔹 STEP 1: CHECK LOCK

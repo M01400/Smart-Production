@@ -326,8 +326,8 @@ tr:nth-child(even){background:#0f172a;}
   </div>
 </div>
 
-<div class="header">
-    TF 2 PRODUCTION MONITORING SYSTEM
+<div class="header" id="titleHeader">
+  TF 2 PRODUCTION MONITORING SYSTEM
     <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
 </div>
 
@@ -342,6 +342,12 @@ tr:nth-child(even){background:#0f172a;}
 
   Daily Plan:
   <input type="number" id="dailyPlanTarget" min="1">
+
+  Start Time:
+  <input type="time" id="startTime" value="08:00">
+  
+  End Time:
+  <input type="time" id="endTime" value="17:00">
 
   Lot:
   <input type="number" id="lotInput" placeholder="Lot No">
@@ -394,7 +400,7 @@ tr:nth-child(even){background:#0f172a;}
     </tr>
   </thead>
   <tbody id="scanTable"></tbody>
-</table>
+</table> 
 
 <script>
 
@@ -473,6 +479,33 @@ let scannedKey = new Set();
 let duplicateLock = false;
 let lastUpdateTime = 0;
 let lastTableData = "";
+let autoRunning = false;
+
+// 🔐 DEV MODE
+let isDeveloper = false;
+const DEV_PASSWORD = "1234"; // change if you want
+
+function toggleDevMode(){
+  let pass = prompt("Developer Access:");
+
+  if(pass !== DEV_PASSWORD){
+    alert("Wrong password");
+    return;
+  }
+
+  isDeveloper = !isDeveloper;
+
+  if(isDeveloper){
+    alert("🟢 Developer Mode ON");
+  } else {
+    alert("🔒 Developer Mode OFF");
+  }
+}
+
+// 🖱 DOUBLE CLICK TITLE
+document.addEventListener("DOMContentLoaded", function(){
+  document.getElementById("titleHeader").addEventListener("dblclick", toggleDevMode);
+});
 
 /* ================= DATE TIME (single definition) ================= */
 function updateDateTime(){
@@ -559,6 +592,7 @@ function setStatus(text, color){
 /* ================= START ================= */
 function startProduction(){
   if(isMonitor) return;
+  if(!isDeveloper && !autoRunning) return;
   if(timer) return;
   if(!startTime) startTime = new Date();
   if(countdownValue === 0){
@@ -580,8 +614,67 @@ function startProduction(){
   }, 1000);
 }
 
+function autoProductionControl(){
+  if(isMonitor) return;
+
+  const now = new Date();
+
+  // 🔄 AUTO RESET (only midnight)
+  if(now.getHours() === 0 && now.getMinutes() === 0 && now.getSeconds() < 2){
+    resetProduction();
+  }
+
+  // 👇 EVERYTHING BELOW MUST BE OUTSIDE
+  const startInput = document.getElementById("startTime").value;
+  const endInput   = document.getElementById("endTime").value;
+
+  if(!startInput || !endInput) return;
+
+  const [startH, startM] = startInput.split(":").map(Number);
+  const [endH, endM]     = endInput.split(":").map(Number);
+
+  let start = new Date();
+  start.setHours(startH, startM, 0, 0);
+
+  let end = new Date();
+  end.setHours(endH, endM, 0, 0);
+
+  // 🔵 BEFORE START
+  if(now < start){
+  if(timer){
+    autoRunning = false;
+    stopProduction();
+  }
+  setStatus("WAITING SHIFT", "status-blue");
+  return;
+}
+
+  // 🟢 RUNNING TIME
+  if(now >= start && now < end){
+    if(!timer){
+      startTime = new Date();
+      autoRunning = true; // 🔥 IMPORTANT
+      console.log("✅ AUTO START");
+      startProduction();
+    }
+  }
+
+  // 🔴 AFTER END
+  if(now >= end){
+    if(timer){
+      autoRunning = false; // 🔥 IMPORTANT
+      console.log("⛔ SHIFT ENDED");
+      stopProduction();
+      countdownValue = 0;
+      lastScanTime = null;
+      setStatus("SHIFT ENDED", "status-orange");
+    }
+  }
+}
+  
 /* ================= STOP ================= */
 function stopProduction(){
+  if(!isDeveloper && !autoRunning) return;
   clearInterval(timer);
   timer = null;
   setStatus("PAUSED", "status-orange");
@@ -589,6 +682,7 @@ function stopProduction(){
 
 /* ================= RESET ================= */
 function resetProduction(){
+  if(!isDeveloper && !autoRunning) return;
   clearInterval(timer);
   timer = null;
   countdownValue = 0;
@@ -622,7 +716,7 @@ document.getElementById("chassisInput").addEventListener("keydown", function(e){
       this.value = "";
       return;
     }
-    if(!timer) startProduction();
+    
     duplicateLock = false;
     pendingChassis = value;
     scannedChassis.add(value);
@@ -735,7 +829,9 @@ document.getElementById("keyInput").addEventListener("keydown", function(e){
     }
 
     actualCount++;
-    countdownValue = cycleTimeSec;
+   if((actualCount + 1) < plan || plan === 0){
+   countdownValue = cycleTimeSec;
+}
     isDowntime = false;
 
     // FIX: target-achieved timer stop here, not inside updateDisplay

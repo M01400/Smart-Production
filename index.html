@@ -449,9 +449,11 @@ Lot:
 <script>
 
 /* 🔐 PASSWORD SYSTEM */
-const SYSTEM_PASSWORD = "1234";
+const SYSTEM_PASSWORD = "m01400";
 
 function checkPassword(){
+
+  if(isMonitor) return;
   const input = document.getElementById("passwordInput").value;
 
   if(input === SYSTEM_PASSWORD){
@@ -1868,7 +1870,11 @@ async function loadLastStateFromSheet(){
 
 window.onload = async function(){
 
-document.getElementById("loginOverlay").style.display = "flex";
+  if(!isMonitor){
+    document.getElementById("loginOverlay").style.display = "flex";
+  } else {
+    document.getElementById("loginOverlay").style.display = "none";
+  }
   
   // 🔐 MUST WAIT ACCESS CHECK
   let allowed = await checkAccess();

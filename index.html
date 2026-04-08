@@ -177,17 +177,12 @@ border:1px solid #334155;background:#0f172a;color:white;text-align:center;
 }
 
 .controls button{
-  background:#020617;
-  border:1px solid #334155;
-  color:#e2e8f0;
-  border-radius:8px;
-  padding:10px 20px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.controls button:hover{
-  background:#0f172a;
+padding:8px 18px;
+font-size:16px;
+border:none;
+border-radius:50px;
+font-weight:bold;
+cursor:pointer;
 }
 
 .start{background:#16a34a;color:white;}
@@ -221,23 +216,22 @@ margin:15px;
 }
 
 .fullscreen-btn{
-  position:absolute;
-  right:20px;
-  top:15px;
-  padding:4px 8px;
-  font-size:12px;
-  border:1px solid rgba(255,255,255,0.2);
-  border-radius:8px;
-  background:transparent;
-  color:rgba(255,255,255,0.4);
-  cursor:pointer;
+position:absolute;
+right:20px;
+top:20px;
+padding:5px 10px;
+font-size:14px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+cursor:pointer;
 }
 
 .fullscreen-btn:hover{
-  color:white;
-  border-color:rgba(255,255,255,0.5);
+background:#1d4ed8;
 }
-  
+
 .pulse{animation:pulse 1.5s infinite;}
 @keyframes pulse{0%{text-shadow:0 0 5px #22c55e;}50%{text-shadow:0 0 20px #22c55e;}100%{text-shadow:0 0 5px #22c55e;}}
 
@@ -343,16 +337,18 @@ tr:nth-child(even){background:#0f172a;}
 <body>
 
 <!-- 🔐 LOGIN OVERLAY -->
-<div class="header" ondblclick="enterAdminMode()" style="position:relative; text-align:center; padding:15px 20px;">
-
-<div>
-    TF 2 PRODUCTION MONITORING SYSTEM
+<div id="loginOverlay">
+  <div class="login-box">
+    <h2>🔐 SYSTEM ACCESS</h2>
+    <input type="password" id="passwordInput" placeholder="Enter Password">
+    <button onclick="checkPassword()">ACCESS</button>
+    <p id="loginError"></p>
   </div>
-
-  <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
-
 </div>
 
+<div class="header">
+    TF 2 PRODUCTION MONITORING SYSTEM
+    <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
 </div>
 
 <div class="datetime">
@@ -380,10 +376,6 @@ Lot:
 <button class="summary" id="ramadanToggle" onclick="toggleRamadan()">
 🌙 Ramadhan : OFF
 </button>
-
-<button id="adminLogoutBtn" onclick="logoutAdmin()" style="display:none; background:#ef4444; color:white;">
-🔓 Logout Admin
-</button>  
 
 </div>
 
@@ -453,20 +445,9 @@ Lot:
 <script>
 
 /* 🔐 PASSWORD SYSTEM */
-  
 const SYSTEM_PASSWORD = "1234";
-let isAdmin = false;
-  
-const ADMIN_PASSWORD = "admin123"; // change this
 
 function checkPassword(){
-
-  // ✅ BYPASS PASSWORD FOR MONITOR
-  if(window.location.search.includes("monitor")){
-    document.getElementById("loginOverlay").style.display = "none";
-    return;
-  }
-
   const input = document.getElementById("passwordInput").value;
 
   if(input === SYSTEM_PASSWORD){
@@ -477,35 +458,14 @@ function checkPassword(){
   }
 }
 
-function enterAdminMode(){
-
-  let pass = prompt("Enter Admin Password:");
-
-  if(pass === ADMIN_PASSWORD){
-    isAdmin = true;
-
-    alert("✅ ADMIN MODE ACTIVATED");
-
-    document.getElementById("adminLogoutBtn").style.display = "inline-block";
-
-    setStatus("ADMIN MODE", "status-green");
-
-  }else{
-    alert("❌ Wrong Password");
+document.addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    if(document.getElementById("loginOverlay").style.display !== "none"){
+      checkPassword();
+    }
   }
-}
-  
-function logoutAdmin(){
-  isAdmin = false;
+});
 
-  alert("🔒 Admin mode deactivated");
-
-  document.getElementById("adminLogoutBtn").style.display = "none";
-
-  setStatus("RUNNING", "status-green");
-  
-}
-  
 /* ================= SYSTEM SETTINGS ================= */
 
 const SETTINGS = {
@@ -782,7 +742,6 @@ el.className="big-number "+color;
 /* ===== START ===== */
 
 function startProduction(){
-  
     if(isMonitor) return;
     if(timer) return;
 
@@ -829,7 +788,6 @@ function startProduction(){
 
 /* STOP */
 function stopProduction(){
-  
 clearInterval(timer);
 timer=null;
 setStatus("PAUSED","status-orange");
@@ -837,11 +795,6 @@ setStatus("PAUSED","status-orange");
 
 /* RESET */
 function resetProduction(){
-
-if(!isAdmin){
-  alert("Admin access required");
-  return;
-}  
   
 clearInterval(timer);
 timer=null;
@@ -1228,11 +1181,11 @@ function openSummary() {
 <style>
 /* --- Gaya Asas (Sama seperti Dashboard) --- */
 body{
-  margin:0;
-  font-family:'Segoe UI',sans-serif;
-  background: radial-gradient(circle at top, #0b1220, #020617);
-  color:var(--text);
-  overflow:hidden; /* ✅ ADD THIS */
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#0b1220; /* Warna latar belakang gelap */
+color:#e5e7eb;
+padding:40px;
 }
 
 h1{
@@ -1911,18 +1864,7 @@ async function loadLastStateFromSheet(){
 
 window.onload = async function(){
 
-if(window.location.search.includes("monitor")){
-  document.getElementById("loginOverlay").style.display = "none";
-}else{
-  document.getElementById("loginOverlay").style.display = "flex";
-}
-document.documentElement.requestFullscreen().catch(()=>{});
-
-if(window.location.search.includes("monitor")){
-  setTimeout(()=>{
-    document.getElementById("loginOverlay").style.display = "none";
-  }, 100);
-}
+document.getElementById("loginOverlay").style.display = "flex";
   
   // 🔐 MUST WAIT ACCESS CHECK
   let allowed = await checkAccess();

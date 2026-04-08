@@ -1066,8 +1066,20 @@ function updateLiveStateOnly(){
   else if(expected > 0) efficiency = Math.floor((actual / expected) * 100);
   const balance = actual - plan;
   const status  = document.getElementById("status").innerText.trim();
-  fetch(API_URL,{ method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ liveOnly:true, plan, actual, balance, status, countdown:countdownValue, totalDowntime:downtimeSeconds, expected, delay, efficiency }) });
-}
+  const shiftStart = document.getElementById("shiftStart").value;
+  const shiftEnd   = document.getElementById("shiftEnd").value;
+ 
+  fetch(API_URL,{ method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"}, 
+         body:JSON.stringify({ 
+         liveOnly:true,
+         plan, actual, balance, status, 
+         countdown:countdownValue, 
+         totalDowntime:downtimeSeconds,
+         expected, delay, efficiency,
+         shiftStart, 
+          shiftEnd
+}) 
+});
  
 /* ================= SEND SCAN TO SHEET ================= */
 function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
@@ -1096,6 +1108,8 @@ function loadLiveData(){
     if(newState) window.lastValidState = newState;
     if(!window.lastValidState) return;
     const state = window.lastValidState;
+    document.getElementById("shiftStart").value = state[10] || "08:00";
+    document.getElementById("shiftEnd").value   = state[11] || "17:00";
     if(!state||state.length<9) return;
  
     const scanRows     = data.scan.slice(1);

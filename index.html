@@ -676,7 +676,7 @@ function autoProductionControl(){
 }
 
   // 🟢 RUNNING TIME
-  if(now >= start && now < end){
+ if(now >= start && now <= end)
     if(!timer){
       startTime = new Date();
       autoRunning = true; // 🔥 IMPORTANT
@@ -1397,6 +1397,7 @@ window.onload = async function(){
 
   updateDateTime();
   setInterval(updateDateTime, 1000);
+  setInterval(autoProductionControl, 1000);
 
   if(isMonitor){
     document.body.classList.add("monitor-mode");

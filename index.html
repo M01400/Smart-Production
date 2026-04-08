@@ -485,8 +485,15 @@ document.addEventListener("DOMContentLoaded", function(){
  
 /* ================= LOGIN ================= */
 function checkPassword(){
-  if(isMonitor) return;
+
+  // 🔥 Always bypass login for monitor
+  if(isMonitor){
+    document.getElementById("loginOverlay").style.display = "none";
+    return;
+  }
+
   const input = document.getElementById("passwordInput").value;
+
   if(input === SYSTEM_PASSWORD){
     document.getElementById("loginOverlay").style.display = "none";
   } else {
@@ -1201,8 +1208,12 @@ window.onload = async function(){
   if(!isMonitor){ document.getElementById("loginOverlay").style.display="flex"; }
   else           { document.getElementById("loginOverlay").style.display="none"; }
  
-  let allowed = await checkAccess();
-  if(!allowed) return;
+ let allowed = await checkAccess();
+
+if(!allowed){
+  console.log("❌ ACCESS BLOCKED");
+  return;
+}
  
   if(!isMonitor) await loadLastStateFromSheet();
  

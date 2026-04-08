@@ -313,7 +313,6 @@ tr:nth-child(even){background:#0f172a;}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
 
 <body>
@@ -401,22 +400,6 @@ tr:nth-child(even){background:#0f172a;}
 
 /* ================= isMonitor DECLARED FIRST ================= */
 const isMonitor = window.location.search.includes("monitor");
-  
-function animateNumber(id, value){
-  let el = document.getElementById(id);
-  let current = parseInt(el.innerText) || 0;
-
-  let obj = { val: current };
-
-  gsap.to(obj, {
-    val: value,
-    duration: 0.5,
-    ease: "power2.out",
-    onUpdate: function(){
-      el.innerText = Math.floor(obj.val);
-    }
-  });
-}
 
 /* ================= PASSWORD ================= */
 const SYSTEM_PASSWORD = "1234";
@@ -567,31 +550,10 @@ function calculateExpectedOutput(){
 }
 
 /* ================= STATUS ================= */
-function setStatus(text,color){
+function setStatus(text, color){
   const el = document.getElementById("status");
-
   el.innerText = text;
   el.className = "big-number " + color;
-
-  // 🔥 GSAP glow animation
-  if(text === "RUNNING"){
-    gsap.to(el, {
-      textShadow: "0 0 20px #22c55e",
-      duration: 0.8,
-      repeat: -1,
-      yoyo: true
-    });
-  } else if(text === "DOWN TIME"){
-    gsap.to(el, {
-      textShadow: "0 0 20px #ef4444",
-      duration: 0.6,
-      repeat: -1,
-      yoyo: true
-    });
-  } else {
-    gsap.killTweensOf(el);
-    gsap.set(el, { textShadow: "none" });
-  }
 }
 
 /* ================= START ================= */
@@ -822,9 +784,9 @@ function updateDisplay(){
   else if(efficiency < 100) effEl.className = "big-number status-orange";
   else                       effEl.className = "big-number status-green";
 
+  document.getElementById("expected").innerText  = expected;
   document.getElementById("plan").innerText       = plan;
-  animateNumber("actual", actualCount);
-  animateNumber("expected", expected);
+  document.getElementById("actual").innerText     = actualCount;
   document.getElementById("countdown").innerText  = format(countdownValue);
   document.getElementById("downtime").innerText   = format(downtimeSeconds);
 
@@ -837,53 +799,34 @@ function updateDisplay(){
   /* STATUS LOGIC */
   if(isBreakTime()){
     setStatus("BREAK TIME", "status-orange");
-    
   } else if(duplicateLock){
     setStatus("DUPLICATE SCAN", "status-red blink");
-    
   } else if(isDowntime){
     setStatus("DOWN TIME", "status-red blink");
-    
   } else if(actualCount >= plan && plan > 0){
     // FIX: only display here, timer already stopped in scan handler
     setStatus("TARGET ACHIEVED", "status-green");
   } else if(pendingChassis !== "" && pendingModel === ""){
-    
     setStatus("WAITING MODEL", "status-orange");
   } else if(pendingModel !== "" && pendingEngine === ""){
-    
     setStatus("WAITING ENGINE", "status-orange");
   } else if(pendingEngine !== "" && pendingKey === ""){
-    
     setStatus("WAITING KEY", "status-orange");
   } else if(timer){
-    
     setStatus("RUNNING", "status-green pulse");
   } else {
-    
     setStatus("READY", "status-blue");
   }
 
-  gsap.from(".card", {
-    scale: 0.97,
-    opacity: 0.8,
-    duration: 0.3,
-    stagger: 0.03
-  });
-  
   const downtimeCard = document.getElementById("downtimeCard");
   const downtimeText = document.getElementById("downtime");
   if(isDowntime){
-  gsap.to("#downtimeCard", {
-    scale: 1.05,
-    duration: 0.5,
-    repeat: -1,
-    yoyo: true
-  });
-} else {
-  gsap.killTweensOf("#downtimeCard");
-  gsap.set("#downtimeCard", { scale: 1 });
-}
+    downtimeCard.classList.add("downtime-alert", "blink");
+    downtimeText.classList.add("status-red", "blink");
+  } else {
+    downtimeCard.classList.remove("downtime-alert", "blink");
+    downtimeText.classList.remove("status-red", "blink");
+  }
 }
 
 /* ================= DAILY SUMMARY ================= */
@@ -1238,18 +1181,10 @@ function loadLiveData(){
       else                       effEl.className = "big-number status-green";
 
       document.getElementById("plan").innerText     = plan;
-      animateNumber("actual", actual);
-      animateNumber("expected", expected);
+      document.getElementById("actual").innerText   = actual;
+      document.getElementById("expected").innerText = expected;
       countdownValue = countdown;
-      gsap.to("#countdown", {
-      opacity: 0.5,
-      duration: 0.2,
-      yoyo: true,
-      repeat: 1,
-      onComplete: () => {
       document.getElementById("countdown").innerText = format(countdownValue);
-      }
-    });
       document.getElementById("downtime").innerText  = format(totalDowntime);
 
       const balanceEl = document.getElementById("balance");

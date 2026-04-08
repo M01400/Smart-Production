@@ -313,18 +313,6 @@ tr:nth-child(even){ background:#0f172a; }
   z-index:9000;
   letter-spacing:0.5px;
 }
-
-#devOverlay{
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background:rgba(0,0,0,0.85);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
-}
- 
 </style>
  
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
@@ -343,20 +331,7 @@ tr:nth-child(even){ background:#0f172a; }
 </div>
  
 <!-- DEV MODE BADGE -->
-<div id="devBadge" onclick="exitDevMode()" 
-style="cursor:pointer;">
-  🟢 DEVELOPER MODE
-</div>
- 
-<!-- DEV LOGIN POPUP -->
-<div id="devOverlay" style="display:none;">
-  <div class="login-box">
-    <h2>⚙️ DEVELOPER ACCESS</h2>
-    <input type="password" id="devPasswordInput" placeholder="Enter Developer Password">
-    <button onclick="checkDevPassword()">ENTER</button>
-    <p id="devError" style="color:red;"></p>
-  </div>
-</div>
+<div id="devBadge">🟢 DEVELOPER MODE</div>
  
 <!-- HEADER -->
 <div class="header" id="titleHeader">
@@ -453,30 +428,11 @@ let autoRunning  = false;
 let midnightResetFired = false;
  
 function toggleDevMode(){
-  document.getElementById("devOverlay").style.display = "flex";
-  document.getElementById("devPasswordInput").value = "";
-  document.getElementById("devError").innerText = "";
+  const pass = prompt("Developer Access:");
+  if(pass !== DEV_PASSWORD){ alert("Wrong password"); return; }
+  isDeveloper = !isDeveloper;
+  document.getElementById("devBadge").style.display = isDeveloper ? "block" : "none";
 }
-
- function checkDevPassword(){
-  const input = document.getElementById("devPasswordInput").value;
-
-  if(input === DEV_PASSWORD){
-    isDeveloper = true;
-
-    document.getElementById("devOverlay").style.display = "none";
-    document.getElementById("devBadge").style.display = "block";
-  } else {
-    document.getElementById("devError").innerText = "Wrong Password!";
-    document.getElementById("devPasswordInput").value = "";
-  }
-}
-
-function exitDevMode(){
-  isDeveloper = false;
-
-  document.getElementById("devBadge").style.display = "none";
-} 
  
 // Double-click title to toggle dev mode
 document.addEventListener("DOMContentLoaded", function(){
@@ -485,15 +441,8 @@ document.addEventListener("DOMContentLoaded", function(){
  
 /* ================= LOGIN ================= */
 function checkPassword(){
-
-  // 🔥 Always bypass login for monitor
-  if(isMonitor){
-    document.getElementById("loginOverlay").style.display = "none";
-    return;
-  }
-
+  if(isMonitor) return;
   const input = document.getElementById("passwordInput").value;
-
   if(input === SYSTEM_PASSWORD){
     document.getElementById("loginOverlay").style.display = "none";
   } else {
@@ -504,13 +453,7 @@ function checkPassword(){
  
 document.addEventListener("keydown", function(e){
   if(e.key === "Enter"){
-    if(document.getElementById("loginOverlay").style.display !== "none"){
-      checkPassword();
-    }
-
-    if(document.getElementById("devOverlay").style.display === "flex"){
-      checkDevPassword();
-    }
+    if(document.getElementById("loginOverlay").style.display !== "none") checkPassword();
   }
 });
  
@@ -640,7 +583,7 @@ function setStatus(text, color){
 // FIX: Added allowedBySystem flag so loadLastStateFromSheet can resume
 //      without needing isDeveloper or autoRunning to be true
 function startProduction(allowedBySystem = false){
-  if(isMonitor && !isDeveloper) return;
+  if(isMonitor) return;
   // Allow if: dev mode, auto-control running, or system restore on load
   if(!isDeveloper && !autoRunning && !allowedBySystem) return;
   if(timer) return;
@@ -664,7 +607,7 @@ function startProduction(allowedBySystem = false){
  
 /* ================= AUTO PRODUCTION CONTROL ================= */
 function autoProductionControl(){
-  if(isMonitor && !isDeveloper) return;
+  if(isMonitor) return;
  
   const now = new Date();
  
@@ -866,7 +809,7 @@ document.getElementById("keyInput").addEventListener("keydown", function(e){
  
 /* ================= UPDATE DISPLAY ================= */
 function updateDisplay(){
-  if(isMonitor && !isDeveloper) return;
+  if(isMonitor) return;
  
   let plan    = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
   let balance = actualCount - plan;
@@ -1063,7 +1006,7 @@ async function checkAccess(){
  
 /* ================= LIVE STATE PUSH ================= */
 function updateLiveStateOnly(){
-  if(isMonitor && !isDeveloper) return;
+  if(isMonitor) return;
   const plan   = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
   const actual = actualCount;
   let expected = calculateExpectedOutput();
@@ -1073,20 +1016,8 @@ function updateLiveStateOnly(){
   else if(expected > 0) efficiency = Math.floor((actual / expected) * 100);
   const balance = actual - plan;
   const status  = document.getElementById("status").innerText.trim();
-  const shiftStart = document.getElementById("shiftStart").value;
-  const shiftEnd   = document.getElementById("shiftEnd").value;
- 
-  fetch(API_URL,{ method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"}, 
-         body:JSON.stringify({ 
-         liveOnly:true,
-         plan, actual, balance, status, 
-         countdown:countdownValue, 
-         totalDowntime:downtimeSeconds,
-         expected, delay, efficiency,
-         shiftStart, 
-          shiftEnd
-}) 
-});
+  fetch(API_URL,{ method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ liveOnly:true, plan, actual, balance, status, countdown:countdownValue, totalDowntime:downtimeSeconds, expected, delay, efficiency }) });
+}
  
 /* ================= SEND SCAN TO SHEET ================= */
 function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
@@ -1115,8 +1046,6 @@ function loadLiveData(){
     if(newState) window.lastValidState = newState;
     if(!window.lastValidState) return;
     const state = window.lastValidState;
-    document.getElementById("shiftStart").value = state[10] || "08:00";
-    document.getElementById("shiftEnd").value   = state[11] || "17:00";
     if(!state||state.length<9) return;
  
     const scanRows     = data.scan.slice(1);
@@ -1208,12 +1137,8 @@ window.onload = async function(){
   if(!isMonitor){ document.getElementById("loginOverlay").style.display="flex"; }
   else           { document.getElementById("loginOverlay").style.display="none"; }
  
- let allowed = await checkAccess();
-
-if(!allowed){
-  console.log("❌ ACCESS BLOCKED");
-  return;
-}
+  let allowed = await checkAccess();
+  if(!allowed) return;
  
   if(!isMonitor) await loadLastStateFromSheet();
  

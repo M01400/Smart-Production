@@ -633,7 +633,7 @@ function setStatus(text, color){
 // FIX: Added allowedBySystem flag so loadLastStateFromSheet can resume
 //      without needing isDeveloper or autoRunning to be true
 function startProduction(allowedBySystem = false){
-  if(isMonitor) return;
+  if(isMonitor && !isDeveloper) return;
   // Allow if: dev mode, auto-control running, or system restore on load
   if(!isDeveloper && !autoRunning && !allowedBySystem) return;
   if(timer) return;
@@ -657,7 +657,7 @@ function startProduction(allowedBySystem = false){
  
 /* ================= AUTO PRODUCTION CONTROL ================= */
 function autoProductionControl(){
-  if(isMonitor) return;
+  if(isMonitor && !isDeveloper) return;
  
   const now = new Date();
  
@@ -859,7 +859,7 @@ document.getElementById("keyInput").addEventListener("keydown", function(e){
  
 /* ================= UPDATE DISPLAY ================= */
 function updateDisplay(){
-  if(isMonitor) return;
+  if(isMonitor && !isDeveloper) return;
  
   let plan    = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
   let balance = actualCount - plan;
@@ -1056,7 +1056,7 @@ async function checkAccess(){
  
 /* ================= LIVE STATE PUSH ================= */
 function updateLiveStateOnly(){
-  if(isMonitor) return;
+  if(isMonitor && !isDeveloper) return;
   const plan   = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
   const actual = actualCount;
   let expected = calculateExpectedOutput();

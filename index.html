@@ -449,10 +449,9 @@ Lot:
 <script>
 
 /* 🔐 PASSWORD SYSTEM */
-const SYSTEM_PASSWORD = "m01400";
+const SYSTEM_PASSWORD = "1234";
 
 function checkPassword(){
-
   if(isMonitor) return;
   const input = document.getElementById("passwordInput").value;
 
@@ -542,30 +541,9 @@ function updateDateTime(){
   }
 }
 
-// 🔥 BLOCK MULTIPLE TABS (SAME DEVICE)
-if(localStorage.getItem("APP_OPEN") === "true"){
-  document.body.innerHTML = `
-    <h1 style="
-      color:red;
-      text-align:center;
-      margin-top:100px;
-      font-size:40px;
-    ">
-      SYSTEM ALREADY OPEN IN ANOTHER TAB
-    </h1>
-  `;
-  return false;
-}
-
-// Mark this tab as active
-localStorage.setItem("APP_OPEN", "true");
-
-// Remove lock when tab closes
-window.addEventListener("beforeunload", () => {
-  localStorage.removeItem("APP_OPEN");
-});
-  
 /* ================= GLOBAL LOCK SYSTEM ================= */
+
+/* ================= STRICT GLOBAL LOCK ================= */
 
 async function checkAccess(){
 
@@ -575,8 +553,13 @@ async function checkAccess(){
   }
 
   // 🔹 Create unique device ID (once only)
- let deviceId = "TAB-" + Math.random().toString(36).substring(2);
-  
+  let deviceId = localStorage.getItem("DEVICE_ID");
+
+  if(!deviceId){
+    deviceId = "DEV-" + Math.random().toString(36).substring(2);
+    localStorage.setItem("DEVICE_ID", deviceId);
+  }
+
   try{
 
     // 🔹 STEP 1: CHECK LOCK
@@ -1886,6 +1869,7 @@ async function loadLastStateFromSheet(){
 
 window.onload = async function(){
 
+  // ONLY show password on MAIN PC
   if(!isMonitor){
     document.getElementById("loginOverlay").style.display = "flex";
   } else {

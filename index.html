@@ -970,34 +970,74 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwwLUYjoT7GH0sfFCGZMJoe
 
 /* ================= GLOBAL LOCK ================= */
 async function checkAccess(){
+
+  // ✅ 1. Allow monitor (NO CHANGE)
   if(window.location.search.includes("monitor")) return true;
 
+
+  // 🔥 2. ADD THIS BLOCK HERE (TAB LOCK)
+  if(sessionStorage.getItem("TAB_ACTIVE") === "true"){
+    document.body.innerHTML = `
+      <h1 style="
+        color:red;
+        text-align:center;
+        margin-top:100px;
+        font-size:40px;
+      ">
+        SYSTEM ALREADY OPEN IN ANOTHER TAB
+      </h1>
+    `;
+    return false;
+  }
+
+  // Mark this tab active
+  sessionStorage.setItem("TAB_ACTIVE", "true");
+
+  // Remove when tab closes
+  window.addEventListener("beforeunload", () => {
+    sessionStorage.removeItem("TAB_ACTIVE");
+  });
+
+
+  // ✅ 3. KEEP YOUR ORIGINAL DEVICE LOCK (NO CHANGE)
   let deviceId = localStorage.getItem("DEVICE_ID");
+
   if(!deviceId){
     deviceId = "DEV-" + Math.random().toString(36).substring(2);
     localStorage.setItem("DEVICE_ID", deviceId);
   }
 
   try{
-    let res  = await fetch(API_URL + "?checkLock=true");
+    let res = await fetch(API_URL + "?checkLock=true");
     let data = await res.json();
-    console.log("LOCK DATA:", data);
 
     if(data.lock && data.lock !== deviceId){
       document.body.innerHTML = `
-        <h1 style="color:red;text-align:center;margin-top:100px;font-size:40px;">
+        <h1 style="
+          color:red;
+          text-align:center;
+          margin-top:100px;
+          font-size:40px;
+        ">
           SYSTEM ALREADY OPEN ON ANOTHER SCREEN
-        </h1>`;
+        </h1>
+      `;
       return false;
     }
 
-    await fetch(API_URL, {
-      method:"POST", mode:"no-cors",
+    await fetch(API_URL,{
+      method:"POST",
+      mode:"no-cors",
       headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ lockRequest:true, deviceId })
+      body: JSON.stringify({
+        lockRequest:true,
+        deviceId: deviceId
+      })
     });
 
-  } catch(err){ console.log("Lock error:", err); }
+  }catch(err){
+    console.log("Lock error:", err);
+  }
 
   return true;
 }

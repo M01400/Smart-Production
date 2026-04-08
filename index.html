@@ -310,6 +310,31 @@ tr:nth-child(even){background:#0f172a;}
   color:red;
   margin-top:10px;
 }
+
+ .time-control{
+  position:absolute;
+  right:20px;
+  top:60px;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  font-size:14px;
+  background:rgba(255,255,255,0.05);
+  padding:6px 10px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.1);
+}
+
+.time-control input{
+  width:90px;
+  font-size:14px;
+  border-radius:6px;
+  border:1px solid #334155;
+  background:#0f172a;
+  color:white;
+  text-align:center;
+}
+  
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
@@ -329,8 +354,15 @@ tr:nth-child(even){background:#0f172a;}
 <div class="header" id="titleHeader">
   TF 2 PRODUCTION MONITORING SYSTEM
     <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
+  
+<div class="time-control">
+    🕒
+    <input type="time" id="startTime" value="08:00">
+    -
+    <input type="time" id="endTime" value="17:00">
+  </div>
 </div>
-
+  
 <div class="datetime">
   <div id="dateDisplay"></div>
   <div id="clock"></div>
@@ -342,12 +374,6 @@ tr:nth-child(even){background:#0f172a;}
 
   Daily Plan:
   <input type="number" id="dailyPlanTarget" min="1">
-
-  Start Time:
-  <input type="time" id="startTime" value="08:00">
-  
-  End Time:
-  <input type="time" id="endTime" value="17:00">
 
   Lot:
   <input type="number" id="lotInput" placeholder="Lot No">

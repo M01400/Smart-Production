@@ -659,6 +659,12 @@ function startProduction(allowedBySystem = false){
 /* ================= AUTO PRODUCTION CONTROL ================= */
 function autoProductionControl(){
   if(isMonitor) return;
+
+  // 🚫 STOP AUTO if developer mode ON
+  if(isDeveloper){
+    autoRunning = false;
+    return;
+  }
  
   const now = new Date();
  

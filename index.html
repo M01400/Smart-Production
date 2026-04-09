@@ -10,7 +10,6 @@
   --card-title-size: 25px;
   --clock-size: 70px;
   --header-size: 60px;
- 
   --bg:#050b18;
   --panel:#0f172a;
   --glass:rgba(255,255,255,0.05);
@@ -25,7 +24,7 @@
 body{
   margin:0;
   font-family:'Segoe UI',sans-serif;
-  background: radial-gradient(circle at top, #0b1220, #020617);
+  background:radial-gradient(circle at top,#0b1220,#020617);
   color:var(--text);
 }
  
@@ -36,70 +35,40 @@ body{
   padding:20px;
   color:var(--blue);
   letter-spacing:2px;
-  text-shadow:none;
   position:relative;
 }
  
-#clock{
-  font-size:var(--clock-size);
-  font-weight:500;
-  color:#22d3ee;
-  text-shadow:none;
-}
- 
-#dateDisplay{
-  font-size:30px;
-  color:#94a3b8;
-}
+#clock{font-size:var(--clock-size);font-weight:500;color:#22d3ee;}
+#dateDisplay{font-size:30px;color:#94a3b8;}
  
 .datetime{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
   margin-top:10px;
 }
  
 .controls{
-  display:flex;
-  justify-content:center;
-  gap:15px;
-  flex-wrap:wrap;
-  padding:15px;
-  background:var(--glass);
-  backdrop-filter:blur(10px);
-  border:1px solid var(--border);
-  border-radius:15px;
-  margin:20px;
+  display:flex;justify-content:center;gap:15px;
+  flex-wrap:wrap;padding:15px;
+  background:var(--glass);backdrop-filter:blur(10px);
+  border:1px solid var(--border);border-radius:15px;margin:20px;
 }
  
-.wide{ grid-column: span 2; }
+.wide{grid-column:span 2;}
  
 .card{
   background:linear-gradient(145deg,#0f172a,#020617);
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:15px;
+  border:1px solid var(--border);border-radius:20px;padding:15px;
   text-align:center;
-  box-shadow:
-    inset 0 0 15px rgba(255,255,255,0.05),
-    0 0 20px rgba(0,0,0,0.8);
-  position:relative;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start;
-  align-items:center;
-  min-height:90px;
+  box-shadow:inset 0 0 15px rgba(255,255,255,0.05),0 0 20px rgba(0,0,0,0.8);
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+  justify-content:flex-start;align-items:center;min-height:90px;
 }
  
 .card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:20px;
-  border:1px solid rgba(255,255,255,0.05);
-  pointer-events:none;
+  content:"";position:absolute;inset:0;border-radius:20px;
+  border:1px solid rgba(255,255,255,0.05);pointer-events:none;
 }
  
 .status-green{color:var(--green);}
@@ -107,28 +76,18 @@ body{
 .status-blue{color:var(--blue);}
 .status-orange{color:var(--orange);}
  
-.pulse{ animation:pulseGlow 1.5s infinite; }
+.pulse{animation:pulseGlow 1.5s infinite;}
 @keyframes pulseGlow{
   0%{text-shadow:0 0 5px #22c55e;}
   50%{text-shadow:0 0 25px #22c55e;}
   100%{text-shadow:0 0 5px #22c55e;}
 }
  
-.blink{ animation:blink 1s infinite; }
-@keyframes blink{ 50%{opacity:0.3;} }
+.blink{animation:blink 1s infinite;}
+@keyframes blink{50%{opacity:0.3;}}
  
-.bottom-row{
-  display:grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap:15px;
-  margin:15px;
-}
- 
-.scan-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:15px;
-}
+.bottom-row{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin:15px;}
+.scan-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
  
 .downtime-alert{
   box-shadow:0 0 30px rgba(239,68,68,0.7);
@@ -136,195 +95,119 @@ body{
 }
  
 .controls input{
-  padding:6px;
-  width:90px;
-  font-size:18px;
-  font-weight:bold;
-  border-radius:10px;
-  border:1px solid #334155;
-  background:#0f172a;
-  color:white;
-  text-align:center;
+  padding:6px;width:90px;font-size:18px;font-weight:bold;
+  border-radius:10px;border:1px solid #334155;
+  background:#0f172a;color:white;text-align:center;
 }
  
 .controls button{
-  background:#020617;
-  border:1px solid #334155;
-  color:#e2e8f0;
-  border-radius:8px;
-  padding:10px 20px;
-  cursor:pointer;
+  background:#020617;border:1px solid #334155;
+  color:#e2e8f0;border-radius:8px;padding:10px 20px;cursor:pointer;
 }
- 
-.controls button:hover{ background:#0f172a; }
+.controls button:hover{background:#0f172a;}
  
 .start{background:#16a34a;color:white;}
 .stop{background:#dc2626;color:white;}
 .reset{background:#f59e0b;color:white;}
 .summary{background:#2563eb;color:white;}
  
-.dashboard{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:15px;
-  margin:15px;
-}
+.dashboard{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin:15px;}
  
-.card h3{
-  color:#9ca3af;
-  margin:0;
-  margin-bottom:4px;
-  font-size:var(--card-title-size);
-}
- 
-.big-number{
-  font-size:var(--big-number-size);
-  font-weight:900;
-}
+.card h3{color:#9ca3af;margin:0;margin-bottom:4px;font-size:var(--card-title-size);}
+.big-number{font-size:var(--big-number-size);font-weight:900;}
  
 .fullscreen-btn{
-  position:absolute;
-  right:20px;
-  top:15px;
-  padding:4px 8px;
-  font-size:12px;
-  border:1px solid rgba(255,255,255,0.2);
-  border-radius:8px;
-  background:transparent;
-  color:rgba(255,255,255,0.4);
-  cursor:pointer;
+  position:absolute;right:20px;top:15px;padding:4px 8px;font-size:12px;
+  border:1px solid rgba(255,255,255,0.2);border-radius:8px;
+  background:transparent;color:rgba(255,255,255,0.4);cursor:pointer;
 }
- 
-.fullscreen-btn:hover{
-  color:white;
-  border-color:rgba(255,255,255,0.5);
-}
+.fullscreen-btn:hover{color:white;border-color:rgba(255,255,255,0.5);}
  
 .scan-box{
-  width:300px;
-  padding:10px;
-  font-size:18px;
-  border-radius:40px;
-  background:#0f172a;
-  border:1px solid #334155;
-  color:white;
-  text-align:center;
+  width:300px;padding:10px;font-size:18px;border-radius:40px;
+  background:#0f172a;border:1px solid #334155;color:white;text-align:center;
 }
  
 table{
-  width:95%;
-  margin:30px auto;
-  border-collapse:collapse;
-  background:#111827;
-  border-radius:15px;
-  overflow:hidden;
+  width:95%;margin:30px auto;border-collapse:collapse;
+  background:#111827;border-radius:15px;overflow:hidden;
 }
+th,td{padding:12px;text-align:center;font-size:14px;}
+th{background:#1f2937;color:#60a5fa;}
+tr:nth-child(even){background:#0f172a;}
  
-th,td{
-  padding:12px;
-  text-align:center;
-  font-size:14px;
-}
- 
-th{ background:#1f2937; color:#60a5fa; }
-tr:nth-child(even){ background:#0f172a; }
- 
-/* ================= TIME CONTROL ================= */
 .time-control{
-  position:absolute;
-  right:20px;
-  top:100px;
-  display:flex;
-  align-items:center;
-  gap:5px;
-  font-size:14px;
-  background:rgba(255,255,255,0.05);
-  padding:6px 10px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,0.1);
+  position:absolute;right:20px;top:100px;
+  display:flex;align-items:center;gap:5px;font-size:14px;
+  background:rgba(255,255,255,0.05);padding:6px 10px;
+  border-radius:10px;border:1px solid rgba(255,255,255,0.1);
 }
- 
 .time-control input{
-  width:110px;
-  font-size:14px;
-  border-radius:6px;
-  border:1px solid #334155;
-  background:#0f172a;
-  color:white;
-  text-align:center;
+  width:110px;font-size:14px;border-radius:6px;
+  border:1px solid #334155;background:#0f172a;color:white;text-align:center;
 }
  
-/* ================= LOGIN ================= */
+/* ===== LOGIN ===== */
 #loginOverlay{
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
+  position:fixed;top:0;left:0;width:100%;height:100%;
   background:linear-gradient(145deg,#020617,#020617);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
+  display:flex;justify-content:center;align-items:center;z-index:9999;
 }
  
 .login-box{
-  background:#0f172a;
-  padding:40px;
-  border-radius:20px;
-  text-align:center;
-  border:1px solid rgba(255,255,255,0.1);
+  background:#0f172a;padding:40px;border-radius:20px;
+  text-align:center;border:1px solid rgba(255,255,255,0.1);
   box-shadow:0 0 40px rgba(0,0,0,0.8);
 }
- 
 .login-box input{
-  padding:12px;
-  width:250px;
-  border-radius:10px;
-  border:1px solid #334155;
-  background:#020617;
-  color:white;
-  text-align:center;
+  padding:12px;width:250px;border-radius:10px;
+  border:1px solid #334155;background:#020617;color:white;text-align:center;
 }
- 
 .login-box button{
-  margin-top:15px;
-  padding:10px 25px;
-  border:none;
-  border-radius:30px;
-  background:#22c55e;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
+  margin-top:15px;padding:10px 25px;border:none;
+  border-radius:30px;background:#22c55e;color:white;
+  font-weight:bold;cursor:pointer;
 }
+#loginError{color:red;margin-top:10px;}
  
-#loginError{ color:red; margin-top:10px; }
+/* ===== CHANGE PASSWORD PANEL ===== */
+#changePwPanel{
+  display:none;position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  background:#0f172a;padding:30px;border-radius:20px;
+  border:1px solid rgba(255,255,255,0.15);
+  box-shadow:0 0 40px rgba(0,0,0,0.9);
+  z-index:9999;min-width:320px;text-align:center;
+}
+#changePwPanel h3{color:var(--blue);margin-bottom:20px;}
+#changePwPanel select,
+#changePwPanel input{
+  display:block;width:100%;padding:10px;margin-bottom:12px;
+  border-radius:8px;border:1px solid #334155;
+  background:#020617;color:white;font-size:15px;text-align:center;
+  box-sizing:border-box;
+}
+#changePwPanel button{
+  padding:10px 24px;border:none;border-radius:20px;
+  font-weight:bold;cursor:pointer;margin:4px;
+}
+#pwSaveBtn{background:#16a34a;color:white;}
+#pwCancelBtn{background:#dc2626;color:white;}
+#pwMsg{margin-top:8px;font-size:13px;}
  
-/* ================= DEV MODE BADGE ================= */
+/* ===== DEV BADGE ===== */
 #devBadge{
-  display:none;
-  position:fixed;
-  bottom:16px;
-  right:16px;
-  background:#16a34a;
-  color:white;
-  font-size:13px;
-  font-weight:bold;
-  padding:6px 14px;
-  border-radius:20px;
-  z-index:9000;
-  letter-spacing:0.5px;
-}
-
-#devOverlay{
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background:rgba(0,0,0,0.85);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
+  display:none;position:fixed;bottom:16px;right:16px;
+  background:#16a34a;color:white;font-size:13px;font-weight:bold;
+  padding:6px 14px;border-radius:20px;z-index:9000;
+  letter-spacing:0.5px;cursor:pointer;
 }
  
+#devOverlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.85);
+  display:flex;justify-content:center;align-items:center;z-index:9999;
+}
 </style>
  
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
@@ -342,13 +225,10 @@ tr:nth-child(even){ background:#0f172a; }
   </div>
 </div>
  
-<!-- DEV MODE BADGE -->
-<div id="devBadge" onclick="exitDevMode()" 
-style="cursor:pointer;">
-  🟢 DEVELOPER MODE
-</div>
+<!-- DEV BADGE -->
+<div id="devBadge" onclick="exitDevMode()">🟢 DEVELOPER MODE</div>
  
- <!-- DEV LOGIN POPUP -->
+<!-- DEV LOGIN -->
 <div id="devOverlay" style="display:none;">
   <div class="login-box">
     <h2>⚙️ DEVELOPER ACCESS</h2>
@@ -357,13 +237,28 @@ style="cursor:pointer;">
     <p id="devError" style="color:red;"></p>
   </div>
 </div>
-
+ 
+<!-- CHANGE PASSWORD PANEL -->
+<div id="changePwPanel">
+  <h3>🔑 CHANGE PASSWORD</h3>
+  <select id="pwTarget">
+    <option value="system">System Login Password</option>
+    <option value="dev">Developer Password</option>
+  </select>
+  <input type="password" id="pwOld"  placeholder="Current Password">
+  <input type="password" id="pwNew"  placeholder="New Password">
+  <input type="password" id="pwNew2" placeholder="Confirm New Password">
+  <div>
+    <button id="pwSaveBtn"   onclick="saveNewPassword()">Save</button>
+    <button id="pwCancelBtn" onclick="closeChangePw()">Cancel</button>
+  </div>
+  <p id="pwMsg"></p>
+</div>
  
 <!-- HEADER -->
 <div class="header" id="titleHeader">
   TF 2 PRODUCTION MONITORING SYSTEM
   <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
- 
   <div class="time-control">
     🕒
     <input type="time" id="shiftStart" value="08:10">
@@ -401,10 +296,7 @@ style="cursor:pointer;">
   <div class="card"><h3>DELAY / AHEAD</h3><div class="big-number" id="delay">0</div></div>
   <div class="card"><h3>DAILY PLAN</h3><div class="big-number" id="plan">0</div></div>
   <div class="card"><h3>BALANCE</h3><div class="big-number" id="balance">0</div></div>
-  <div class="card wide">
-    <h3>LINE STATUS</h3>
-    <div class="big-number" id="status">READY</div>
-  </div>
+  <div class="card wide"><h3>LINE STATUS</h3><div class="big-number" id="status">READY</div></div>
 </div>
  
 <div class="bottom-row">
@@ -438,88 +330,164 @@ style="cursor:pointer;">
 </table>
  
 <script>
+/* =====================================================
+   FIX 3 — HASHED PASSWORDS
+   Passwords are stored as SHA-256 hashes in localStorage.
+   Default hashes for "1234" and "dev123" are pre-loaded
+   if no saved hash exists. Plain text is NEVER stored.
+   ===================================================== */
  
-/* ================= isMonitor FIRST ================= */
+const DEFAULT_SYSTEM_HASH = "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"; // "1234"
+const DEFAULT_DEV_HASH    = "3b5f5d64e4a43bdc51ae5ec1d5e0e534e71a3f4f8abd4b7d5aba6b5b6e5a6c5a"; // placeholder, replaced on load
+ 
+async function sha256(str){
+  const buf  = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+ 
+// Compute real hash for "dev123" and store defaults on first load
+async function initPasswords(){
+  if(!localStorage.getItem("HASH_SYSTEM")){
+    localStorage.setItem("HASH_SYSTEM", DEFAULT_SYSTEM_HASH);
+  }
+  if(!localStorage.getItem("HASH_DEV")){
+    const h = await sha256("dev123");
+    localStorage.setItem("HASH_DEV", h);
+  }
+}
+ 
+/* ================= isMonitor ================= */
 const isMonitor = window.location.search.includes("monitor");
  
-/* ================= PASSWORDS ================= */
-// FIX: Separate passwords so dev access != login access
-let SYSTEM_PASSWORD = "1234";
-const DEV_PASSWORD  = "dev123";  // change this to something different from login
- 
 /* ================= DEV MODE ================= */
-let isDeveloper  = false;
-let autoRunning  = false;
-// FIX: Tracks whether midnight reset has already fired this minute
+let isDeveloper        = false;
+let autoRunning        = false;
 let midnightResetFired = false;
  
 function toggleDevMode(){
   document.getElementById("devOverlay").style.display = "flex";
-  document.getElementById("devPasswordInput").value = "";
-  document.getElementById("devError").innerText = "";
+  document.getElementById("devPasswordInput").value   = "";
+  document.getElementById("devError").innerText       = "";
 }
-
-function checkDevPassword(){
+ 
+async function checkDevPassword(){
   const input = document.getElementById("devPasswordInput").value;
-
-  if(input === DEV_PASSWORD){
+  const hash  = await sha256(input);
+  const saved = localStorage.getItem("HASH_DEV") || DEFAULT_SYSTEM_HASH;
+ 
+  if(hash === saved){
     isDeveloper = true;
-
     document.getElementById("devOverlay").style.display = "none";
-    document.getElementById("devBadge").style.display = "block";
+    document.getElementById("devBadge").style.display   = "block";
   } else {
-    document.getElementById("devError").innerText = "Wrong Password!";
-    document.getElementById("devPasswordInput").value = "";
+    document.getElementById("devError").innerText       = "Wrong Password!";
+    document.getElementById("devPasswordInput").value   = "";
   }
 }
-
+ 
 function exitDevMode(){
   isDeveloper = false;
-
   document.getElementById("devBadge").style.display = "none";
 }
  
-// Double-click title to toggle dev mode
 document.addEventListener("DOMContentLoaded", function(){
   document.getElementById("titleHeader").addEventListener("dblclick", toggleDevMode);
 });
  
 /* ================= LOGIN ================= */
-function checkPassword(){
+async function checkPassword(){
   if(isMonitor) return;
   const input = document.getElementById("passwordInput").value;
-  if(input === SYSTEM_PASSWORD){
+  const hash  = await sha256(input);
+  const saved = localStorage.getItem("HASH_SYSTEM") || DEFAULT_SYSTEM_HASH;
+ 
+  if(hash === saved){
     document.getElementById("loginOverlay").style.display = "none";
   } else {
-    document.getElementById("loginError").innerText = "Wrong Password!";
-    document.getElementById("passwordInput").value  = "";
+    document.getElementById("loginError").innerText      = "Wrong Password!";
+    document.getElementById("passwordInput").value       = "";
   }
 }
  
 document.addEventListener("keydown", function(e){
   if(e.key === "Enter"){
-    if(document.getElementById("loginOverlay").style.display !== "none"){
-      checkPassword();
-    }
-
-    if(document.getElementById("devOverlay").style.display === "flex"){
-      checkDevPassword();
-    }
+    if(document.getElementById("loginOverlay").style.display !== "none") checkPassword();
+    if(document.getElementById("devOverlay").style.display   === "flex")  checkDevPassword();
   }
+});
+ 
+/* =====================================================
+   CHANGE PASSWORD FEATURE
+   Only accessible from dev mode (double-click title
+   → enter dev password → use the panel that opens).
+   ===================================================== */
+ 
+function openChangePw(){
+  if(!isDeveloper){ alert("Developer mode required."); return; }
+  document.getElementById("pwOld").value  = "";
+  document.getElementById("pwNew").value  = "";
+  document.getElementById("pwNew2").value = "";
+  document.getElementById("pwMsg").innerText = "";
+  document.getElementById("changePwPanel").style.display = "block";
+}
+ 
+function closeChangePw(){
+  document.getElementById("changePwPanel").style.display = "none";
+}
+ 
+async function saveNewPassword(){
+  const target = document.getElementById("pwTarget").value;
+  const oldVal = document.getElementById("pwOld").value;
+  const newVal = document.getElementById("pwNew").value;
+  const cfmVal = document.getElementById("pwNew2").value;
+  const msgEl  = document.getElementById("pwMsg");
+ 
+  if(!oldVal || !newVal || !cfmVal){
+    msgEl.style.color = "red"; msgEl.innerText = "All fields required."; return;
+  }
+  if(newVal !== cfmVal){
+    msgEl.style.color = "red"; msgEl.innerText = "New passwords do not match."; return;
+  }
+  if(newVal.length < 4){
+    msgEl.style.color = "red"; msgEl.innerText = "Password too short (min 4 chars)."; return;
+  }
+ 
+  const oldHash  = await sha256(oldVal);
+  const storeKey = target === "system" ? "HASH_SYSTEM" : "HASH_DEV";
+  const saved    = localStorage.getItem(storeKey);
+ 
+  if(oldHash !== saved){
+    msgEl.style.color = "red"; msgEl.innerText = "Current password is wrong."; return;
+  }
+ 
+  const newHash = await sha256(newVal);
+  localStorage.setItem(storeKey, newHash);
+  msgEl.style.color = "#22c55e";
+  msgEl.innerText   = "✅ Password changed successfully!";
+  setTimeout(closeChangePw, 1500);
+}
+ 
+// Hook change-password panel to dev badge long-press (hold 2s)
+let devBadgeTimer = null;
+document.addEventListener("DOMContentLoaded", function(){
+  const badge = document.getElementById("devBadge");
+  badge.addEventListener("mousedown", () => { devBadgeTimer = setTimeout(openChangePw, 2000); });
+  badge.addEventListener("mouseup",   () => clearTimeout(devBadgeTimer));
+  badge.addEventListener("mouseleave",() => clearTimeout(devBadgeTimer));
 });
  
 /* ================= SETTINGS ================= */
 const SETTINGS = {
   defaultCycle: 16,
   defaultPlan:  1,
-  breakTime: {
-    normal: {
-      weekday: [{ start:600, end:620 },{ start:780, end:840 }],
-      friday:  [{ start:600, end:620 },{ start:750, end:870 }]
+  breakTime:{
+    normal:{
+      weekday:[{start:600,end:620},{start:780,end:840}],
+      friday: [{start:600,end:620},{start:750,end:870}]
     },
-    ramadan: {
-      weekday: [{ start:600, end:610 },{ start:780, end:830 }],
-      friday:  [{ start:600, end:610 },{ start:750, end:860 }]
+    ramadan:{
+      weekday:[{start:600,end:610},{start:780,end:830}],
+      friday: [{start:600,end:610},{start:750,end:860}]
     }
   }
 };
@@ -527,11 +495,11 @@ const SETTINGS = {
 document.getElementById("cycleTarget").value     = SETTINGS.defaultCycle;
 document.getElementById("dailyPlanTarget").value = SETTINGS.defaultPlan;
  
-document.getElementById("cycleTarget").addEventListener("input", () => {
-  if(!timer) countdownValue = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+document.getElementById("cycleTarget").addEventListener("input", ()=>{
+  if(!timer) countdownValue = (parseFloat(document.getElementById("cycleTarget").value)||1)*60;
   updateDisplay();
 });
-document.getElementById("dailyPlanTarget").addEventListener("input", () => { updateDisplay(); });
+document.getElementById("dailyPlanTarget").addEventListener("input", ()=>{ updateDisplay(); });
  
 /* ================= VARIABLES ================= */
 let ramadanMode     = false;
@@ -556,50 +524,48 @@ let lastTableData   = "";
  
 /* ================= DATE TIME ================= */
 function updateDateTime(){
-  const now     = new Date();
-  const options = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
-  const dateEl  = document.getElementById("dateDisplay");
-  const clockEl = document.getElementById("clock");
-  if(dateEl && clockEl){
-    dateEl.innerText  = now.toLocaleDateString("en-MY", options);
-    clockEl.innerText = now.toLocaleTimeString("en-MY");
+  const now    = new Date();
+  const opts   = {weekday:"long",year:"numeric",month:"long",day:"numeric"};
+  const dateEl = document.getElementById("dateDisplay");
+  const clkEl  = document.getElementById("clock");
+  if(dateEl && clkEl){
+    dateEl.innerText = now.toLocaleDateString("en-MY",opts);
+    clkEl.innerText  = now.toLocaleTimeString("en-MY");
   }
 }
  
 /* ================= FORMAT ================= */
 function format(s){
-  const m   = Math.floor(s / 60);
-  const sec = s % 60;
-  return (m < 10 ? "0" + m : m) + ":" + (sec < 10 ? "0" + sec : sec);
+  const m   = Math.floor(s/60);
+  const sec = s%60;
+  return (m<10?"0"+m:m)+":"+(sec<10?"0"+sec:sec);
 }
  
 /* ================= BREAK TIME ================= */
 function isBreakTime(){
   const now     = new Date();
-  const current = now.getHours() * 60 + now.getMinutes();
+  const current = now.getHours()*60+now.getMinutes();
   const day     = now.getDay();
   let breaks    = ramadanMode
-    ? (day === 5 ? SETTINGS.breakTime.ramadan.friday  : SETTINGS.breakTime.ramadan.weekday)
-    : (day === 5 ? SETTINGS.breakTime.normal.friday   : SETTINGS.breakTime.normal.weekday);
-  for(let b of breaks){ if(current >= b.start && current < b.end) return true; }
+    ? (day===5 ? SETTINGS.breakTime.ramadan.friday  : SETTINGS.breakTime.ramadan.weekday)
+    : (day===5 ? SETTINGS.breakTime.normal.friday   : SETTINGS.breakTime.normal.weekday);
+  for(let b of breaks) if(current>=b.start && current<b.end) return true;
   return false;
 }
  
 /* ================= BREAK SECONDS ================= */
 function calculateBreakSeconds(from, to){
-  // FIX: use from.getDay() not new Date().getDay()
   const day  = from.getDay();
   let breaks = ramadanMode
-    ? (day === 5 ? SETTINGS.breakTime.ramadan.friday  : SETTINGS.breakTime.ramadan.weekday)
-    : (day === 5 ? SETTINGS.breakTime.normal.friday   : SETTINGS.breakTime.normal.weekday);
- 
+    ? (day===5 ? SETTINGS.breakTime.ramadan.friday  : SETTINGS.breakTime.ramadan.weekday)
+    : (day===5 ? SETTINGS.breakTime.normal.friday   : SETTINGS.breakTime.normal.weekday);
   let total = 0;
   for(let b of breaks){
-    const bs = new Date(from); bs.setHours(Math.floor(b.start/60), b.start%60, 0, 0);
-    const be = new Date(from); be.setHours(Math.floor(b.end/60),   b.end%60,   0, 0);
-    const os = Math.max(from.getTime(), bs.getTime());
-    const oe = Math.min(to.getTime(),   be.getTime());
-    if(oe > os) total += Math.floor((oe - os) / 1000);
+    const bs = new Date(from); bs.setHours(Math.floor(b.start/60),b.start%60,0,0);
+    const be = new Date(from); be.setHours(Math.floor(b.end/60),  b.end%60,  0,0);
+    const os = Math.max(from.getTime(),bs.getTime());
+    const oe = Math.min(to.getTime(),  be.getTime());
+    if(oe>os) total += Math.floor((oe-os)/1000);
   }
   return total;
 }
@@ -609,349 +575,245 @@ function calculateExpectedOutput(){
   if(isMonitor) return 0;
   if(!startTime) return 0;
   if(!timer) return actualCount;
- 
-  const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
-  if(actualCount >= plan && plan > 0) return plan;
- 
+  const plan = parseInt(document.getElementById("dailyPlanTarget").value)||0;
+  if(actualCount>=plan && plan>0) return plan;
   const now          = new Date();
-  const elapsedSec   = Math.floor((now - startTime) / 1000);
-  const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
-  const breakSec     = calculateBreakSeconds(startTime, now);
-  let netTime        = Math.max(elapsedSec - breakSec, 0);
-  let expected       = Math.floor(netTime / cycleTimeSec);
-  if(actualCount > 0 && expected === 0) expected = 1;
+  const elapsedSec   = Math.floor((now-startTime)/1000);
+  const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value)||1)*60;
+  const breakSec     = calculateBreakSeconds(startTime,now);
+  let netTime        = Math.max(elapsedSec-breakSec,0);
+  let expected       = Math.floor(netTime/cycleTimeSec);
+  if(actualCount>0 && expected===0) expected=1;
   return expected;
 }
  
 /* ================= STATUS ================= */
-function setStatus(text, color){
+function setStatus(text,color){
   const el = document.getElementById("status");
-  el.innerText = text;
-  el.className = "big-number " + color;
+  el.innerText  = text;
+  el.className  = "big-number "+color;
 }
  
 /* ================= START ================= */
-// FIX: Added allowedBySystem flag so loadLastStateFromSheet can resume
-//      without needing isDeveloper or autoRunning to be true
-function startProduction(allowedBySystem = false){
+function startProduction(allowedBySystem=false){
   if(isMonitor) return;
-  // Allow if: dev mode, auto-control running, or system restore on load
   if(!isDeveloper && !autoRunning && !allowedBySystem) return;
   if(timer) return;
- 
   if(!startTime) startTime = new Date();
-  if(countdownValue === 0){
-    countdownValue = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+  if(countdownValue===0){
+    countdownValue = (parseFloat(document.getElementById("cycleTarget").value)||1)*60;
   }
- 
-  timer = setInterval(() => {
+  timer = setInterval(()=>{
     if(isBreakTime()){ setStatus("BREAK TIME","status-orange"); updateDisplay(); return; }
-    const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+    const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value)||1)*60;
     const now          = new Date();
-    const baseTime     = lastScanTime || startTime;
-    const diff         = Math.floor((now - baseTime) / 1000);
-    countdownValue     = Math.max(cycleTimeSec - diff, 0);
-    isDowntime         = (countdownValue === 0);
+    const baseTime     = lastScanTime||startTime;
+    const diff         = Math.floor((now-baseTime)/1000);
+    countdownValue     = Math.max(cycleTimeSec-diff,0);
+    isDowntime         = (countdownValue===0);
     updateDisplay();
-  }, 1000);
+  },1000);
 }
  
 /* ================= AUTO PRODUCTION CONTROL ================= */
 function autoProductionControl(){
   if(isMonitor) return;
-
-  // 🚫 STOP AUTO if developer mode ON
-  if(isDeveloper){
-    autoRunning = false;
-    return;
-  }
+  if(isDeveloper){ autoRunning=false; return; }
  
   const now = new Date();
  
-  // FIX: Use a flag so midnight reset only fires once per minute, not every tick
-  if(now.getHours() === 0 && now.getMinutes() === 0){
-    if(!midnightResetFired){
-      midnightResetFired = true;
-      resetProduction(true);
-    }
-  } else {
-    midnightResetFired = false;
-  }
+  if(now.getHours()===0 && now.getMinutes()===0){
+    if(!midnightResetFired){ midnightResetFired=true; resetProduction(true); }
+  } else { midnightResetFired=false; }
  
   const startInput = document.getElementById("shiftStart").value;
   const endInput   = document.getElementById("shiftEnd").value;
-  if(!startInput || !endInput) return;
+  if(!startInput||!endInput) return;
  
-  const [startH, startM] = startInput.split(":").map(Number);
-  const [endH,   endM]   = endInput.split(":").map(Number);
+  const [startH,startM] = startInput.split(":").map(Number);
+  const [endH,endM]     = endInput.split(":").map(Number);
+  const shiftStart = new Date(); shiftStart.setHours(startH,startM,0,0);
+  const shiftEnd   = new Date(); shiftEnd.setHours(endH,endM,0,0);
  
-  const shiftStart = new Date(); shiftStart.setHours(startH, startM, 0, 0);
-  const shiftEnd   = new Date(); shiftEnd.setHours(endH,   endM,   0, 0);
- 
-  // BEFORE SHIFT
-  if(now < shiftStart){
-    if(timer){ autoRunning = false; stopProduction(true); }
-    setStatus("WAITING SHIFT","status-blue");
-    return;
+  if(now<shiftStart){
+    if(timer){ autoRunning=false; stopProduction(true); }
+    setStatus("WAITING SHIFT","status-blue"); return;
   }
  
-  // FIX: Added missing outer braces for this block
-  // DURING SHIFT
-  if(now >= shiftStart && now <= shiftEnd){
-    if(!timer){
-      autoRunning = true;
-      startTime   = new Date();
-      console.log("✅ AUTO START");
-      startProduction();
-    }
+  if(now>=shiftStart && now<=shiftEnd){
+    if(!timer){ autoRunning=true; startTime=new Date(); startProduction(); }
   }
  
-  // AFTER SHIFT
-  if(now > shiftEnd){
+  if(now>shiftEnd){
     if(timer){
-      autoRunning = false;
-      console.log("⛔ SHIFT ENDED");
-      stopProduction(true);
-      countdownValue = 0;
-      lastScanTime   = null;
+      autoRunning=false; stopProduction(true);
+      countdownValue=0; lastScanTime=null;
       setStatus("SHIFT ENDED","status-orange");
     }
   }
 }
  
 /* ================= STOP ================= */
-function stopProduction(allowedBySystem = false){
+function stopProduction(allowedBySystem=false){
   if(!isDeveloper && !autoRunning && !allowedBySystem) return;
-  clearInterval(timer);
-  timer = null;
+  clearInterval(timer); timer=null;
   setStatus("PAUSED","status-orange");
 }
  
 /* ================= RESET ================= */
-function resetProduction(allowedBySystem = false){
+function resetProduction(allowedBySystem=false){
   if(!isDeveloper && !autoRunning && !allowedBySystem) return;
-  clearInterval(timer);
-  timer           = null;
-  countdownValue  = 0;
-  actualCount     = 0;
-  downtimeSeconds = 0;
-  lastScanTime    = null;
-  startTime       = null;
-  pendingChassis  = "";
-  pendingModel    = "";
-  pendingEngine   = "";
-  pendingKey      = "";
-  scannedChassis.clear();
-  scannedModel.clear();
-  scannedEngine.clear();
-  scannedKey.clear();
-  isDowntime    = false;
-  duplicateLock = false;
-  document.getElementById("scanTable").innerHTML = "";
+  clearInterval(timer); timer=null;
+  countdownValue=0; actualCount=0; downtimeSeconds=0;
+  lastScanTime=null; startTime=null;
+  pendingChassis=""; pendingModel=""; pendingEngine=""; pendingKey="";
+  scannedChassis.clear(); scannedModel.clear(); scannedEngine.clear(); scannedKey.clear();
+  isDowntime=false; duplicateLock=false;
+  document.getElementById("scanTable").innerHTML="";
   setStatus("READY","status-blue");
   updateDisplay();
   updateLiveStateOnly();
 }
  
 /* ================= SCAN CHASSIS ================= */
-document.getElementById("chassisInput").addEventListener("keydown", function(e){
-  if(e.key === "Enter" && this.value.trim() !== ""){
-    let value = this.value.trim();
-    if(scannedChassis.has(value)){
-      duplicateLock = true; setStatus("DUPLICATE CHASSIS","status-red blink"); this.value = ""; return;
-    }
-    duplicateLock = false; pendingChassis = value; scannedChassis.add(value);
-    this.value = ""; document.getElementById("modelInput").focus();
+document.getElementById("chassisInput").addEventListener("keydown",function(e){
+  if(e.key==="Enter" && this.value.trim()!==""){
+    let value=this.value.trim();
+    if(scannedChassis.has(value)){ duplicateLock=true; setStatus("DUPLICATE CHASSIS","status-red blink"); this.value=""; return; }
+    duplicateLock=false; pendingChassis=value; scannedChassis.add(value);
+    this.value=""; document.getElementById("modelInput").focus();
   }
 });
  
 /* ================= SCAN MODEL ================= */
-document.getElementById("modelInput").addEventListener("keydown", function(e){
-  if(e.key === "Enter" && this.value.trim() !== ""){
-    if(pendingChassis === "") return;
-    duplicateLock = false; pendingModel = this.value.trim(); scannedModel.add(pendingModel);
-    this.value = ""; document.getElementById("engineInput").focus();
+document.getElementById("modelInput").addEventListener("keydown",function(e){
+  if(e.key==="Enter" && this.value.trim()!==""){
+    if(pendingChassis==="") return;
+    duplicateLock=false; pendingModel=this.value.trim(); scannedModel.add(pendingModel);
+    this.value=""; document.getElementById("engineInput").focus();
   }
 });
  
 /* ================= SCAN ENGINE ================= */
-document.getElementById("engineInput").addEventListener("keydown", function(e){
-  if(e.key === "Enter" && this.value.trim() !== ""){
-    if(pendingModel === "") return;
-    let value = this.value.trim();
-    if(scannedEngine.has(value)){
-      duplicateLock = true; setStatus("DUPLICATE ENGINE","status-red blink"); this.value = ""; return;
-    }
-    duplicateLock = false; pendingEngine = value; scannedEngine.add(value);
-    this.value = ""; document.getElementById("keyInput").focus();
+document.getElementById("engineInput").addEventListener("keydown",function(e){
+  if(e.key==="Enter" && this.value.trim()!==""){
+    if(pendingModel==="") return;
+    let value=this.value.trim();
+    if(scannedEngine.has(value)){ duplicateLock=true; setStatus("DUPLICATE ENGINE","status-red blink"); this.value=""; return; }
+    duplicateLock=false; pendingEngine=value; scannedEngine.add(value);
+    this.value=""; document.getElementById("keyInput").focus();
   }
 });
  
 /* ================= SCAN KEY ================= */
-document.getElementById("keyInput").addEventListener("keydown", function(e){
-  if(e.key === "Enter" && this.value.trim() !== ""){
-    if(pendingChassis === "" || pendingModel === "" || pendingEngine === "") return;
- 
-    let key = this.value.trim();
-    if(scannedKey.has(key)){
-      duplicateLock = true; setStatus("DUPLICATE KEY","status-red blink"); this.value = ""; return;
-    }
- 
-    duplicateLock = false; pendingKey = key; scannedKey.add(key);
- 
-    let chassis = pendingChassis, model = pendingModel, engine = pendingEngine;
-    let lot     = document.getElementById("lotInput").value || "-";
-    const now   = new Date();
-    const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
-    const plan  = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
-    let downtimeEvent = "";
- 
+document.getElementById("keyInput").addEventListener("keydown",function(e){
+  if(e.key==="Enter" && this.value.trim()!==""){
+    if(pendingChassis===""||pendingModel===""||pendingEngine==="") return;
+    let key=this.value.trim();
+    if(scannedKey.has(key)){ duplicateLock=true; setStatus("DUPLICATE KEY","status-red blink"); this.value=""; return; }
+    duplicateLock=false; pendingKey=key; scannedKey.add(key);
+    let chassis=pendingChassis, model=pendingModel, engine=pendingEngine;
+    let lot=document.getElementById("lotInput").value||"-";
+    const now=new Date();
+    const cycleTimeSec=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
+    const plan=parseInt(document.getElementById("dailyPlanTarget").value)||0;
+    let downtimeEvent="";
     if(lastScanTime){
-      let diffSec = Math.floor((now - lastScanTime) / 1000);
-      if(diffSec > cycleTimeSec){
-        let actualDowntime = diffSec - cycleTimeSec;
-        if((actualCount + 1) <= plan){
-          downtimeEvent    = format(actualDowntime);
-          downtimeSeconds += actualDowntime;
-          isDowntime       = true;
-        } else {
-          downtimeEvent = ""; isDowntime = false;
-        }
-      } else { isDowntime = false; }
-    } else { isDowntime = false; }
- 
-    lastScanTime = now;
- 
-    let row = document.getElementById("scanTable").insertRow(0);
-    row.insertCell(0).innerText = now.toLocaleDateString();
-    row.insertCell(1).innerText = now.toLocaleTimeString();
-    row.insertCell(2).innerText = lot;
-    row.insertCell(3).innerText = model;
-    row.insertCell(4).innerText = chassis;
-    row.insertCell(5).innerText = engine;
-    row.insertCell(6).innerText = key;
- 
-    let statusCell   = row.insertCell(7);
-    let downtimeCell = row.insertCell(8);
- 
+      let diffSec=Math.floor((now-lastScanTime)/1000);
+      if(diffSec>cycleTimeSec){
+        let actualDowntime=diffSec-cycleTimeSec;
+        if((actualCount+1)<=plan){ downtimeEvent=format(actualDowntime); downtimeSeconds+=actualDowntime; isDowntime=true; }
+        else { downtimeEvent=""; isDowntime=false; }
+      } else { isDowntime=false; }
+    } else { isDowntime=false; }
+    lastScanTime=now;
+    let row=document.getElementById("scanTable").insertRow(0);
+    row.insertCell(0).innerText=now.toLocaleDateString();
+    row.insertCell(1).innerText=now.toLocaleTimeString();
+    row.insertCell(2).innerText=lot;
+    row.insertCell(3).innerText=model;
+    row.insertCell(4).innerText=chassis;
+    row.insertCell(5).innerText=engine;
+    row.insertCell(6).innerText=key;
+    let statusCell=row.insertCell(7), downtimeCell=row.insertCell(8);
     if(downtimeEvent){
-      statusCell.innerText = "DOWN TIME"; statusCell.classList.add("status-red");
-      downtimeCell.innerText = downtimeEvent; downtimeCell.classList.add("status-red");
+      statusCell.innerText="DOWN TIME"; statusCell.classList.add("status-red");
+      downtimeCell.innerText=downtimeEvent; downtimeCell.classList.add("status-red");
     } else {
-      statusCell.innerText = "SCANNED"; statusCell.classList.add("status-green");
+      statusCell.innerText="SCANNED"; statusCell.classList.add("status-green");
     }
- 
     actualCount++;
- 
-    // FIX: actualCount already incremented, so compare directly (not +1)
-    if(actualCount < plan || plan === 0){
-      countdownValue = cycleTimeSec;
-    }
- 
-    isDowntime = false;
- 
-    // Stop timer cleanly when target achieved
-    if(actualCount >= plan && plan > 0){
-      clearInterval(timer); timer = null; countdownValue = 0; isDowntime = false;
-    }
- 
+    if(actualCount<plan||plan===0) countdownValue=cycleTimeSec;
+    isDowntime=false;
+    if(actualCount>=plan && plan>0){ clearInterval(timer); timer=null; countdownValue=0; isDowntime=false; }
     updateDisplay();
-    sendToSheet(chassis, model, engine, key, lot, statusCell.innerText, downtimeEvent);
- 
-    pendingChassis = ""; pendingModel = ""; pendingEngine = ""; pendingKey = "";
-    this.value = "";
-    setTimeout(() => { document.getElementById("chassisInput").focus(); }, 50);
+    sendToSheet(chassis,model,engine,key,lot,statusCell.innerText,downtimeEvent);
+    pendingChassis=""; pendingModel=""; pendingEngine=""; pendingKey="";
+    this.value="";
+    setTimeout(()=>{ document.getElementById("chassisInput").focus(); },50);
   }
 });
  
 /* ================= UPDATE DISPLAY ================= */
 function updateDisplay(){
   if(isMonitor) return;
- 
-  let plan    = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
-  let balance = actualCount - plan;
-  let displayBalance = balance > 0 ? ("+" + balance) : balance;
-  let expected = calculateExpectedOutput();
-  if(actualCount >= plan && plan > 0) expected = plan;
- 
-  let delay   = actualCount - expected;
-  let delayEl = document.getElementById("delay");
-  delayEl.className = "big-number";
-  if(delay < 0)      delayEl.classList.add("status-red");
-  else if(delay > 0) delayEl.classList.add("status-green");
-  else               delayEl.classList.add("status-blue");
-  delayEl.innerText = delay > 0 ? ("+" + delay) : delay;
- 
-  let efficiency = expected > 0 ? Math.floor((actualCount / expected) * 100) : 0;
-  let effEl = document.getElementById("efficiency");
-  effEl.innerText = efficiency + "%";
-  if(efficiency < 90)       effEl.className = "big-number status-red";
-  else if(efficiency < 100) effEl.className = "big-number status-orange";
-  else                       effEl.className = "big-number status-green";
- 
+  let plan=parseInt(document.getElementById("dailyPlanTarget").value)||0;
+  let balance=actualCount-plan;
+  let displayBalance=balance>0?("+"+balance):balance;
+  let expected=calculateExpectedOutput();
+  if(actualCount>=plan && plan>0) expected=plan;
+  let delay=actualCount-expected;
+  let delayEl=document.getElementById("delay"); delayEl.className="big-number";
+  if(delay<0) delayEl.classList.add("status-red");
+  else if(delay>0) delayEl.classList.add("status-green");
+  else delayEl.classList.add("status-blue");
+  delayEl.innerText=delay>0?("+"+delay):delay;
+  let efficiency=expected>0?Math.floor((actualCount/expected)*100):0;
+  let effEl=document.getElementById("efficiency"); effEl.innerText=efficiency+"%";
+  if(efficiency<90) effEl.className="big-number status-red";
+  else if(efficiency<100) effEl.className="big-number status-orange";
+  else effEl.className="big-number status-green";
   document.getElementById("expected").innerText  = expected;
   document.getElementById("plan").innerText      = plan;
   document.getElementById("actual").innerText    = actualCount;
   document.getElementById("countdown").innerText = format(countdownValue);
   document.getElementById("downtime").innerText  = format(downtimeSeconds);
- 
-  let balanceEl = document.getElementById("balance");
-  if(balance < 0)      balanceEl.className = "big-number status-red";
-  else if(balance > 0) balanceEl.className = "big-number status-green";
-  else                  balanceEl.className = "big-number status-blue";
-  balanceEl.innerText = displayBalance;
- 
-  /* STATUS LOGIC */
-  if(isBreakTime()){
-    setStatus("BREAK TIME","status-orange");
-  } else if(duplicateLock){
-    setStatus("DUPLICATE SCAN","status-red blink");
-  } else if(isDowntime){
-    setStatus("DOWN TIME","status-red blink");
-  } else if(actualCount >= plan && plan > 0){
-    setStatus("TARGET ACHIEVED","status-green");
-  } else if(pendingChassis !== "" && pendingModel === ""){
-    setStatus("WAITING MODEL","status-orange");
-  } else if(pendingModel !== "" && pendingEngine === ""){
-    setStatus("WAITING ENGINE","status-orange");
-  } else if(pendingEngine !== "" && pendingKey === ""){
-    setStatus("WAITING KEY","status-orange");
-  } else if(timer){
-    setStatus("RUNNING","status-green pulse");
-  } else {
-    setStatus("READY","status-blue");
-  }
- 
-  const downtimeCard = document.getElementById("downtimeCard");
-  const downtimeText = document.getElementById("downtime");
-  if(isDowntime){
-    downtimeCard.classList.add("downtime-alert","blink");
-    downtimeText.classList.add("status-red","blink");
-  } else {
-    downtimeCard.classList.remove("downtime-alert","blink");
-    downtimeText.classList.remove("status-red","blink");
-  }
+  let balanceEl=document.getElementById("balance");
+  if(balance<0) balanceEl.className="big-number status-red";
+  else if(balance>0) balanceEl.className="big-number status-green";
+  else balanceEl.className="big-number status-blue";
+  balanceEl.innerText=displayBalance;
+  if(isBreakTime()){ setStatus("BREAK TIME","status-orange"); }
+  else if(duplicateLock){ setStatus("DUPLICATE SCAN","status-red blink"); }
+  else if(isDowntime){ setStatus("DOWN TIME","status-red blink"); }
+  else if(actualCount>=plan && plan>0){ setStatus("TARGET ACHIEVED","status-green"); }
+  else if(pendingChassis!==""&&pendingModel===""){ setStatus("WAITING MODEL","status-orange"); }
+  else if(pendingModel!==""&&pendingEngine===""){ setStatus("WAITING ENGINE","status-orange"); }
+  else if(pendingEngine!==""&&pendingKey===""){ setStatus("WAITING KEY","status-orange"); }
+  else if(timer){ setStatus("RUNNING","status-green pulse"); }
+  else { setStatus("READY","status-blue"); }
+  const downtimeCard=document.getElementById("downtimeCard");
+  const downtimeText=document.getElementById("downtime");
+  if(isDowntime){ downtimeCard.classList.add("downtime-alert","blink"); downtimeText.classList.add("status-red","blink"); }
+  else { downtimeCard.classList.remove("downtime-alert","blink"); downtimeText.classList.remove("status-red","blink"); }
 }
  
 /* ================= DAILY SUMMARY ================= */
 function openSummary(){
-  let plan     = parseInt(document.getElementById("plan").innerText) || 0;
-  let actual   = parseInt(document.getElementById("actual").innerText) || 0;
-  let downtime = document.getElementById("downtime").innerText;
-  let diff     = actual - plan;
-  let diffDisplay = diff > 0 ? ("+" + diff) : diff;
-  let rows = document.querySelectorAll("#scanTable tr");
-  let tableRows = "";
-  rows.forEach(row => {
-    let cells = row.querySelectorAll("td");
-    if(cells.length > 0){
-      let sc = cells[7].classList.contains("status-red") ? "status-red" : cells[7].classList.contains("status-green") ? "status-green" : "";
-      let dc = cells[8].classList.contains("status-red") ? "status-red" : "";
-      tableRows += `<tr><td>${cells[0].innerText}</td><td>${cells[1].innerText}</td><td>${cells[2].innerText}</td><td>${cells[3].innerText}</td><td>${cells[4].innerText}</td><td>${cells[5].innerText}</td><td>${cells[6].innerText}</td><td class="${sc}">${cells[7].innerText}</td><td class="${dc}">${cells[8].innerText}</td></tr>`;
+  let plan=parseInt(document.getElementById("plan").innerText)||0;
+  let actual=parseInt(document.getElementById("actual").innerText)||0;
+  let downtime=document.getElementById("downtime").innerText;
+  let diff=actual-plan, diffDisplay=diff>0?("+"+diff):diff;
+  let rows=document.querySelectorAll("#scanTable tr"), tableRows="";
+  rows.forEach(row=>{
+    let cells=row.querySelectorAll("td");
+    if(cells.length>0){
+      let sc=cells[7].classList.contains("status-red")?"status-red":cells[7].classList.contains("status-green")?"status-green":"";
+      let dc=cells[8].classList.contains("status-red")?"status-red":"";
+      tableRows+=`<tr><td>${cells[0].innerText}</td><td>${cells[1].innerText}</td><td>${cells[2].innerText}</td><td>${cells[3].innerText}</td><td>${cells[4].innerText}</td><td>${cells[5].innerText}</td><td>${cells[6].innerText}</td><td class="${sc}">${cells[7].innerText}</td><td class="${dc}">${cells[8].innerText}</td></tr>`;
     }
   });
- 
-  let html = `<html><head><title>Daily Summary Report</title><style>
+  let html=`<html><head><title>Daily Summary Report</title><style>
 body{margin:0;font-family:'Segoe UI',sans-serif;background:#0b1220;color:#e5e7eb;padding:40px;}
 h1{text-align:center;color:#60a5fa;margin-bottom:30px;font-size:36px;font-weight:800;}
 .summary-card{border-radius:20px;background:#111827;width:450px;margin:0 auto 50px auto;padding:10px;}
@@ -977,7 +839,7 @@ table.detail-table{width:100%;border-collapse:collapse;}
 <tr><th>Plan</th><td>${plan}</td></tr>
 <tr><th>Actual</th><td>${actual}</td></tr>
 <tr><th>Difference</th><td>${diffDisplay}</td></tr>
-<tr><th>Total Downtime</th><td class="${downtime !== '00:00' ? 'status-red' : ''}">${downtime}</td></tr>
+<tr><th>Total Downtime</th><td class="${downtime!=="00:00"?"status-red":""}">${downtime}</td></tr>
 <tr><th>Total Units Scanned</th><td>${actual}</td></tr>
 </table></div>
 <div class="detail-table-container"><table class="detail-table"><thead>
@@ -987,28 +849,27 @@ table.detail-table{width:100%;border-collapse:collapse;}
 <button onclick="window.print()">Print Report / Save PDF</button>
 <button onclick="window.opener.downloadExcel()">Download Excel</button>
 </div></body></html>`;
- 
-  let w = window.open(); w.document.write(html); w.document.close();
+  let w=window.open(); w.document.write(html); w.document.close();
 }
  
 /* ================= EXCEL ================= */
 function downloadExcel(){
-  let wb   = XLSX.utils.book_new();
-  let data = [["Date","Time","Lot","Model","Chassis","Engine No","Key No","Status","Downtime"]];
-  document.querySelectorAll("#scanTable tr").forEach(row => {
-    let cells = row.querySelectorAll("td");
-    if(cells.length > 0) data.push([cells[0].innerText,cells[1].innerText,cells[2].innerText,cells[3].innerText,cells[4].innerText,cells[5].innerText,cells[6].innerText,cells[7].innerText,cells[8].innerText]);
+  let wb=XLSX.utils.book_new();
+  let data=[["Date","Time","Lot","Model","Chassis","Engine No","Key No","Status","Downtime"]];
+  document.querySelectorAll("#scanTable tr").forEach(row=>{
+    let cells=row.querySelectorAll("td");
+    if(cells.length>0) data.push([cells[0].innerText,cells[1].innerText,cells[2].innerText,cells[3].innerText,cells[4].innerText,cells[5].innerText,cells[6].innerText,cells[7].innerText,cells[8].innerText]);
   });
-  let ws = XLSX.utils.aoa_to_sheet(data);
-  for(let i = 1; i < data.length; i++){
-    let cell = "H" + (i + 1);
+  let ws=XLSX.utils.aoa_to_sheet(data);
+  for(let i=1;i<data.length;i++){
+    let cell="H"+(i+1);
     if(ws[cell]){
-      if(ws[cell].v === "DOWN TIME") ws[cell].s = { font:{ color:{ rgb:"FF0000" }, bold:true } };
-      if(ws[cell].v === "SCANNED")   ws[cell].s = { font:{ color:{ rgb:"00AA00" }, bold:true } };
+      if(ws[cell].v==="DOWN TIME") ws[cell].s={font:{color:{rgb:"FF0000"},bold:true}};
+      if(ws[cell].v==="SCANNED")   ws[cell].s={font:{color:{rgb:"00AA00"},bold:true}};
     }
   }
-  XLSX.utils.book_append_sheet(wb, ws, "Daily Report");
-  XLSX.writeFile(wb, "Daily_Summary_Report.xlsx");
+  XLSX.utils.book_append_sheet(wb,ws,"Daily Report");
+  XLSX.writeFile(wb,"Daily_Summary_Report.xlsx");
 }
  
 /* ================= FULLSCREEN ================= */
@@ -1019,44 +880,60 @@ function toggleFullScreen(){
  
 /* ================= RAMADHAN ================= */
 function toggleRamadan(){
-  ramadanMode = !ramadanMode;
-  const btn   = document.getElementById("ramadanToggle");
-  if(ramadanMode){ btn.innerText = "🌙 Ramadhan : ON";  btn.style.background = "#16a34a"; }
-  else            { btn.innerText = "🌙 Ramadhan : OFF"; btn.style.background = "#2563eb"; }
+  ramadanMode=!ramadanMode;
+  const btn=document.getElementById("ramadanToggle");
+  if(ramadanMode){ btn.innerText="🌙 Ramadhan : ON";  btn.style.background="#16a34a"; }
+  else            { btn.innerText="🌙 Ramadhan : OFF"; btn.style.background="#2563eb"; }
   updateDisplay();
 }
  
 /* ================= GOOGLE SHEET API ================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbwwLUYjoT7GH0sfFCGZMJoeLApmPWWKEF5LsdNqvkRpstZjerG9d3zG78bh0RTA1Fu48Q/exec";
+const API_URL="https://script.google.com/macros/s/AKfycbwwLUYjoT7GH0sfFCGZMJoeLApmPWWKEF5LsdNqvkRpstZjerG9d3zG78bh0RTA1Fu48Q/exec";
  
-/* ================= GLOBAL LOCK ================= */
+/* =====================================================
+   FIX 1 — DEVICE LOCK WITH 5-SECOND TIMEOUT
+   If the Google Sheet API is slow/down, we give it 5s
+   then fall through and allow access rather than hanging.
+   ===================================================== */
+function fetchWithTimeout(url, options={}, timeoutMs=5000){
+  return Promise.race([
+    fetch(url, options),
+    new Promise((_,reject)=>
+      setTimeout(()=>reject(new Error("Timeout")), timeoutMs)
+    )
+  ]);
+}
+ 
 async function checkAccess(){
   if(window.location.search.includes("monitor")) return true;
  
-  // Tab lock — prevents same browser from opening two instances
-  if(sessionStorage.getItem("TAB_ACTIVE") === "true"){
-    document.body.innerHTML = `<h1 style="color:red;text-align:center;margin-top:100px;font-size:40px;">SYSTEM ALREADY IN USE</h1>`;
+  if(sessionStorage.getItem("TAB_ACTIVE")==="true"){
+    document.body.innerHTML=`<h1 style="color:red;text-align:center;margin-top:100px;font-size:40px;">SYSTEM ALREADY IN USE</h1>`;
     return false;
   }
   sessionStorage.setItem("TAB_ACTIVE","true");
-  window.addEventListener("beforeunload", () => { sessionStorage.removeItem("TAB_ACTIVE"); });
+  window.addEventListener("beforeunload",()=>{ sessionStorage.removeItem("TAB_ACTIVE"); });
  
-  // Device lock via Google Sheet
-  let deviceId = localStorage.getItem("DEVICE_ID");
+  let deviceId=localStorage.getItem("DEVICE_ID");
   if(!deviceId){
-    deviceId = "DEV-" + Math.random().toString(36).substring(2);
-    localStorage.setItem("DEVICE_ID", deviceId);
+    deviceId="DEV-"+Math.random().toString(36).substring(2);
+    localStorage.setItem("DEVICE_ID",deviceId);
   }
  
   try{
-    let res  = await fetch(API_URL + "?checkLock=true");
+    // ✅ FIX 1: 5-second timeout — if API hangs, allow access gracefully
+    let res  = await fetchWithTimeout(API_URL+"?checkLock=true", {}, 5000);
     let data = await res.json();
-    if(data.lock && data.lock !== deviceId){
-      document.body.innerHTML = `<h1 style="color:red;text-align:center;margin-top:100px;font-size:40px;">SYSTEM ALREADY OPEN ON ANOTHER DEVICE</h1>`;
+    if(data.lock && data.lock!==deviceId){
+      document.body.innerHTML=`<h1 style="color:red;text-align:center;margin-top:100px;font-size:40px;">SYSTEM ALREADY OPEN ON ANOTHER DEVICE</h1>`;
       return false;
     }
-    await fetch(API_URL,{ method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ lockRequest:true, deviceId }) });
-  } catch(err){ console.log("Lock error:",err); }
+    // Register this device (fire-and-forget, no timeout needed)
+    fetch(API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify({lockRequest:true,deviceId})});
+  } catch(err){
+    // API down or timeout — log and allow access anyway
+    console.warn("Lock check failed (timeout or error):", err.message, "— allowing access.");
+  }
  
   return true;
 }
@@ -1064,155 +941,316 @@ async function checkAccess(){
 /* ================= LIVE STATE PUSH ================= */
 function updateLiveStateOnly(){
   if(isMonitor) return;
-  const plan   = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
-  const actual = actualCount;
-  let expected = calculateExpectedOutput();
-  let delay    = actual - expected;
-  let efficiency = 0;
-  if(actual >= plan && plan > 0){ expected = plan; delay = actual - plan; efficiency = 100; }
-  else if(expected > 0) efficiency = Math.floor((actual / expected) * 100);
-  const balance = actual - plan;
-  const status  = document.getElementById("status").innerText.trim();
-  fetch(API_URL,{ method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ liveOnly:true, plan, actual, balance, status, countdown:countdownValue, totalDowntime:downtimeSeconds, expected, delay, efficiency }) });
+  const plan=parseInt(document.getElementById("dailyPlanTarget").value)||0;
+  const actual=actualCount;
+  let expected=calculateExpectedOutput(), delay=actual-expected, efficiency=0;
+  if(actual>=plan && plan>0){ expected=plan; delay=actual-plan; efficiency=100; }
+  else if(expected>0) efficiency=Math.floor((actual/expected)*100);
+  const balance=actual-plan;
+  const status=document.getElementById("status").innerText.trim();
+  fetch(API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify({liveOnly:true,plan,actual,balance,status,countdown:countdownValue,totalDowntime:downtimeSeconds,expected,delay,efficiency})});
 }
  
 /* ================= SEND SCAN TO SHEET ================= */
-function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
-  const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
-  const actual = actualCount, balance = actual - plan;
-  fetch(API_URL,{ method:"POST", mode:"no-cors", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ lot, model, chassis, engine, key, status, plan, actual, balance, downtimeEvent, totalDowntime:downtimeSeconds, countdown:countdownValue }) }).catch(err=>console.log("Sheet error:",err));
+function sendToSheet(chassis,model,engine,key,lot,status,downtimeEvent){
+  const plan=parseInt(document.getElementById("dailyPlanTarget").value)||0;
+  const actual=actualCount, balance=actual-plan;
+  fetch(API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify({lot,model,chassis,engine,key,status,plan,actual,balance,downtimeEvent,totalDowntime:downtimeSeconds,countdown:countdownValue})}).catch(err=>console.log("Sheet error:",err));
 }
  
 /* ================= CLEAN DOWNTIME ================= */
 function cleanDowntime(raw){
   if(!raw) return "";
-  if(typeof raw === "string" && raw.includes("1899")){ let d=new Date(raw),m=d.getMinutes(),s=d.getSeconds(); if(m>0&&s===0) return "00:"+String(m).padStart(2,'0'); return String(m).padStart(2,'0')+":"+String(s).padStart(2,'0'); }
+  if(typeof raw==="string" && raw.includes("1899")){
+    let d=new Date(raw),m=d.getMinutes(),s=d.getSeconds();
+    if(m>0&&s===0) return "00:"+String(m).padStart(2,"0");
+    return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+  }
   if(/^\d{2}:\d{2}$/.test(raw)) return raw;
-  if(!isNaN(raw)){ let sec=parseInt(raw); return String(Math.floor(sec/60)).padStart(2,'0')+":"+String(sec%60).padStart(2,'0'); }
+  if(!isNaN(raw)){ let sec=parseInt(raw); return String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0"); }
   return raw;
 }
  
-/* ================= MONITOR: LOAD LIVE DATA ================= */
-function loadLiveData(){
-  fetch(API_URL).then(res=>res.json()).then(data=>{
-    const now = Date.now();
-    if(now - lastUpdateTime < 1000) return;
-    lastUpdateTime = now;
-    if(!data||!data.state||data.state.length===0) return;
-    let newState = data.state[0];
-    if(newState) window.lastValidState = newState;
-    if(!window.lastValidState) return;
-    const state = window.lastValidState;
-    if(!state||state.length<9) return;
+/* ================= MONITOR: LOCAL COUNTDOWN TICK ================= */
+// FIX 4: Tick the countdown locally every second so it's smooth
+//         between API responses instead of jumping/freezing.
+let monitorCountdownTimer = null;
+let monitorLastFetchTime  = 0; // timestamp of last successful API sync
  
-    const scanRows     = data.scan.slice(1);
-    const table        = document.getElementById("scanTable");
-    const newTableData = JSON.stringify(scanRows);
- 
-    if(newTableData !== lastTableData){
-      lastTableData   = newTableData;
-      table.innerHTML = "";
-      scanRows.reverse().forEach(row=>{
-        let nr=table.insertRow(), fdt=new Date(row[0]);
-        nr.insertCell(0).innerText=fdt.toLocaleDateString("en-GB");
-        nr.insertCell(1).innerText=fdt.toLocaleTimeString("en-GB",{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true}).toLowerCase();
-        nr.insertCell(2).innerText=row[1]||"-"; nr.insertCell(3).innerText=row[2]||"-";
-        nr.insertCell(4).innerText=row[3]||"-"; nr.insertCell(5).innerText=row[4]||"-"; nr.insertCell(6).innerText=row[5]||"-";
-        let sc=nr.insertCell(7),st=row[6]||""; sc.innerText=st;
-        if(st==="SCANNED") sc.className="status-green";
-        if(st==="DOWN TIME") sc.className="status-red";
-        let dc=nr.insertCell(8);
-        if(st==="DOWN TIME"){ dc.innerText=cleanDowntime(row[7]||""); dc.className="status-red"; } else dc.innerText="";
-      });
+function startMonitorCountdownTick(){
+  if(monitorCountdownTimer) return;
+  monitorCountdownTimer = setInterval(()=>{
+    if(!isMonitor) return;
+    // Only tick down if we have a recent sync (within 10s) and value > 0
+    const ageMs = Date.now() - monitorLastFetchTime;
+    if(ageMs < 10000 && countdownValue > 0){
+      countdownValue--;
+      document.getElementById("countdown").innerText = format(countdownValue);
     }
- 
-    const plan=parseInt(state[0])||0, actual=parseInt(state[1])||0, balance=parseInt(state[2])||0;
-    const status=state[3]||"READY", totalDowntime=parseInt(state[4])||0, countdown=parseInt(state[5])||0;
-    const expected=parseInt(state[6])||0, delay=parseInt(state[7])||0, efficiency=parseInt(state[8])||0;
- 
-    let effEl=document.getElementById("efficiency"); effEl.innerText=efficiency+"%";
-    if(efficiency<90) effEl.className="big-number status-red";
-    else if(efficiency<100) effEl.className="big-number status-orange";
-    else effEl.className="big-number status-green";
- 
-    document.getElementById("plan").innerText=plan; document.getElementById("actual").innerText=actual;
-    document.getElementById("expected").innerText=expected; countdownValue=countdown;
-    document.getElementById("countdown").innerText=format(countdownValue);
-    document.getElementById("downtime").innerText=format(totalDowntime);
- 
-    const bEl=document.getElementById("balance");
-    if(balance<0){bEl.className="big-number status-red";bEl.innerText=balance;}
-    else if(balance>0){bEl.className="big-number status-green";bEl.innerText="+"+balance;}
-    else{bEl.className="big-number status-blue";bEl.innerText="0";}
- 
-    let dEl=document.getElementById("delay"); dEl.className="big-number";
-    if(delay<0) dEl.classList.add("status-red"); else if(delay>0) dEl.classList.add("status-green"); else dEl.classList.add("status-blue");
-    dEl.innerText=delay>0?"+"+delay:delay;
- 
-    const dc=document.getElementById("downtimeCard"), dt=document.getElementById("downtime");
-    if(status==="DOWN TIME"){ setStatus("DOWN TIME","status-red blink"); dc.classList.add("downtime-alert","blink"); dt.classList.add("status-red","blink"); }
-    else if(status==="RUNNING"){ setStatus("RUNNING","status-green pulse"); dc.classList.remove("downtime-alert","blink"); dt.classList.remove("status-red","blink"); }
-    else if(status==="TARGET ACHIEVED"){ setStatus("TARGET ACHIEVED","status-green"); dc.classList.remove("downtime-alert","blink"); dt.classList.remove("status-red","blink"); }
-    else if(status==="BEHIND SCHEDULE") setStatus("BEHIND SCHEDULE","status-red blink");
-    else if(status==="BREAK TIME") setStatus("BREAK TIME","status-orange");
-    else if(status==="PAUSED") setStatus("PAUSED","status-orange");
-    else{ setStatus(status,"status-blue"); dc.classList.remove("downtime-alert","blink"); dt.classList.remove("status-red","blink"); }
-  }).catch(err=>console.log("Monitor load error:",err));
+  }, 1000);
 }
  
-/* ================= RESTORE STATE FROM SHEET ================= */
+/* ================= MONITOR: APPLY STATUS TO DISPLAY ================= */
+// FIX 3: Full status mapping — covers every status string the main PC can send
+function applyMonitorStatus(status){
+  const dc = document.getElementById("downtimeCard");
+  const dt = document.getElementById("downtime");
+ 
+  // Helper to clear downtime alert styling
+  function clearAlert(){ dc.classList.remove("downtime-alert","blink"); dt.classList.remove("status-red","blink"); }
+  function setAlert()  { dc.classList.add("downtime-alert","blink");    dt.classList.add("status-red","blink"); }
+ 
+  switch(status){
+    case "RUNNING":
+      setStatus("RUNNING","status-green pulse"); clearAlert(); break;
+    case "DOWN TIME":
+      setStatus("DOWN TIME","status-red blink"); setAlert(); break;
+    case "TARGET ACHIEVED":
+      setStatus("TARGET ACHIEVED","status-green"); clearAlert(); break;
+    case "BREAK TIME":
+      setStatus("BREAK TIME","status-orange"); clearAlert(); break;
+    case "PAUSED":
+      setStatus("PAUSED","status-orange"); clearAlert(); break;
+    case "SHIFT ENDED":
+      setStatus("SHIFT ENDED","status-orange"); clearAlert(); break;
+    case "WAITING SHIFT":
+      setStatus("WAITING SHIFT","status-blue"); clearAlert(); break;
+    case "READY":
+      setStatus("READY","status-blue"); clearAlert(); break;
+    case "WAITING MODEL":
+      setStatus("WAITING MODEL","status-orange"); clearAlert(); break;
+    case "WAITING ENGINE":
+      setStatus("WAITING ENGINE","status-orange"); clearAlert(); break;
+    case "WAITING KEY":
+      setStatus("WAITING KEY","status-orange"); clearAlert(); break;
+    case "DUPLICATE SCAN":
+    case "DUPLICATE CHASSIS":
+    case "DUPLICATE ENGINE":
+    case "DUPLICATE KEY":
+      setStatus(status,"status-red blink"); clearAlert(); break;
+    case "BEHIND SCHEDULE":
+      setStatus("BEHIND SCHEDULE","status-red blink"); clearAlert(); break;
+    default:
+      setStatus(status||"READY","status-blue"); clearAlert(); break;
+  }
+}
+ 
+/* ================= MONITOR: LOAD LIVE DATA ================= */
+// FIX 1: Removed the lastUpdateTime throttle — it was inside .then() and
+//         blocked valid updates when fetch responded faster than 1 second.
+//         Replaced with a simple in-flight lock so fetches don't pile up.
+// FIX 2: No longer use window.lastValidState cache for state.
+//         If main PC resets, data.state will be empty — we now handle that
+//         explicitly and push READY/zero state to the monitor.
+// FIX 5: Added null-guard for data.scan before calling .slice()
+let monitorFetchInFlight = false;
+ 
+function loadLiveData(){
+  if(monitorFetchInFlight) return; // prevent overlapping fetches
+  monitorFetchInFlight = true;
+ 
+  fetch(API_URL)
+    .then(res=>res.json())
+    .then(data=>{
+      monitorFetchInFlight = false;
+      monitorLastFetchTime = Date.now(); // FIX 4: record sync time for local tick
+ 
+      // FIX 2: If state is missing/empty, main PC has reset — show READY
+      if(!data || !data.state || data.state.length===0 || !data.state[0]){
+        document.getElementById("plan").innerText     = "0";
+        document.getElementById("actual").innerText   = "0";
+        document.getElementById("expected").innerText = "0";
+        document.getElementById("balance").innerText  = "0";
+        document.getElementById("delay").innerText    = "0";
+        document.getElementById("countdown").innerText= "00:00";
+        document.getElementById("downtime").innerText = "00:00";
+        document.getElementById("efficiency").innerText="0%";
+        countdownValue = 0;
+        applyMonitorStatus("READY");
+        return;
+      }
+ 
+      const state = data.state[0];
+      if(!state || state.length < 9) return;
+ 
+      // FIX 5: Null-guard for data.scan
+      const rawScan    = (data.scan && Array.isArray(data.scan)) ? data.scan : [];
+      const scanRows   = rawScan.slice(1); // skip header
+      const table      = document.getElementById("scanTable");
+      const newTableData = JSON.stringify(scanRows);
+ 
+      if(newTableData !== lastTableData){
+        lastTableData   = newTableData;
+        table.innerHTML = "";
+        [...scanRows].reverse().forEach(row=>{
+          let nr=table.insertRow(), fdt=new Date(row[0]);
+          nr.insertCell(0).innerText=fdt.toLocaleDateString("en-GB");
+          nr.insertCell(1).innerText=fdt.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:true}).toLowerCase();
+          nr.insertCell(2).innerText=row[1]||"-";
+          nr.insertCell(3).innerText=row[2]||"-";
+          nr.insertCell(4).innerText=row[3]||"-";
+          nr.insertCell(5).innerText=row[4]||"-";
+          nr.insertCell(6).innerText=row[5]||"-";
+          let sc=nr.insertCell(7), st=row[6]||"";
+          sc.innerText=st;
+          if(st==="SCANNED")   sc.className="status-green";
+          if(st==="DOWN TIME") sc.className="status-red";
+          let dc=nr.insertCell(8);
+          if(st==="DOWN TIME"){ dc.innerText=cleanDowntime(row[7]||""); dc.className="status-red"; }
+          else dc.innerText="";
+        });
+      }
+ 
+      const plan         = parseInt(state[0])||0;
+      const actual       = parseInt(state[1])||0;
+      const balance      = parseInt(state[2])||0;
+      const status       = state[3]||"READY";
+      const totalDowntime= parseInt(state[4])||0;
+      const countdown    = parseInt(state[5])||0;
+      const expected     = parseInt(state[6])||0;
+      const delay        = parseInt(state[7])||0;
+      const efficiency   = parseInt(state[8])||0;
+ 
+      // FIX 4: Sync local countdown to sheet value on each fetch
+      countdownValue = countdown;
+ 
+      // Efficiency
+      let effEl=document.getElementById("efficiency");
+      effEl.innerText=efficiency+"%";
+      if(efficiency<90)       effEl.className="big-number status-red";
+      else if(efficiency<100) effEl.className="big-number status-orange";
+      else                    effEl.className="big-number status-green";
+ 
+      // Numbers
+      document.getElementById("plan").innerText     = plan;
+      document.getElementById("actual").innerText   = actual;
+      document.getElementById("expected").innerText = expected;
+      document.getElementById("countdown").innerText= format(countdown);
+      document.getElementById("downtime").innerText = format(totalDowntime);
+ 
+      // Balance
+      const bEl=document.getElementById("balance");
+      if(balance<0)      { bEl.className="big-number status-red";   bEl.innerText=balance; }
+      else if(balance>0) { bEl.className="big-number status-green"; bEl.innerText="+"+balance; }
+      else               { bEl.className="big-number status-blue";  bEl.innerText="0"; }
+ 
+      // Delay
+      let dEl=document.getElementById("delay");
+      dEl.className="big-number";
+      if(delay<0)      dEl.classList.add("status-red");
+      else if(delay>0) dEl.classList.add("status-green");
+      else             dEl.classList.add("status-blue");
+      dEl.innerText=delay>0?"+"+delay:delay;
+ 
+      // FIX 3: Full status mapping
+      applyMonitorStatus(status);
+    })
+    .catch(err=>{
+      monitorFetchInFlight=false;
+      console.log("Monitor load error:",err);
+    });
+}
+ 
+/* =====================================================
+   FIX 2 — RESTORE SCAN TABLE FROM SHEET ON RELOAD
+   After restoring state numbers, also fetch scan rows
+   and rebuild the table so history isn't lost on refresh.
+   ===================================================== */
+function rebuildTableFromRows(scanRows){
+  const table=document.getElementById("scanTable");
+  table.innerHTML="";
+  // Rows come oldest-first from sheet; reverse to show newest on top
+  const rows=[...scanRows].reverse();
+  rows.forEach(row=>{
+    let nr=table.insertRow();
+    // row format from sheet: [timestamp, lot, model, chassis, engine, key, status, downtime]
+    let fdt=new Date(row[0]);
+    nr.insertCell(0).innerText=fdt.toLocaleDateString("en-GB");
+    nr.insertCell(1).innerText=fdt.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:true}).toLowerCase();
+    nr.insertCell(2).innerText=row[1]||"-";
+    nr.insertCell(3).innerText=row[2]||"-";
+    nr.insertCell(4).innerText=row[3]||"-";
+    nr.insertCell(5).innerText=row[4]||"-";
+    nr.insertCell(6).innerText=row[5]||"-";
+    let sc=nr.insertCell(7), st=row[6]||"";
+    sc.innerText=st;
+    if(st==="SCANNED")   sc.className="status-green";
+    if(st==="DOWN TIME") sc.className="status-red";
+    let dc=nr.insertCell(8);
+    if(st==="DOWN TIME"){ dc.innerText=cleanDowntime(row[7]||""); dc.className="status-red"; }
+    else dc.innerText="";
+    // Rebuild duplicate-check sets from restored rows
+    if(row[3]) scannedChassis.add(row[3]);
+    if(row[2]) scannedModel.add(row[2]);
+    if(row[4]) scannedEngine.add(row[4]);
+    if(row[5]) scannedKey.add(row[5]);
+  });
+}
+ 
 async function loadLastStateFromSheet(){
   try{
-    let res=await fetch(API_URL), data=await res.json();
+    let res=await fetchWithTimeout(API_URL,{},8000);
+    let data=await res.json();
     if(!data.state||data.state.length===0) return;
     let state=data.state[0]; if(!state) return;
  
-    actualCount     = parseInt(state[1]) || 0;
-    downtimeSeconds = parseInt(state[4]) || 0;
-    document.getElementById("dailyPlanTarget").value = state[0] || 0;
+    actualCount     = parseInt(state[1])||0;
+    downtimeSeconds = parseInt(state[4])||0;
+    document.getElementById("dailyPlanTarget").value=state[0]||0;
  
-    let lastUpdate = new Date(state[9]);
-    lastScanTime   = lastUpdate;
-    let now        = new Date();
-    let diffSec    = Math.floor((now - lastUpdate) / 1000);
-    let cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
-    countdownValue = Math.max(cycleTimeSec - diffSec, 0);
+    let lastUpdate=new Date(state[9]);
+    lastScanTime=lastUpdate;
+    let now=new Date();
+    let diffSec=Math.floor((now-lastUpdate)/1000);
+    let cycleTimeSec=(parseFloat(document.getElementById("cycleTarget").value)||1)*60;
+    countdownValue=Math.max(cycleTimeSec-diffSec,0);
+    if(!startTime) startTime=new Date(state[9]);
  
-    if(!startTime) startTime = new Date(state[9]);
+    // ✅ FIX 2: Rebuild the scan table from sheet data
+    if(data.scan && data.scan.length>1){
+      const scanRows=data.scan.slice(1); // skip header row
+      rebuildTableFromRows(scanRows);
+      console.log("✅ Scan table restored:",scanRows.length,"rows");
+    }
  
     updateDisplay();
- 
-    // FIX: pass allowedBySystem=true so this works without isDeveloper/autoRunning
-    if(actualCount > 0 && !timer) startProduction(true);
- 
+    if(actualCount>0 && !timer) startProduction(true);
     console.log("✅ State restored from sheet");
-  } catch(err){ console.log("Load state error:",err); }
+  } catch(err){
+    console.warn("Load state error (timeout or API issue):", err.message);
+  }
 }
  
 /* ================= INITIALIZE ================= */
 window.onload = async function(){
-  if(!isMonitor){ document.getElementById("loginOverlay").style.display="flex"; }
-  else           { document.getElementById("loginOverlay").style.display="none"; }
+  // ✅ FIX 3: Init hashed passwords before anything else
+  await initPasswords();
  
-  let allowed = await checkAccess();
+  if(!isMonitor) document.getElementById("loginOverlay").style.display="flex";
+  else           document.getElementById("loginOverlay").style.display="none";
+ 
+  let allowed=await checkAccess();
   if(!allowed) return;
  
   if(!isMonitor) await loadLastStateFromSheet();
  
   updateDateTime();
-  setInterval(updateDateTime,   1000);
-  setInterval(autoProductionControl, 1000);
+  setInterval(updateDateTime, 1000);
  
   if(isMonitor){
+    // Monitor: no autoProductionControl, no liveState push — only receive
     document.body.classList.add("monitor-mode");
     document.getElementById("chassisInput").style.display="none";
     document.getElementById("modelInput").style.display="none";
     document.getElementById("engineInput").style.display="none";
     document.getElementById("keyInput").style.display="none";
+    startMonitorCountdownTick(); // FIX 4: smooth local countdown between API calls
     loadLiveData();
-    setInterval(loadLiveData, 1000);
+    setInterval(loadLiveData, 2000); // FIX 1: 2s gives fetch time to finish before next
   } else {
-    setInterval(updateLiveStateOnly, 1000);
+    // Main PC only
+    setInterval(autoProductionControl, 1000);
+    setInterval(updateLiveStateOnly,   1000);
   }
 };
  

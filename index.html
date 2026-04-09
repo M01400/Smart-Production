@@ -635,36 +635,23 @@ function setStatus(text, color){
 //      without needing isDeveloper or autoRunning to be true
 function startProduction(allowedBySystem = false){
   if(isMonitor) return;
-
-  // 🚫 Block manual control during AUTO
-  if(autoRunning && !allowedBySystem) return;
-
-  // 🚫 Only developer or system can start
-  if(!isDeveloper && !allowedBySystem) return;
-
+  // Allow if: dev mode, auto-control running, or system restore on load
+  if(!isDeveloper && !autoRunning && !allowedBySystem) return;
   if(timer) return;
-
+ 
   if(!startTime) startTime = new Date();
-
   if(countdownValue === 0){
     countdownValue = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
   }
-
+ 
   timer = setInterval(() => {
-    if(isBreakTime()){
-      setStatus("BREAK TIME","status-orange");
-      updateDisplay();
-      return;
-    }
-
+    if(isBreakTime()){ setStatus("BREAK TIME","status-orange"); updateDisplay(); return; }
     const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
-    const now = new Date();
-    const baseTime = lastScanTime || startTime;
-    const diff = Math.floor((now - baseTime) / 1000);
-
-    countdownValue = Math.max(cycleTimeSec - diff, 0);
-    isDowntime = (countdownValue === 0);
-
+    const now          = new Date();
+    const baseTime     = lastScanTime || startTime;
+    const diff         = Math.floor((now - baseTime) / 1000);
+    countdownValue     = Math.max(cycleTimeSec - diff, 0);
+    isDowntime         = (countdownValue === 0);
     updateDisplay();
   }, 1000);
 }
@@ -728,9 +715,7 @@ function autoProductionControl(){
  
 /* ================= STOP ================= */
 function stopProduction(allowedBySystem = false){
-  if(autoRunning && !allowedBySystem) return;
-  if(!isDeveloper && !allowedBySystem) return;
-
+  if(!isDeveloper && !autoRunning && !allowedBySystem) return;
   clearInterval(timer);
   timer = null;
   setStatus("PAUSED","status-orange");
@@ -738,33 +723,25 @@ function stopProduction(allowedBySystem = false){
  
 /* ================= RESET ================= */
 function resetProduction(allowedBySystem = false){
-  if(autoRunning && !allowedBySystem) return;
-  if(!isDeveloper && !allowedBySystem) return;
-
+  if(!isDeveloper && !autoRunning && !allowedBySystem) return;
   clearInterval(timer);
-  timer = null;
-
+  timer           = null;
   countdownValue  = 0;
   actualCount     = 0;
   downtimeSeconds = 0;
   lastScanTime    = null;
   startTime       = null;
-
   pendingChassis  = "";
   pendingModel    = "";
   pendingEngine   = "";
   pendingKey      = "";
-
   scannedChassis.clear();
   scannedModel.clear();
   scannedEngine.clear();
   scannedKey.clear();
-
   isDowntime    = false;
   duplicateLock = false;
-
   document.getElementById("scanTable").innerHTML = "";
-
   setStatus("READY","status-blue");
   updateDisplay();
   updateLiveStateOnly();

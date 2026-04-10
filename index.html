@@ -1109,19 +1109,42 @@ function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
 
 /* ================= CLEAN DOWNTIME ================= */
 function cleanDowntime(raw){
+
   if(!raw) return "";
-  if(typeof raw === "string" && raw.includes("1899")){
+
+  // 🔥 Detect ISO date from Google Sheets
+  if(typeof raw === "string" && raw.includes("T")){
     let date = new Date(raw);
-    let m = date.getMinutes();
-    let s = date.getSeconds();
-    if(m > 0 && s === 0) return "00:" + String(m).padStart(2,'0');
-    return String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
+
+    let h = date.getUTCHours();
+    let m = date.getUTCMinutes();
+    let s = date.getUTCSeconds();
+
+    // Convert to HH:MM:SS
+    return (
+      String(h).padStart(2,'0') + ":" +
+      String(m).padStart(2,'0') + ":" +
+      String(s).padStart(2,'0')
+    );
   }
-  if(/^\d{2}:\d{2}$/.test(raw)) return raw;
+
+  // If already normal format
+  if(/^\d{2}:\d{2}(:\d{2})?$/.test(raw)) return raw;
+
+  // If number (seconds)
   if(!isNaN(raw)){
     let sec = parseInt(raw);
-    return String(Math.floor(sec/60)).padStart(2,'0') + ":" + String(sec%60).padStart(2,'0');
+    let h = Math.floor(sec / 3600);
+    let m = Math.floor((sec % 3600) / 60);
+    let s = sec % 60;
+
+    return (
+      String(h).padStart(2,'0') + ":" +
+      String(m).padStart(2,'0') + ":" +
+      String(s).padStart(2,'0')
+    );
   }
+
   return raw;
 }
 

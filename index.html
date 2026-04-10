@@ -488,25 +488,9 @@ function updateDateTime(){
 
 /* ================= FORMAT ================= */
 function format(s){
-
-  const hours = Math.floor(s / 3600);
-  const minutes = Math.floor((s % 3600) / 60);
-  const seconds = s % 60;
-
-  // If less than 1 hour → show MM:SS
-  if(hours === 0){
-    return (
-      String(minutes).padStart(2,'0') + ":" +
-      String(seconds).padStart(2,'0')
-    );
-  }
-
-  // If 1 hour or more → show HH:MM:SS
-  return (
-    String(hours).padStart(2,'0') + ":" +
-    String(minutes).padStart(2,'0') + ":" +
-    String(seconds).padStart(2,'0')
-  );
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return (m < 10 ? "0" + m : m) + ":" + (sec < 10 ? "0" + sec : sec);
 }
 
 /* ================= BREAK TIME ================= */
@@ -1109,42 +1093,19 @@ function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
 
 /* ================= CLEAN DOWNTIME ================= */
 function cleanDowntime(raw){
-
   if(!raw) return "";
-
-  // 🔥 Detect ISO date from Google Sheets
-  if(typeof raw === "string" && raw.includes("T")){
+  if(typeof raw === "string" && raw.includes("1899")){
     let date = new Date(raw);
-
-    let h = date.getUTCHours();
-    let m = date.getUTCMinutes();
-    let s = date.getUTCSeconds();
-
-    // Convert to HH:MM:SS
-    return (
-      String(h).padStart(2,'0') + ":" +
-      String(m).padStart(2,'0') + ":" +
-      String(s).padStart(2,'0')
-    );
+    let m = date.getMinutes();
+    let s = date.getSeconds();
+    if(m > 0 && s === 0) return "00:" + String(m).padStart(2,'0');
+    return String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
   }
-
-  // If already normal format
-  if(/^\d{2}:\d{2}(:\d{2})?$/.test(raw)) return raw;
-
-  // If number (seconds)
+  if(/^\d{2}:\d{2}$/.test(raw)) return raw;
   if(!isNaN(raw)){
     let sec = parseInt(raw);
-    let h = Math.floor(sec / 3600);
-    let m = Math.floor((sec % 3600) / 60);
-    let s = sec % 60;
-
-    return (
-      String(h).padStart(2,'0') + ":" +
-      String(m).padStart(2,'0') + ":" +
-      String(s).padStart(2,'0')
-    );
+    return String(Math.floor(sec/60)).padStart(2,'0') + ":" + String(sec%60).padStart(2,'0');
   }
-
   return raw;
 }
 

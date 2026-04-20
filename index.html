@@ -94,11 +94,11 @@ body{
   0 0 20px rgba(0,0,0,0.8);
   position:relative;
   overflow:hidden;
-  display:flex;                /* 🔥 ADD */
-  flex-direction:column;       /* 🔥 ADD */
-  justify-content:flex-start;  /* 🔥 TOP align */
-  align-items:center;          /* 🔥 CENTER horizontally */
-  min-height:90px;            /* optional for consistency */
+  display:flex;               
+  flex-direction:column;       
+  justify-content:flex-start;  
+  align-items:center;          
+  min-height:90px;            
 }
 
 /* GLOW BORDER */
@@ -453,8 +453,6 @@ function updateDateTime(){
     clockEl.innerText = now.toLocaleTimeString("en-MY");
   }
 }
-
-/* ================= GLOBAL LOCK SYSTEM ================= */
 
 /* ================= STRICT GLOBAL LOCK ================= */
 
@@ -1084,7 +1082,7 @@ function openSummary() {
                 downtimeClass = "status-red";
             }
 
-            // Bina HTML baris untuk laporan, memindahkan data DAN kelas warna
+            
             tableRows += `
 <tr>
 <td>${cells[0].innerText}</td> <td>${cells[1].innerText}</td> <td>${cells[2].innerText}</td> <td>${cells[3].innerText}</td> <td>${cells[4].innerText}</td> <td>${cells[5].innerText}</td> <td>${cells[6].innerText}</td> <td class="${statusClass}">${cells[7].innerText}</td> <td class="${downtimeClass}">${cells[8].innerText}</td> </tr>`;

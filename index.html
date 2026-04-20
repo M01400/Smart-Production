@@ -10,6 +10,7 @@
   --card-title-size: 25px;
   --clock-size: 70px;
   --header-size: 60px;
+
   --bg:#050b18;
   --panel:#0f172a;
   --glass:rgba(255,255,255,0.05);
@@ -21,8 +22,7 @@
   --orange:#f97316;
 }
 
-*{ box-sizing: border-box; }
-
+/* BACKGROUND */
 body{
   margin:0;
   font-family:'Segoe UI',sans-serif;
@@ -30,6 +30,7 @@ body{
   color:var(--text);
 }
 
+/* HEADER */
 .header{
   font-size:var(--header-size);
   font-weight:900;
@@ -37,219 +38,247 @@ body{
   padding:20px;
   color:var(--blue);
   letter-spacing:2px;
-  position:relative;
+  text-shadow:none;
 }
 
-#clock{ font-size:var(--clock-size); font-weight:500; color:#22d3ee; }
-#dateDisplay{ font-size:30px; color:#94a3b8; }
+/* CLOCK */
+#clock{
+  font-size:var(--clock-size);
+  font-weight:500;
+  color:#22d3ee;
+  text-shadow:none;
+}
+  
+  /* DATE */
+#dateDisplay{
+  font-size:30px;
+  color:#94a3b8;
+}
 
 .datetime{
-  display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;   
+  justify-content:center;
   margin-top:10px;
 }
-
+  
+/* CONTROL PANEL */
 .controls{
-  display:flex; justify-content:center;
-  gap:15px; flex-wrap:wrap;
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  flex-wrap:wrap;
   padding:15px;
   background:var(--glass);
   backdrop-filter:blur(10px);
   border:1px solid var(--border);
   border-radius:15px;
   margin:20px;
-  align-items:center;
 }
 
-.wide{ grid-column: span 2; }
-
+/* 🔥 MAKE LINE STATUS WIDE */
+.wide{
+  grid-column: span 2;
+}
+  
+/* CARD STYLE (SCADA LOOK) */
 .card{
   background:linear-gradient(145deg,#0f172a,#020617);
   border:1px solid var(--border);
   border-radius:20px;
   padding:15px;
   text-align:center;
-  box-shadow: inset 0 0 15px rgba(255,255,255,0.05), 0 0 20px rgba(0,0,0,0.8);
-  position:relative; overflow:hidden;
-  display:flex; flex-direction:column;
-  justify-content:flex-start; align-items:center;
-  min-height:90px;
+  box-shadow:
+  inset 0 0 15px rgba(255,255,255,0.05),
+  0 0 20px rgba(0,0,0,0.8);
+  position:relative;
+  overflow:hidden;
+  display:flex;                /* 🔥 ADD */
+  flex-direction:column;       /* 🔥 ADD */
+  justify-content:flex-start;  /* 🔥 TOP align */
+  align-items:center;          /* 🔥 CENTER horizontally */
+  min-height:90px;            /* optional for consistency */
 }
 
+/* GLOW BORDER */
 .card::before{
-  content:""; position:absolute; inset:0;
+  content:"";
+  position:absolute;
+  inset:0;
   border-radius:20px;
   border:1px solid rgba(255,255,255,0.05);
   pointer-events:none;
 }
 
-.status-green  { color:var(--green); }
-.status-red    { color:var(--red); }
-.status-blue   { color:var(--blue); }
-.status-orange { color:var(--orange); }
+/* STATUS COLORS */
+.status-green{color:var(--green);}
+.status-red{color:var(--red);}
+.status-blue{color:var(--blue);}
+.status-orange{color:var(--orange);}
 
-.pulse{ animation:pulseGlow 1.5s infinite; }
+/* RUNNING GLOW */
+.pulse{
+  animation:pulseGlow 1.5s infinite;
+}
 @keyframes pulseGlow{
-  0%  { text-shadow:0 0 5px  #22c55e; }
-  50% { text-shadow:0 0 25px #22c55e; }
-  100%{ text-shadow:0 0 5px  #22c55e; }
+  0%{text-shadow:0 0 5px #22c55e;}
+  50%{text-shadow:0 0 25px #22c55e;}
+  100%{text-shadow:0 0 5px #22c55e;}
 }
 
-.blink{ animation:blink 1s infinite; }
-@keyframes blink{ 50%{ opacity:0.3; } }
+/* ALERT BLINK */
+.blink{
+  animation:blink 1s infinite;
+}
+@keyframes blink{
+  50%{opacity:0.3;}
+}
+
+/* STATUS BAR (BOTTOM) */
 
 .bottom-row{
   display:grid;
-  grid-template-columns: repeat(4,1fr);
-  gap:15px; margin:15px;
+  grid-template-columns: repeat(4, 1fr);
+  gap:15px;
+  margin:15px;
 }
 
-.scan-grid{ display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+.scan-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
 
+/* DOWNTIME ALERT */
 .downtime-alert{
   box-shadow:0 0 30px rgba(239,68,68,0.7);
   background:#2a0b0b !important;
 }
 
-.controls input{
-  padding:6px; width:90px;
-  font-size:18px; font-weight:bold;
-  border-radius:10px;
-  border:1px solid #334155;
-  background:#0f172a; color:white;
-  text-align:center;
+/* TABLE */
+table{
+  background:#020617;
+  border:1px solid var(--border);
+}
+th{
+  background:#0f172a;
 }
 
-.controls label{ color:#94a3b8; font-size:14px; font-weight:600; }
+/* ================= CONTROLS SETTINGS ================= */
+
+.controls input{
+padding:6px;
+width:90px;
+font-size:18px;
+font-weight:bold;
+border-radius:10px;
+border:1px solid #334155;background:#0f172a;color:white;text-align:center;
+}
 
 .controls button{
-  background:#020617; border:1px solid #334155;
-  color:#e2e8f0; border-radius:8px;
-  padding:10px 20px; cursor:pointer;
-  font-size:14px; font-weight:600;
-  transition: background 0.2s;
+padding:8px 18px;
+font-size:16px;
+border:none;
+border-radius:50px;
+font-weight:bold;
+cursor:pointer;
 }
-.controls button:hover{ background:#0f172a; }
 
-.start   { background:#16a34a !important; color:white !important; border-color:#16a34a !important; }
-.stop    { background:#dc2626 !important; color:white !important; border-color:#dc2626 !important; }
-.reset   { background:#f59e0b !important; color:black !important; border-color:#f59e0b !important; }
-.summary { background:#2563eb !important; color:white !important; border-color:#2563eb !important; }
+.start{background:#16a34a;color:white;}
+.stop{background:#dc2626;color:white;}
+.reset{background:#f59e0b;color:white;}
+.summary{background:#2563eb;color:white;}
 
 .dashboard{
-  display:grid; grid-template-columns:repeat(4,1fr);
-  gap:15px; margin:15px;
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+margin:15px;
 }
 
 .card h3{
-  color:#9ca3af; margin:0; margin-bottom:4px;
-  font-size:var(--card-title-size);
+color:#9ca3af;
+margin:0;              
+margin-bottom:4px;    
+font-size:var(--card-title-size);
 }
 
-.big-number{ font-size:var(--big-number-size); font-weight:900; }
+.big-number
+{font-size:var(--big-number-size);
+font-weight:900;}
+
+.bottom{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+margin:15px;
+}
 
 .fullscreen-btn{
-  position:absolute; right:20px; top:50%;
-  transform: translateY(-50%);
-  padding:6px 12px; font-size:13px;
-  border:1px solid rgba(255,255,255,0.2);
-  border-radius:8px; background:transparent;
-  color:rgba(255,255,255,0.4); cursor:pointer;
-  transition: all 0.2s;
+position:absolute;
+right:20px;
+top:20px;
+padding:5px 10px;
+font-size:14px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+cursor:pointer;
 }
-.fullscreen-btn:hover{ color:white; border-color:rgba(255,255,255,0.5); }
+
+.fullscreen-btn:hover{
+background:#1d4ed8;
+}
+
+.pulse{animation:pulse 1.5s infinite;}
+@keyframes pulse{0%{text-shadow:0 0 5px #22c55e;}50%{text-shadow:0 0 20px #22c55e;}100%{text-shadow:0 0 5px #22c55e;}}
+
+.blink{animation:blink 1.5s infinite;}
+@keyframes blink{0%{opacity:1;}50%{opacity:0.3;}100%{opacity:1;}}
+
+.downtime-alert{background:#3f0d0d !important;box-shadow:0 0 25px rgba(239,68,68,0.8);}
+
+.scan-container{
+display:flex;
+justify-content:center;
+gap:15px;
+margin:15px;
+flex-wrap:wrap;
+}
 
 .scan-box{
-  width:100%; padding:10px;
-  font-size:18px; border-radius:40px;
-  background:#0f172a; border:1px solid #334155;
-  color:white; text-align:center;
+width:300px;
+padding:10px;
+font-size:18px;
+border-radius:40px;
+background:#0f172a;
+border:1px solid #334155;
+color:white;
+text-align:center;
 }
 
 table{
-  width:95%; margin:30px auto;
-  border-collapse:collapse;
-  background:#111827; border-radius:15px;
-  overflow:hidden;
-  border:1px solid var(--border);
-}
-th{ background:#0f172a; color:#60a5fa; }
-th,td{ padding:12px; text-align:center; font-size:14px; }
-tr:nth-child(even){ background:#0f172a; }
-
-/* ===== LOGIN OVERLAY ===== */
-#loginOverlay{
-  position:fixed; top:0; left:0;
-  width:100%; height:100%;
-  background:linear-gradient(145deg,#020617,#020617);
-  display:flex; justify-content:center; align-items:center;
-  z-index:9999;
+width:95%;
+margin:30px auto;
+border-collapse:collapse;
+background:#111827;
+border-radius:15px;
+overflow:hidden;
 }
 
-.login-box{
-  background:#0f172a; padding:40px;
-  border-radius:20px; text-align:center;
-  border:1px solid rgba(255,255,255,0.1);
-  box-shadow:0 0 40px rgba(0,0,0,0.8);
-  min-width: 320px;
+th,td{
+padding:12px;
+text-align:center;
+font-size:14px;
 }
 
-.login-box h2{ color:var(--blue); margin-top:0; }
-
-.login-box input{
-  padding:12px; width:250px;
-  border-radius:10px; border:1px solid #334155;
-  background:#020617; color:white;
-  text-align:center; font-size:16px;
-  display:block; margin:0 auto 12px auto;
+th{
+background:#1f2937;
+color:#60a5fa;
 }
-
-.login-box button{
-  padding:10px 30px; border:none;
-  border-radius:30px; background:#22c55e;
-  color:white; font-weight:bold;
-  cursor:pointer; font-size:15px;
-  transition: background 0.2s;
-}
-.login-box button:hover{ background:#16a34a; }
-
-#loginError{ color:var(--red); margin-top:10px; font-size:14px; }
-
-/* ===== LOCK SCREEN ===== */
-#lockScreen{
-  position:fixed; top:0; left:0;
-  width:100%; height:100%;
-  background:#020617;
-  display:none; flex-direction:column;
-  justify-content:center; align-items:center;
-  z-index:9998;
-}
-
-#lockScreen h1{ color:var(--red); font-size:36px; text-align:center; margin-bottom:20px; }
-#lockScreen p { color:#94a3b8; font-size:16px; text-align:center; margin-bottom:30px; }
-
-.unlock-btn{
-  padding:12px 30px; border:none;
-  border-radius:30px; background:#dc2626;
-  color:white; font-weight:bold;
-  cursor:pointer; font-size:15px;
-  margin-top:10px;
-}
-.unlock-btn:hover{ background:#b91c1c; }
-
-/* ===== CONNECTION STATUS ===== */
-#connectionStatus{
-  position:fixed; bottom:15px; right:15px;
-  padding:6px 14px; border-radius:20px;
-  font-size:12px; font-weight:600;
-  background:rgba(0,0,0,0.5); border:1px solid var(--border);
-  z-index:100; display:flex; align-items:center; gap:6px;
-}
-.conn-dot{
-  width:8px; height:8px; border-radius:50%;
-  background:var(--green);
-}
-.conn-dot.offline{ background:var(--red); }
+tr:nth-child(even){background:#0f172a;}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
@@ -257,1076 +286,1475 @@ tr:nth-child(even){ background:#0f172a; }
 
 <body>
 
-<!-- ===== LOGIN OVERLAY ===== -->
-<div id="loginOverlay">
-  <div class="login-box">
-    <h2>🔐 SYSTEM ACCESS</h2>
-    <input type="password" id="passwordInput" placeholder="Enter Password" autocomplete="off">
-    <button onclick="checkPassword()">ACCESS</button>
-    <p id="loginError"></p>
-  </div>
-</div>
-
-<!-- ===== LOCK SCREEN (shown when another tab/device has the lock) ===== -->
-<div id="lockScreen">
-  <h1 id="lockTitle">⚠️ SYSTEM IN USE</h1>
-  <p id="lockMsg">This system is already open on another tab or device.</p>
-  <button class="unlock-btn" onclick="forceUnlock()">Force Unlock (Admin)</button>
-  <p style="color:#475569;font-size:12px;margin-top:8px;">Use only if the other session has crashed or closed.</p>
-</div>
-
-<!-- ===== MAIN UI ===== -->
 <div class="header">
-  TF 2 PRODUCTION MONITORING SYSTEM
-  <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
+    TF 2 PRODUCTION MONITORING SYSTEM
+    <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
 </div>
 
 <div class="datetime">
-  <div id="dateDisplay"></div>
-  <div id="clock"></div>
+<div id="dateDisplay"></div>
+<div id="clock"></div>
 </div>
 
 <div class="controls">
-  <label>Cycle Time (min):<br>
-    <input type="number" id="cycleTarget" min="1" style="width:80px;">
-  </label>
-  <label>Daily Plan:<br>
-    <input type="number" id="dailyPlanTarget" min="1" style="width:80px;">
-  </label>
-  <label>Lot No:<br>
-    <input type="number" id="lotInput" placeholder="Lot" style="width:80px;">
-  </label>
-  <button class="start"   onclick="startProduction()">▶ Start</button>
-  <button class="stop"    onclick="stopProduction()">⏸ Stop</button>
-  <button class="reset"   onclick="resetProduction()">↺ Reset</button>
-  <button class="summary" onclick="openSummary()">📋 Daily Summary</button>
-  <button class="summary" id="ramadanToggle" onclick="toggleRamadan()">🌙 Ramadhan : OFF</button>
+
+Cycle Time (min):
+<input type="number" id="cycleTarget" min="1">
+
+Daily Plan:
+<input type="number" id="dailyPlanTarget" min="Daily Plan">
+
+Lot:
+<input type="number" id="lotInput" placeholder="Lot No">
+
+<button class="start" onclick="startProduction()">Start</button>
+<button class="stop" onclick="stopProduction()">Stop</button>
+<button class="reset" onclick="resetProduction()">Reset</button>
+<button class="summary" onclick="openSummary()">Daily Summary</button>
+<button class="summary" onclick="downloadExcel()">Download Excel</button>
+
+<button class="summary" id="ramadanToggle" onclick="toggleRamadan()">
+🌙 Ramadhan : OFF
+</button>
+
 </div>
 
 <div class="dashboard">
-  <div class="card"><h3>COUNTDOWN</h3>    <div class="big-number" id="countdown">00:00</div></div>
-  <div class="card"><h3>ACTUAL OUTPUT</h3><div class="big-number status-green" id="actual">0</div></div>
-  <div class="card"><h3>EXPECTED OUTPUT</h3><div class="big-number status-blue" id="expected">0</div></div>
-  <div class="card"><h3>DELAY / AHEAD</h3><div class="big-number" id="delay">0</div></div>
-  <div class="card"><h3>DAILY PLAN</h3>  <div class="big-number" id="plan">0</div></div>
-  <div class="card"><h3>BALANCE</h3>     <div class="big-number" id="balance">0</div></div>
-  <div class="card wide">
-    <h3>LINE STATUS</h3>
-    <div class="big-number" id="status">READY</div>
-  </div>
-</div>
 
+<!-- 🔹 ROW 1 -->
+<div class="card"><h3>COUNTDOWN</h3><div class="big-number" id="countdown">00:00</div></div>
+<div class="card"><h3>ACTUAL OUTPUT</h3><div class="big-number status-green" id="actual">0</div></div>
+<div class="card"><h3>EXPECTED OUTPUT</h3><div class="big-number status-blue" id="expected">0</div></div>
+<div class="card"><h3>DELAY / AHEAD</h3><div class="big-number" id="delay">0</div></div>
+
+<!-- 🔹 ROW 2 -->
+<div class="card"><h3>DAILY PLAN</h3><div class="big-number" id="plan">0</div></div>
+<div class="card"><h3>BALANCE</h3><div class="big-number" id="balance">0</div></div>
+
+<!-- LINE STATUS -->
+<div class="card wide">
+<h3>LINE STATUS</h3>
+<div class="big-number" id="status">READY</div>
+</div>
+</div>
+  
 <div class="bottom-row">
-  <div class="card wide">
-    <h3>SCAN INPUT</h3>
-    <div class="scan-grid">
-      <input type="text" id="chassisInput" class="scan-box" placeholder="Scan Chassis" autocomplete="off">
-      <input type="text" id="modelInput"   class="scan-box" placeholder="Scan Model"   autocomplete="off">
-      <input type="text" id="engineInput"  class="scan-box" placeholder="Scan Engine No" autocomplete="off">
-      <input type="text" id="keyInput"     class="scan-box" placeholder="Scan Key No"  autocomplete="off">
-    </div>
-  </div>
-  <div class="card" id="downtimeCard">
-    <h3>ACCUMULATED DOWNTIME</h3>
-    <div class="big-number" id="downtime">00:00</div>
-  </div>
-  <div class="card">
-    <h3>EFFICIENCY</h3>
-    <div class="big-number" id="efficiency">0%</div>
-  </div>
+<!-- LEFT: SCAN -->
+<div class="card wide">
+<h3>SCAN INPUT</h3>
+
+<div class="scan-grid">
+<input type="text" id="chassisInput" class="scan-box" placeholder="Scan Chassis" autofocus>
+<input type="text" id="modelInput" class="scan-box" placeholder="Scan Model">
+<input type="text" id="engineInput" class="scan-box" placeholder="Scan Engine No">
+<input type="text" id="keyInput" class="scan-box" placeholder="Scan Key No">
 </div>
 
+</div>
+
+<!-- RIGHT: DOWNTIME -->
+<div class="card" id="downtimeCard">
+<h3>ACCUMULATED DOWNTIME</h3>
+<div class="big-number" id="downtime">00:00</div>
+</div>
+
+<div class="card">
+<h3>EFFICIENCY</h3>
+<div class="big-number" id="efficiency">0%</div> 
+</div>
+  
+</div>
+  
 <table>
-  <thead>
-    <tr>
-      <th>Date</th><th>Time</th><th>Lot</th><th>Model</th>
-      <th>Chassis</th><th>Engine No</th><th>Key No</th><th>Status</th><th>Downtime</th>
-    </tr>
-  </thead>
-  <tbody id="scanTable"></tbody>
+<thead>
+<tr>
+<th>Date</th>
+<th>Time</th>
+<th>Lot</th>
+<th>Model</th>
+<th>Chassis</th>
+<th>Engine No</th>
+<th>Key No</th>
+<th>Status</th>
+<th>Downtime</th>
+</tr>
+</thead>
+<tbody id="scanTable"></tbody>
 </table>
 
-<!-- Connection Status Badge -->
-<div id="connectionStatus">
-  <span class="conn-dot" id="connDot"></span>
-  <span id="connLabel">Connected</span>
-</div>
-
 <script>
-"use strict";
 
-/* ═══════════════════════════════════════════════════════
-   MODE DETECTION
-═══════════════════════════════════════════════════════ */
-const isMonitor = window.location.search.includes("monitor");
+/* ================= SYSTEM SETTINGS ================= */
 
-/* ═══════════════════════════════════════════════════════
-   PASSWORD
-═══════════════════════════════════════════════════════ */
-const SYSTEM_PASSWORD = "1234";
-
-function checkPassword() {
-  if (isMonitor) { hideLogin(); return; }
-  const val = document.getElementById("passwordInput").value;
-  if (val === SYSTEM_PASSWORD) {
-    hideLogin();
-  } else {
-    document.getElementById("loginError").innerText = "Wrong Password!";
-    document.getElementById("passwordInput").value = "";
-  }
-}
-
-function hideLogin() {
-  document.getElementById("loginOverlay").style.display = "none";
-}
-
-document.addEventListener("keydown", e => {
-  if (e.key === "Enter") {
-    const overlay = document.getElementById("loginOverlay");
-    if (overlay && overlay.style.display !== "none") checkPassword();
-  }
-});
-
-/* ═══════════════════════════════════════════════════════
-   SETTINGS
-═══════════════════════════════════════════════════════ */
 const SETTINGS = {
+
   defaultCycle: 16,
   defaultPlan: 1,
+
   breakTime: {
     normal: {
-      weekday: [{ start:600, end:620 }, { start:780, end:840 }],
-      friday:  [{ start:600, end:620 }, { start:750, end:870 }]
+      weekday: [
+        { start: 600, end: 620 },
+        { start: 780, end: 840 }
+      ],
+      friday: [
+        { start: 600, end: 620 },
+        { start: 750, end: 870 }
+      ]
     },
     ramadan: {
-      weekday: [{ start:600, end:610 }, { start:780, end:830 }],
-      friday:  [{ start:600, end:610 }, { start:750, end:860 }]
+      weekday: [
+        { start: 600, end: 610 },
+        { start: 780, end: 830 }
+      ],
+      friday: [
+        { start: 600, end: 610 },
+        { start: 750, end: 860 }
+      ]
     }
   }
+
 };
 
-document.getElementById("cycleTarget").value    = SETTINGS.defaultCycle;
+/* Apply defaults */
+document.getElementById("cycleTarget").value = SETTINGS.defaultCycle;
 document.getElementById("dailyPlanTarget").value = SETTINGS.defaultPlan;
-
+// 🔥 LIVE UPDATE WHEN USER CHANGE INPUT
 document.getElementById("cycleTarget").addEventListener("input", () => {
-  if (!timer) countdownValue = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
-  updateDisplay();
+if(!timer){
+    countdownValue = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+}
+  
+updateDisplay();
 });
 
-document.getElementById("dailyPlanTarget").addEventListener("input", updateDisplay);
+document.getElementById("dailyPlanTarget").addEventListener("input", () => {
+updateDisplay();
+});
 
-/* ═══════════════════════════════════════════════════════
-   TAB / DEVICE LOCK SYSTEM
-   ─────────────────────────────────────────────────────
-   Problem with original code:
-   • sessionStorage is scoped per-tab, so the TAB_ACTIVE
-     check in a NEW tab will always read null → broken.
-   
-   Fix: Use localStorage (shared across all tabs in the
-   same browser) with a heartbeat timestamp. If the
-   heartbeat goes stale (e.g. tab crashed), another tab
-   can claim the lock after STALE_MS milliseconds.
-═══════════════════════════════════════════════════════ */
+/* ===== ORIGINAL LOGIC BELOW (UNCHANGED) ===== */
 
-const TAB_ID       = 'TF2_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
-const LS_LOCK_ID   = 'TF2_LOCK_OWNER';    // which tab holds the lock
-const LS_LOCK_TS   = 'TF2_LOCK_TS';       // last heartbeat timestamp
-const LS_DEVICE_ID = 'TF2_DEVICE_ID';     // persistent device ID
-const HEARTBEAT_MS = 2000;
-const STALE_MS     = 7000;   // lock considered dead if no heartbeat for 7s
+function updateDateTime(){
 
-let heartbeatTimer  = null;
-let lockAcquired    = false;
+  const now = new Date();
 
-/* Generate or retrieve persistent device ID */
-function getDeviceId() {
-  let id = localStorage.getItem(LS_DEVICE_ID);
-  if (!id) {
-    id = 'DEV-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
-    localStorage.setItem(LS_DEVICE_ID, id);
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
+
+  const dateEl = document.getElementById("dateDisplay");
+  const clockEl = document.getElementById("clock");
+
+  if(dateEl && clockEl){
+    dateEl.innerText = now.toLocaleDateString("en-MY", options);
+    clockEl.innerText = now.toLocaleTimeString("en-MY");
   }
-  return id;
 }
 
-/* Try to acquire the local (same-browser) tab lock.
-   Returns true if this tab now owns the lock. */
-function acquireLocalLock() {
-  const owner  = localStorage.getItem(LS_LOCK_ID);
-  const lastTS = parseInt(localStorage.getItem(LS_LOCK_TS) || '0');
-  const now    = Date.now();
+/* ================= GLOBAL LOCK SYSTEM ================= */
 
-  const isStale = (now - lastTS) > STALE_MS;
+/* ================= STRICT GLOBAL LOCK ================= */
 
-  if (!owner || owner === TAB_ID || isStale) {
-    // Claim or reclaim the lock
-    localStorage.setItem(LS_LOCK_ID, TAB_ID);
-    localStorage.setItem(LS_LOCK_TS, now.toString());
+async function checkAccess(){
+
+  // ✅ Allow monitor screen
+  if(window.location.search.includes("monitor")){
     return true;
   }
 
-  // Another tab owns it and is still alive
-  return false;
-}
+  // 🔹 Create unique device ID (once only)
+  let deviceId = localStorage.getItem("DEVICE_ID");
 
-/* Refresh our heartbeat so we're not considered stale */
-function startHeartbeat() {
-  clearInterval(heartbeatTimer);
-  heartbeatTimer = setInterval(() => {
-    const owner = localStorage.getItem(LS_LOCK_ID);
-    if (owner === TAB_ID) {
-      localStorage.setItem(LS_LOCK_TS, Date.now().toString());
-    } else {
-      // Someone stole our lock while we were active
-      clearInterval(heartbeatTimer);
-      showLockScreen('⚠️ SESSION TAKEN OVER', 'Another tab or device has taken control of this system.');
-    }
-  }, HEARTBEAT_MS);
-}
-
-/* Release lock when tab closes properly */
-function releaseLocalLock() {
-  if (localStorage.getItem(LS_LOCK_ID) === TAB_ID) {
-    localStorage.removeItem(LS_LOCK_ID);
-    localStorage.removeItem(LS_LOCK_TS);
+  if(!deviceId){
+    deviceId = "DEV-" + Math.random().toString(36).substring(2);
+    localStorage.setItem("DEVICE_ID", deviceId);
   }
-  clearInterval(heartbeatTimer);
-}
 
-window.addEventListener('beforeunload', releaseLocalLock);
+  try{
 
-/* Detect if another tab in the same browser releases the
-   lock (so this tab can optionally re-acquire it) */
-window.addEventListener('storage', e => {
-  if (isMonitor || lockAcquired) return;
+    // 🔹 STEP 1: CHECK LOCK
+    let res = await fetch(API_URL + "?checkLock=true");
+    let data = await res.json();
 
-  if (e.key === LS_LOCK_ID && (e.newValue === null || e.newValue === '')) {
-    // Lock was released — allow user to refresh and re-enter
-    const lockScreen = document.getElementById('lockScreen');
-    if (lockScreen && lockScreen.style.display === 'flex') {
-      document.getElementById('lockMsg').innerText =
-        'The other session has closed. You may now reload this page to take over.';
-    }
-  }
-});
+    console.log("LOCK DATA:", data);
 
-function showLockScreen(title, msg) {
-  document.getElementById('lockTitle').innerText = title || '⚠️ SYSTEM IN USE';
-  document.getElementById('lockMsg').innerText   = msg   || 'This system is already open elsewhere.';
-  document.getElementById('lockScreen').style.display = 'flex';
-}
+    // ❌ STRICT MODE → BLOCK IF ANY LOCK EXISTS
+    if(data.lock){
 
-/* Admin force-unlock: clears local lock AND sheet lock */
-async function forceUnlock() {
-  localStorage.removeItem(LS_LOCK_ID);
-  localStorage.removeItem(LS_LOCK_TS);
+      document.body.innerHTML = `
+        <h1 style="
+          color:red;
+          text-align:center;
+          margin-top:100px;
+          font-size:40px;
+        ">
+          SYSTEM ALREADY OPEN ON ANOTHER SCREEN
+        </h1>
+      `;
 
-  // Also clear remote device lock on Google Sheets
-  try {
-    await fetch(API_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ clearLock: true })
-    });
-  } catch (e) { /* ignore */ }
-
-  document.getElementById('lockScreen').style.display = 'none';
-  // Re-run the full access check
-  initSystem();
-}
-
-/* Full access check: local tab lock + remote device lock */
-async function checkAccess() {
-  if (isMonitor) return true;
-
-  // 1. Check local (same-browser) tab lock
-  if (!acquireLocalLock()) {
-    showLockScreen(
-      '⚠️ ALREADY OPEN IN THIS BROWSER',
-      'This system is already running in another tab. Close that tab first.'
-    );
-    return false;
-  }
-  lockAcquired = true;
-
-  // 2. Check remote device lock (Google Sheets)
-  const deviceId = getDeviceId();
-  try {
-    const res  = await fetch(API_URL + '?checkLock=true');
-    const data = await res.json();
-
-    if (data.lock && data.lock !== deviceId) {
-      // Another physical device holds the lock
-      releaseLocalLock(); // give up local lock too
-      lockAcquired = false;
-      showLockScreen(
-        '⚠️ SYSTEM OPEN ON ANOTHER DEVICE',
-        'This system is already active on a different device.'
-      );
       return false;
     }
 
-    // Register this device as the lock holder
-    await fetch(API_URL, {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lockRequest: true, deviceId })
+    // 🔹 STEP 2: CLAIM LOCK
+    await fetch(API_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({
+        lockRequest:true,
+        deviceId: deviceId
+      })
     });
 
-  } catch (err) {
-    console.warn('Remote lock check failed (continuing offline):', err);
-    setConnectionStatus(false);
+  }catch(err){
+    console.log("Lock error:", err);
   }
 
-  // Start heartbeat to keep our local lock alive
-  startHeartbeat();
   return true;
 }
+  
+/* ===== VARIABLES ===== */
 
-/* ═══════════════════════════════════════════════════════
-   CONNECTION STATUS UI
-═══════════════════════════════════════════════════════ */
-function setConnectionStatus(online) {
-  const dot   = document.getElementById('connDot');
-  const label = document.getElementById('connLabel');
-  if (!dot || !label) return;
-  if (online) {
-    dot.classList.remove('offline');
-    label.innerText = 'Connected';
-  } else {
-    dot.classList.add('offline');
-    label.innerText = 'Offline';
-  }
-}
+let ramadanMode=false;
+let timer=null;
+let countdownValue=0;
+let actualCount=0;
+let downtimeSeconds=0;
+let lastScanTime=null;
+let startTime=null;
+let isDowntime=false;
+let pendingChassis="";
+let pendingModel="";
+let pendingEngine="";
+let pendingKey="";
+let scannedChassis = new Set();
+let scannedModel = new Set();
+let scannedEngine = new Set();
+let scannedKey = new Set();
+let duplicateLock=false;
+let lastUpdateTime = 0;
+let lastTableData = "";
+  
+/* ===== DATE TIME ===== */
 
-/* ═══════════════════════════════════════════════════════
-   PRODUCTION VARIABLES
-═══════════════════════════════════════════════════════ */
-let ramadanMode     = false;
-let timer           = null;
-let countdownValue  = 0;
-let actualCount     = 0;
-let downtimeSeconds = 0;
-let lastScanTime    = null;
-let startTime       = null;
-let isDowntime      = false;
-let pendingChassis  = "";
-let pendingModel    = "";
-let pendingEngine   = "";
-let pendingKey      = "";
-let scannedChassis  = new Set();
-let scannedModel    = new Set();
-let scannedEngine   = new Set();
-let scannedKey      = new Set();
-let duplicateLock   = false;
-let lastUpdateTime  = 0;
-let lastTableData   = "";
-
-/* ═══════════════════════════════════════════════════════
-   DATE / TIME
-═══════════════════════════════════════════════════════ */
-function updateDateTime() {
+function updateDateTime(){
   const now = new Date();
-  const dateEl  = document.getElementById("dateDisplay");
-  const clockEl = document.getElementById("clock");
-  if (!dateEl || !clockEl) return;
-  dateEl.innerText  = now.toLocaleDateString("en-MY", { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-  clockEl.innerText = now.toLocaleTimeString("en-MY");
+
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
+
+  document.getElementById("dateDisplay").innerText =
+    now.toLocaleDateString("en-MY", options);
+
+  document.getElementById("clock").innerText =
+    now.toLocaleTimeString("en-MY");
 }
 
-/* ═══════════════════════════════════════════════════════
-   UTILITIES
-═══════════════════════════════════════════════════════ */
-function format(s) {
-  s = Math.max(0, Math.round(s));
-  const m   = Math.floor(s / 60);
-  const sec = s % 60;
-  return (m < 10 ? "0" + m : m) + ":" + (sec < 10 ? "0" + sec : sec);
+/* ===== FORMAT ===== */
+
+function format(s){
+const m=Math.floor(s/60);
+const sec=s%60;
+return (m<10?"0"+m:m)+":"+(sec<10?"0"+sec:sec);
 }
 
-/* ═══════════════════════════════════════════════════════
-   BREAK TIME
-═══════════════════════════════════════════════════════ */
-function getBreaks() {
-  const day = new Date().getDay();
-  if (ramadanMode) return day === 5 ? SETTINGS.breakTime.ramadan.friday  : SETTINGS.breakTime.ramadan.weekday;
-  else             return day === 5 ? SETTINGS.breakTime.normal.friday   : SETTINGS.breakTime.normal.weekday;
-}
+/* ===== RAMADAN + BREAK ===== */
 
-function isBreakTime() {
-  const now     = new Date();
-  const current = now.getHours() * 60 + now.getMinutes();
-  return getBreaks().some(b => current >= b.start && current < b.end);
-}
+function isBreakTime(){
 
-function calculateBreakSeconds(from, to) {
-  let total = 0;
-  for (const b of getBreaks()) {
-    const bStart = new Date(from);
-    bStart.setHours(Math.floor(b.start / 60), b.start % 60, 0, 0);
-    const bEnd = new Date(from);
-    bEnd.setHours(Math.floor(b.end / 60), b.end % 60, 0, 0);
-    const overlapStart = Math.max(from.getTime(), bStart.getTime());
-    const overlapEnd   = Math.min(to.getTime(),   bEnd.getTime());
-    if (overlapEnd > overlapStart) total += Math.floor((overlapEnd - overlapStart) / 1000);
+  let now = new Date();
+  let current = now.getHours()*60 + now.getMinutes();
+  let day = now.getDay();
+
+  let breaks = [];
+
+  if(ramadanMode){
+
+    if(day === 5){
+      breaks = SETTINGS.breakTime.ramadan.friday;
+    }else{
+      breaks = SETTINGS.breakTime.ramadan.weekday;
+    }
+
+  }else{
+
+    if(day === 5){
+      breaks = SETTINGS.breakTime.normal.friday;
+    }else{
+      breaks = SETTINGS.breakTime.normal.weekday;
+    }
+
   }
-  return total;
+
+  for(let b of breaks){
+    if(current >= b.start && current < b.end){
+      return true;
+    }
+  }
+
+  return false;
 }
 
-/* ═══════════════════════════════════════════════════════
-   EXPECTED OUTPUT
-═══════════════════════════════════════════════════════ */
-function calculateExpectedOutput() {
-  if (isMonitor || !startTime) return 0;
-  if (!timer) return actualCount;
+function calculateExpectedOutput(){
+    if(isMonitor) return 0;
+    if(!startTime) return 0;
+    if(!timer){
+    return actualCount;
+    }
 
-  const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
-  if (plan > 0 && actualCount >= plan) return plan;
-
-  const now          = new Date();
-  const elapsedSec   = Math.floor((now - startTime) / 1000);
-  const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
-  const breakSec     = calculateBreakSeconds(startTime, now);
-  const netTime      = Math.max(elapsedSec - breakSec, 0);
-  let expected       = Math.floor(netTime / cycleTimeSec);
-  if (actualCount > 0 && expected === 0) expected = 1;
-  return expected;
+  // ✅ STOP expected when target achieved
+    let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+    if(actualCount >= plan && plan > 0){
+    return plan;
 }
 
-/* ═══════════════════════════════════════════════════════
-   STATUS HELPER
-═══════════════════════════════════════════════════════ */
-function setStatus(text, cssClass) {
-  const el = document.getElementById("status");
-  el.innerText  = text;
-  el.className  = "big-number " + cssClass;
-}
+    const now = new Date();
+    let elapsedSec = Math.floor((now - startTime) / 1000);
 
-/* ═══════════════════════════════════════════════════════
-   START / STOP / RESET
-═══════════════════════════════════════════════════════ */
-function startProduction() {
-  if (isMonitor || timer) return;
-  if (!startTime) startTime = new Date();
-  if (countdownValue === 0)
-    countdownValue = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
-
-  timer = setInterval(() => {
-    if (isBreakTime()) { setStatus("BREAK TIME", "status-orange"); updateDisplay(); return; }
     const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
-    const baseTime     = lastScanTime || startTime;
-    const diff         = Math.floor((new Date() - baseTime) / 1000);
-    countdownValue     = Math.max(cycleTimeSec - diff, 0);
-    isDowntime         = (countdownValue === 0);
-    updateDisplay();
-  }, 1000);
+
+    // 🚫 Tolak break Stime
+    let breakSeconds = 0;
+
+    let tempTime = new Date(startTime);
+
+    while(tempTime < now){
+        if(isBreakTime()){
+            breakSeconds += 60;
+        }
+        tempTime.setMinutes(tempTime.getMinutes() + 1);
+    }
+
+   let netTime = elapsedSec - breakSeconds;
+
+    if(netTime < 0) netTime = 0;
+    
+    let expected = Math.floor(netTime / cycleTimeSec);
+    
+    // 🔥 START SHOW AFTER FIRST SCAN
+    if(actualCount > 0 && expected === 0){
+        expected = 1;
+    }
+  
+  return expected;
+
+}
+  
+/* ===== STATUS ===== */
+
+function setStatus(text,color){
+const el=document.getElementById("status");
+el.innerText=text;
+el.className="big-number "+color;
 }
 
-function stopProduction() {
-  clearInterval(timer);
-  timer = null;
-  setStatus("PAUSED", "status-orange");
+/* ===== START ===== */
+
+function startProduction(){
+    if(isMonitor) return;
+    if(timer) return;
+
+    // Set start time if first run
+    if(!startTime){
+        startTime = new Date();
+    }
+
+    // If no scan yet, set initial countdown
+    if(countdownValue === 0){
+        countdownValue = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+    }
+
+    timer = setInterval(() => {
+
+        if(isBreakTime()){
+            setStatus("BREAK TIME", "status-orange");
+            updateDisplay();
+            return;
+        }
+
+        const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
+
+        // 🔥 USE REAL TIME (FIXED)
+        const now = new Date();
+        
+        // use startTime if no scan yet
+        const baseTime = lastScanTime || startTime;
+        
+        const diff = Math.floor((now - baseTime) / 1000);
+        
+        countdownValue = Math.max(cycleTimeSec - diff, 0);
+        
+        if(countdownValue === 0){
+            isDowntime = true;
+        } else {
+            isDowntime = false;
+        }
+
+        updateDisplay();
+
+    }, 1000);
 }
 
-function resetProduction() {
-  clearInterval(timer);
-  timer = null;
-  countdownValue  = 0;
-  actualCount     = 0;
-  downtimeSeconds = 0;
-  lastScanTime    = null;
-  startTime       = null;
-  pendingChassis  = pendingModel = pendingEngine = pendingKey = "";
-  scannedChassis.clear();
-  scannedModel.clear();
-  scannedEngine.clear();
-  scannedKey.clear();
-  isDowntime    = false;
-  duplicateLock = false;
-  document.getElementById("scanTable").innerHTML = "";
-  setStatus("READY", "status-blue");
-  updateDisplay();
-  updateLiveStateOnly();
+/* STOP */
+function stopProduction(){
+clearInterval(timer);
+timer=null;
+setStatus("PAUSED","status-orange");
 }
 
-/* ═══════════════════════════════════════════════════════
-   SCAN INPUT HANDLERS
-   Flow: Chassis → Model → Engine → Key → commit row
-═══════════════════════════════════════════════════════ */
+/* RESET */
+function resetProduction(){
+  
+clearInterval(timer);
+timer=null;
+countdownValue=0;
+actualCount=0;
+downtimeSeconds=0;
+lastScanTime=null;
+startTime=null;
+pendingChassis="";
+scannedChassis.clear();
+scannedModel.clear();
+scannedEngine.clear();
+scannedKey.clear();
+isDowntime=false;
+duplicateLock=false;
+document.getElementById("scanTable").innerHTML="";
+  
+setStatus("READY","status-blue");
+updateDisplay();
+updateLiveStateOnly();
+
+}
+
+/* ===== SCAN CHASSIS ===== */
+
 document.getElementById("chassisInput").addEventListener("keydown", function(e) {
-  if (e.key !== "Enter" || !this.value.trim()) return;
-  const val = this.value.trim();
+if (e.key === "Enter" && this.value.trim() !== "") {
+let value = this.value.trim();
 
-  if (scannedChassis.has(val)) {
-    duplicateLock = true;
-    setStatus("DUPLICATE CHASSIS", "status-red blink");
-    this.value = "";
-    return;
-  }
+/* DUPLICATE CHECK */
+if (scannedChassis.has(value)) {
+duplicateLock = true;
+setStatus("DUPLICATE CHASSIS", "status-red blink");
+this.value = "";
+return;
+}
 
-  if (!timer) startProduction();
-  duplicateLock  = false;
-  pendingChassis = val;
-  scannedChassis.add(val);
-  this.value = "";
-  document.getElementById("modelInput").focus();
+/* --- START COUNTDOWN ON FIRST SCAN --- */
+if (!timer) {
+startProduction(); 
+}
+
+duplicateLock = false;
+pendingChassis = value;
+scannedChassis.add(value);
+
+this.value = "";
+document.getElementById("modelInput").focus();
+}
+});
+  
+/* ===== SCAN MODEL ===== */
+
+document.getElementById("modelInput").addEventListener("keydown",function(e){
+
+if(e.key==="Enter" && this.value.trim()!==""){
+
+if(pendingChassis==="") return;
+
+let model=this.value.trim();
+
+duplicateLock=false;
+
+pendingModel=model;
+scannedModel.add(model);
+
+this.value="";
+document.getElementById("engineInput").focus();
+
+}
+
 });
 
-document.getElementById("modelInput").addEventListener("keydown", function(e) {
-  if (e.key !== "Enter" || !this.value.trim() || !pendingChassis) return;
-  duplicateLock = false;
-  pendingModel  = this.value.trim();
-  scannedModel.add(pendingModel);
-  this.value = "";
-  document.getElementById("engineInput").focus();
+/* ===== SCAN ENGINE NO ===== */
+
+document.getElementById("engineInput").addEventListener("keydown",function(e){
+
+if(e.key==="Enter" && this.value.trim()!==""){
+
+if(pendingModel==="") return;
+
+let value=this.value.trim();
+
+/* DUPLICATE CHECK */
+if(scannedEngine.has(value)){
+duplicateLock=true;
+setStatus("DUPLICATE ENGINE","status-red blink");
+this.value="";
+return;
+}
+
+duplicateLock=false;
+
+pendingEngine=value;
+scannedEngine.add(value);
+
+this.value="";
+document.getElementById("keyInput").focus();
+
+}
+
 });
+  
+/* ===== SCAN KEY ===== */
 
-document.getElementById("engineInput").addEventListener("keydown", function(e) {
-  if (e.key !== "Enter" || !this.value.trim() || !pendingModel) return;
-  const val = this.value.trim();
+document.getElementById("keyInput").addEventListener("keydown",function(e){
 
-  if (scannedEngine.has(val)) {
-    duplicateLock = true;
-    setStatus("DUPLICATE ENGINE", "status-red blink");
-    this.value = "";
-    return;
-  }
+if(e.key==="Enter" && this.value.trim()!==""){
 
-  duplicateLock = false;
-  pendingEngine = val;
-  scannedEngine.add(val);
-  this.value = "";
-  document.getElementById("keyInput").focus();
-});
+if(pendingChassis==="" || pendingModel==="" || pendingEngine==="") return;
 
-document.getElementById("keyInput").addEventListener("keydown", function(e) {
-  if (e.key !== "Enter" || !this.value.trim()) return;
-  if (!pendingChassis || !pendingModel || !pendingEngine) return;
+let key=this.value.trim();
 
-  const key = this.value.trim();
-  if (scannedKey.has(key)) {
-    duplicateLock = true;
-    setStatus("DUPLICATE KEY", "status-red blink");
-    this.value = "";
-    return;
-  }
+/* ===== DUPLICATE CHECK KEY ===== */
+if(scannedKey.has(key)){
+duplicateLock=true;
+setStatus("DUPLICATE KEY","status-red blink");
+this.value="";
+return;
+}
 
-  duplicateLock = false;
-  pendingKey    = key;
-  scannedKey.add(key);
+duplicateLock=false;
 
-  const chassis      = pendingChassis;
-  const model        = pendingModel;
-  const engine       = pendingEngine;
-  const lot          = document.getElementById("lotInput").value || "-";
-  const now          = new Date();
-  const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
-  const plan         = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+pendingKey=key;
+scannedKey.add(key);
+  
+let chassis = pendingChassis;
+let model = pendingModel;
+let engine = pendingEngine;
+let lot = document.getElementById("lotInput").value || "-";
+  
 
-  let downtimeEvent = "";
+const now = new Date();
+const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
 
-  if (lastScanTime) {
-    const diffSec = Math.floor((now - lastScanTime) / 1000);
-    if (diffSec > cycleTimeSec && (actualCount + 1) <= plan) {
-      const actualDowntime = diffSec - cycleTimeSec;
-      downtimeEvent    = format(actualDowntime);
-      downtimeSeconds += actualDowntime;
-      isDowntime       = true;
+let downtimeEvent = "";
+
+if(lastScanTime){
+    let diffSec = Math.floor((now - lastScanTime) / 1000);
+
+    if(diffSec > cycleTimeSec){
+    let actualDowntime = diffSec - cycleTimeSec;
+
+    let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+
+    // ✅ ONLY BEFORE TARGET
+    if((actualCount + 1) <= plan){
+        downtimeEvent = format(actualDowntime);
+        downtimeSeconds += actualDowntime;
+        isDowntime = true;
     } else {
-      isDowntime = false;
+        downtimeEvent = "";
+        isDowntime = false;
     }
-  } else {
+
+        // ✅ TRIGGER STATUS
+        isDowntime = true;
+
+    } else {
+        // ✅ TAK DOWNTIME
+        isDowntime = false;
+    }
+} else {
     isDowntime = false;
-  }
+}
 
-  lastScanTime = now;
+lastScanTime = now;
 
-  // Insert row at top of table
-  const row = document.getElementById("scanTable").insertRow(0);
-  row.insertCell(0).innerText = now.toLocaleDateString();
-  row.insertCell(1).innerText = now.toLocaleTimeString();
-  row.insertCell(2).innerText = lot;
-  row.insertCell(3).innerText = model;
-  row.insertCell(4).innerText = chassis;
-  row.insertCell(5).innerText = engine;
-  row.insertCell(6).innerText = key;
+let row=document.getElementById("scanTable").insertRow(0);
 
-  const statusCell   = row.insertCell(7);
-  const downtimeCell = row.insertCell(8);
+row.insertCell(0).innerText=now.toLocaleDateString();
+row.insertCell(1).innerText=now.toLocaleTimeString();
+row.insertCell(2).innerText=lot;
+row.insertCell(3).innerText=model;
+row.insertCell(4).innerText=chassis;
+row.insertCell(5).innerText=engine;
+row.insertCell(6).innerText=key;
 
-  if (downtimeEvent) {
-    statusCell.innerText   = "DOWN TIME";
-    statusCell.className   = "status-red";
-    downtimeCell.innerText = downtimeEvent;
-    downtimeCell.className = "status-red";
-  } else {
-    statusCell.innerText = "SCANNED";
-    statusCell.className = "status-green";
-  }
+let statusCell=row.insertCell(7);
+let downtimeCell=row.insertCell(8);
 
-  actualCount++;
-  countdownValue = cycleTimeSec;
-  isDowntime     = false;
+if(downtimeEvent){
+statusCell.innerText="DOWN TIME";
+statusCell.classList.add("status-red");
+downtimeCell.innerText=downtimeEvent;
+downtimeCell.classList.add("status-red");
+}
+else{
+statusCell.innerText="SCANNED";
+statusCell.classList.add("status-green");
+}
 
-  // Stop timer when plan is reached
-  if (plan > 0 && actualCount >= plan) {
-    clearInterval(timer);
-    timer          = null;
-    countdownValue = 0;
-    isDowntime     = false;
-  }
+actualCount++;
+countdownValue=cycleTimeSec;
+isDowntime=false;
 
-  updateDisplay();
-  sendToSheet(chassis, model, engine, key, lot, statusCell.innerText, downtimeEvent);
+updateDisplay();
 
-  pendingChassis = pendingModel = pendingEngine = pendingKey = "";
-  this.value = "";
-  setTimeout(() => document.getElementById("chassisInput").focus(), 50);
+sendToSheet(
+  chassis,
+  model,
+  engine,
+  key,
+  lot,
+  statusCell.innerText,
+  downtimeEvent
+);
+
+pendingChassis="";
+pendingModel="";
+pendingEngine="";
+pendingKey="";
+
+this.value="";
+
+setTimeout(()=>{
+document.getElementById("chassisInput").focus();
+},50);
+  
+}
+});
+  
+/* ===== UPDATE DISPLAY ===== */
+
+function updateDisplay() {
+    if(isMonitor) return;
+    let plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+    let balance = actualCount - plan;
+    let displayBalance = balance > 0 ? ("+" + balance) : balance;
+
+    //  EXPECTED CALCULATION
+    let expected = calculateExpectedOutput();
+
+    // ✅ FORCE CORRECT LOGIC AFTER TARGET
+    if(actualCount >= plan && plan > 0){
+        expected = plan;
+}
+    let delay = actualCount - expected;
+    let delayEl = document.getElementById("delay");
+
+    delayEl.className = "big-number";
+    
+    if(delay < 0){
+        delayEl.classList.add("status-red");
+    } 
+    else if(delay > 0){
+        delayEl.classList.add("status-green");
+    } 
+    else{
+        delayEl.classList.add("status-blue");
+    }
+    
+    delayEl.innerText = delay > 0 ? ("+" + delay) : delay;
+      
+    let efficiency = 0;
+
+    if(expected > 0){
+    efficiency = (actualCount / expected) * 100;
+    }
+    
+    efficiency = Math.floor(efficiency);
+    
+    let effEl = document.getElementById("efficiency");
+    effEl.innerText = efficiency + "%";
+
+    if(efficiency < 90){
+    effEl.className = "big-number status-red";
+    }
+    else if(efficiency < 100){
+    effEl.className = "big-number status-orange";
+    }
+    else{
+    effEl.className = "big-number status-green";
+    }
+    
+    // Display Expected
+    document.getElementById("expected").innerText = expected;
+    document.getElementById("plan").innerText = plan;
+    document.getElementById("actual").innerText = actualCount;
+    document.getElementById("countdown").innerText = format(countdownValue);
+    document.getElementById("downtime").innerText = format(downtimeSeconds);
+
+    let balanceEl = document.getElementById("balance");
+    if (balance < 0) { balanceEl.className = "big-number status-red"; } 
+    else if (balance > 0) { balanceEl.className = "big-number status-green"; } 
+    else { balanceEl.className = "big-number status-blue"; }
+    balanceEl.innerText = displayBalance;
+    if(delay < 0){
+    setStatus("BEHIND SCHEDULE","status-red blink");
+}
+
+    /* ================= LOGIK STATUS BARU ================= */
+    if (isBreakTime()) {
+        setStatus("BREAK TIME", "status-orange");
+    } 
+    else if (duplicateLock) {
+        setStatus("DUPLICATE SCAN", "status-red blink");
+    } 
+    else if (isDowntime) {
+        setStatus("DOWN TIME", "status-red blink");
+    } 
+    else if (actualCount >= plan && plan > 0) {
+        clearInterval(timer); timer = null; countdownValue = 0; isDowntime = false;
+        setStatus("TARGET ACHIEVED", "status-green");
+    } 
+    // Jika sedang dalam proses scan (salah satu input sudah diisi tapi belum lengkap semua)
+    else if (pendingChassis !== "" && pendingModel === "") {
+        setStatus("WAITING MODEL", "status-orange");
+    } 
+    else if (pendingModel !== "" && pendingEngine === "") {
+        setStatus("WAITING ENGINE", "status-orange");
+    } 
+    else if (pendingEngine !== "" && pendingKey === "") {
+        setStatus("WAITING KEY", "status-orange");
+    } 
+    // Jika timer sedang jalan dan tiada proses scan yang tertunggak, status adalah RUNNING
+    else if (timer) {
+        setStatus("RUNNING", "status-green pulse");
+    } 
+    else {
+        setStatus("READY", "status-blue");
+    }
+    /* ===================================================== */
+
+    const downtimeCard = document.getElementById("downtimeCard");
+    const downtimeText = document.getElementById("downtime");
+    if (isDowntime) {
+        downtimeCard.classList.add("downtime-alert", "blink");
+        downtimeText.classList.add("status-red", "blink");
+    } else {
+        downtimeCard.classList.remove("downtime-alert", "blink");
+        downtimeText.classList.remove("status-red", "blink");
+    }
+}
+/* ===== DAILY SUMMARY ===== */
+
+/* ===== DAILY SUMMARY (VERSI DIKEMASKINI: SAMA PERSIH DENGAN DASHBOARD) ===== */
+
+function openSummary() {
+    let plan = parseInt(document.getElementById("plan").innerText) || 0;
+    let actual = parseInt(document.getElementById("actual").innerText) || 0;
+    let downtime = document.getElementById("downtime").innerText;
+    let diff = actual - plan;
+    let diffDisplay = diff > 0 ? ("+" + diff) : diff;
+
+    // Ambil semua baris dari jadual papan pemuka
+    let rows = document.querySelectorAll("#scanTable tr");
+    let tableRows = "";
+
+    // Gelung setiap baris papan pemuka untuk mengekstrak data dan kelas warna
+    rows.forEach(row => {
+        let cells = row.querySelectorAll("td");
+        if (cells.length > 0) {
+            // Ambil sel Status dan sel Downtime untuk mengekstrak kelas warna
+            let statusCell = cells[7];
+            let downtimeCell = cells[8];
+
+            // Tentukan kelas warna status yang betul
+            let statusClass = "";
+            if (statusCell.classList.contains("status-red")) {
+                statusClass = "status-red";
+            } else if (statusCell.classList.contains("status-green")) {
+                statusClass = "status-green";
+            }
+
+            // Tentukan kelas warna downtime yang betul
+            let downtimeClass = "";
+            if (downtimeCell.classList.contains("status-red")) {
+                downtimeClass = "status-red";
+            }
+
+            // Bina HTML baris untuk laporan, memindahkan data DAN kelas warna
+            tableRows += `
+<tr>
+<td>${cells[0].innerText}</td> <td>${cells[1].innerText}</td> <td>${cells[2].innerText}</td> <td>${cells[3].innerText}</td> <td>${cells[4].innerText}</td> <td>${cells[5].innerText}</td> <td>${cells[6].innerText}</td> <td class="${statusClass}">${cells[7].innerText}</td> <td class="${downtimeClass}">${cells[8].innerText}</td> </tr>`;
+        }
+    });
+
+    // Kandungan HTML Laporan Larian Harian
+    let htmlContent = `
+<html>
+<head>
+<title>Daily Summary Report</title>
+<style>
+/* --- Gaya Asas (Sama seperti Dashboard) --- */
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#0b1220; /* Warna latar belakang gelap */
+color:#e5e7eb;
+padding:40px;
+}
+
+h1{
+text-align:center;
+color:#60a5fa; /* Warna biru tajuk */
+margin-bottom:30px;
+font-size:36px;
+font-weight: 800;
+}
+
+/* --- Gaya Jadual Ringkasan (Atas) --- */
+.summary-card {
+    border-radius: 20px;
+    background: #111827;
+    width: 450px;
+    margin: 0 auto 50px auto;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+.summary-table{
+width:100%;
+border-collapse:collapse;
+}
+
+.summary-table th,
+.summary-table td{
+padding:14px;
+text-align:center;
+}
+
+.summary-table th{
+background:#1f2937;
+color:#60a5fa;
+font-weight:bold;
+text-align: left;
+width: 50%;
+border-radius: 10px 0 0 10px;
+}
+
+.summary-table td {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* --- Gaya Jadual Butiran (Bawah) --- */
+.detail-table-container {
+    background: #111827;
+    border-radius: 15px;
+    padding: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+table.detail-table{
+width:100%;
+border-collapse:collapse;
+}
+
+.detail-table th, .detail-table td{
+padding:12px;
+text-align:center;
+border-bottom: 1px solid #1f2937;
+font-size: 14px;
+}
+
+.detail-table th{
+background:#1f2937;
+color:#60a5fa;
+font-weight:bold;
+text-transform: uppercase;
+}
+
+.detail-table tr:last-child td {
+    border-bottom: none;
+}
+
+.detail-table tr:nth-child(even){
+background:#0f172a;
+}
+
+/* --- Gaya Warna Status (SAMA SEPERTI DASHBOARD) --- */
+.status-green{
+color:#22c55e !important; /* Warna hijau */
+font-weight:bold;
+}
+
+.status-red{
+color:#ef4444 !important; /* Warna merah */
+font-weight:bold;
+}
+
+/* --- Gaya Butang Tindakan --- */
+.action-buttons{
+text-align:center;
+margin-top:40px;
+}
+
+.action-buttons button{
+padding:12px 28px;
+margin:0 12px;
+border:none;
+border-radius:30px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+background:#2563eb;
+color:white;
+transition: background 0.2s;
+}
+
+.action-buttons button:hover{
+background:#1d4ed8;
+}
+
+/* --- Gaya MOD CETAK (Memastikan warna kekal dalam PDF) --- */
+@media print{
+body{
+background:white !important;
+color:black !important;
+padding:20px !important;
+}
+
+h1{ color: black !important; }
+
+.summary-card, .detail-table-container {
+background:white !important;
+color:black !important;
+box-shadow:none !important;
+border: 1px solid #ccc;
+}
+
+.summary-table th, .detail-table th {
+background:#f0f0f0 !important;
+color:black !important;
+border: 1px solid #ccc !important;
+}
+
+.summary-table td, .detail-table td{
+color:black !important;
+border:1px solid #ccc !important;
+}
+
+/* Memaksa cetakan warna untuk status */
+.status-green{
+color:#22c55e !important;
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
+}
+
+.status-red{
+color:#ef4444 !important;
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
+}
+
+.action-buttons{ display:none !important; }
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>DAILY SUMMARY REPORT</h1>
+
+<div class="summary-card">
+<table class="summary-table">
+<tr>
+<th>Date</th>
+<td>${new Date().toLocaleDateString()}</td>
+</tr>
+<tr>
+<th>Plan</th>
+<td>${plan}</td>
+</tr>
+<tr>
+<th>Actual</th>
+<td>${actual}</td>
+</tr>
+<tr>
+<th>Difference</th>
+<td>${diffDisplay}</td>
+</tr>
+<tr>
+<th>Total Downtime</th>
+<td class="${downtime !== '00:00' ? 'status-red' : ''}">${downtime}</td>
+</tr>
+<tr>
+<th>Total Units Scanned</th>
+<td>${actual}</td>
+</tr>
+</table>
+</div>
+
+<div class="detail-table-container">
+<table class="detail-table">
+<thead>
+<tr>
+<th>Date</th>
+<th>Time</th>
+<th>Lot</th>
+<th>Model</th>
+<th>Chassis</th>
+<th>Engine No</th>
+<th>Key No</th>
+<th>Status</th>
+<th>Downtime</th>
+</tr>
+</thead>
+<tbody>
+${tableRows}
+</tbody>
+</table>
+</div>
+
+<div class="action-buttons">
+<button onclick="window.print()">Print Report / Save PDF</button>
+<button onclick="window.opener.downloadExcel()">Download Excel</button>
+</div>
+
+</body>
+</html>
+`;
+
+    // Buka tetingkap laporan baru
+    let newWindow = window.open();
+    newWindow.document.write(htmlContent);
+    newWindow.document.close();
+}
+
+/* ===== EXCEL ===== */
+
+function downloadExcel(){
+let wb=XLSX.utils.book_new();
+let data=[["Date","Time","Lot","Model","Chassis","Engine No","Key No","Status","Downtime"]];
+
+document.querySelectorAll("#scanTable tr").forEach(row=>{
+let cells=row.querySelectorAll("td");
+if(cells.length>0){
+data.push([
+cells[0].innerText,
+cells[1].innerText,
+cells[2].innerText,
+cells[3].innerText,
+cells[4].innerText,
+cells[5].innerText,
+cells[6].innerText,
+cells[7].innerText,
+cells[8].innerText
+]);
+}
 });
 
-/* ═══════════════════════════════════════════════════════
-   UPDATE DISPLAY
-═══════════════════════════════════════════════════════ */
-function updateDisplay() {
-  if (isMonitor) return;
+let ws=XLSX.utils.aoa_to_sheet(data);
 
-  const plan     = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
-  const balance  = actualCount - plan;
-  let   expected = calculateExpectedOutput();
-
-  if (plan > 0 && actualCount >= plan) expected = plan;
-
-  const delay   = actualCount - expected;
-  const delayEl = document.getElementById("delay");
-  delayEl.className = "big-number " + (delay < 0 ? "status-red" : delay > 0 ? "status-green" : "status-blue");
-  delayEl.innerText = delay > 0 ? "+" + delay : delay;
-
-  const efficiency = expected > 0 ? Math.floor((actualCount / expected) * 100) : 0;
-  const effEl      = document.getElementById("efficiency");
-  effEl.innerText  = efficiency + "%";
-  effEl.className  = "big-number " + (efficiency < 90 ? "status-red" : efficiency < 100 ? "status-orange" : "status-green");
-
-  document.getElementById("expected").innerText  = expected;
-  document.getElementById("plan").innerText      = plan;
-  document.getElementById("actual").innerText    = actualCount;
-  document.getElementById("countdown").innerText = format(countdownValue);
-  document.getElementById("downtime").innerText  = format(downtimeSeconds);
-
-  const balanceEl      = document.getElementById("balance");
-  balanceEl.className  = "big-number " + (balance < 0 ? "status-red" : balance > 0 ? "status-green" : "status-blue");
-  balanceEl.innerText  = balance > 0 ? "+" + balance : balance;
-
-  // Determine line status
-  if      (isBreakTime())                                        setStatus("BREAK TIME",       "status-orange");
-  else if (duplicateLock)                                        setStatus("DUPLICATE SCAN",   "status-red blink");
-  else if (isDowntime)                                           setStatus("DOWN TIME",         "status-red blink");
-  else if (plan > 0 && actualCount >= plan)                      setStatus("TARGET ACHIEVED",  "status-green");
-  else if (pendingChassis && !pendingModel)                      setStatus("WAITING MODEL",     "status-orange");
-  else if (pendingModel   && !pendingEngine)                     setStatus("WAITING ENGINE",    "status-orange");
-  else if (pendingEngine  && !pendingKey)                        setStatus("WAITING KEY",       "status-orange");
-  else if (timer)                                                setStatus("RUNNING",           "status-green pulse");
-  else                                                           setStatus("READY",             "status-blue");
-
-  // Downtime card alert
-  const downtimeCard = document.getElementById("downtimeCard");
-  const downtimeText = document.getElementById("downtime");
-  if (isDowntime) {
-    downtimeCard.classList.add("downtime-alert", "blink");
-    downtimeText.classList.add("status-red", "blink");
-  } else {
-    downtimeCard.classList.remove("downtime-alert", "blink");
-    downtimeText.classList.remove("status-red", "blink");
-  }
+for(let i=1;i<data.length;i++){
+let cell="E"+(i+1);
+if(ws[cell]){
+if(ws[cell].v==="DOWN TIME"){
+ws[cell].s={font:{color:{rgb:"FF0000"},bold:true}};
+}
+if(ws[cell].v==="SCANNED"){
+ws[cell].s={font:{color:{rgb:"00AA00"},bold:true}};
+}
+}
 }
 
-/* ═══════════════════════════════════════════════════════
-   DAILY SUMMARY POPUP
-═══════════════════════════════════════════════════════ */
-function openSummary() {
-  const plan     = parseInt(document.getElementById("plan").innerText)   || 0;
-  const actual   = parseInt(document.getElementById("actual").innerText) || 0;
-  const downtime = document.getElementById("downtime").innerText;
-  const diff     = actual - plan;
-  const diffDisplay = diff > 0 ? "+" + diff : diff;
-
-  let tableRows = "";
-  document.querySelectorAll("#scanTable tr").forEach(row => {
-    const cells = row.querySelectorAll("td");
-    if (!cells.length) return;
-    const statusClass   = cells[7].classList.contains("status-red")   ? "status-red"
-                        : cells[7].classList.contains("status-green") ? "status-green" : "";
-    const downtimeClass = cells[8].classList.contains("status-red")   ? "status-red" : "";
-    tableRows += `<tr>
-      <td>${cells[0].innerText}</td><td>${cells[1].innerText}</td>
-      <td>${cells[2].innerText}</td><td>${cells[3].innerText}</td>
-      <td>${cells[4].innerText}</td><td>${cells[5].innerText}</td>
-      <td>${cells[6].innerText}</td>
-      <td class="${statusClass}">${cells[7].innerText}</td>
-      <td class="${downtimeClass}">${cells[8].innerText}</td>
-    </tr>`;
-  });
-
-  const html = `<html><head><title>Daily Summary Report</title>
-<style>
-body{margin:0;font-family:'Segoe UI',sans-serif;background:#0b1220;color:#e5e7eb;padding:40px;}
-h1{text-align:center;color:#60a5fa;margin-bottom:30px;font-size:36px;font-weight:800;}
-.summary-card{border-radius:20px;background:#111827;width:450px;margin:0 auto 50px auto;padding:10px;box-shadow:0 4px 6px rgba(0,0,0,0.3);}
-.summary-table{width:100%;border-collapse:collapse;}
-.summary-table th,.summary-table td{padding:14px;text-align:center;}
-.summary-table th{background:#1f2937;color:#60a5fa;font-weight:bold;text-align:left;width:50%;}
-.summary-table td{font-size:18px;font-weight:bold;}
-.detail-table-container{background:#111827;border-radius:15px;padding:10px;overflow:hidden;}
-table.detail-table{width:100%;border-collapse:collapse;}
-.detail-table th,.detail-table td{padding:12px;text-align:center;border-bottom:1px solid #1f2937;font-size:14px;}
-.detail-table th{background:#1f2937;color:#60a5fa;font-weight:bold;}
-.detail-table tr:nth-child(even){background:#0f172a;}
-.status-green{color:#22c55e !important;font-weight:bold;}
-.status-red{color:#ef4444 !important;font-weight:bold;}
-.action-buttons{text-align:center;margin-top:40px;}
-.action-buttons button{padding:12px 28px;margin:0 12px;border:none;border-radius:30px;font-size:15px;font-weight:bold;cursor:pointer;background:#2563eb;color:white;}
-@media print{
-  body{background:white !important;color:black !important;}
-  h1{color:black !important;}
-  .summary-card,.detail-table-container{background:white !important;border:1px solid #ccc;}
-  .summary-table th,.detail-table th{background:#f0f0f0 !important;color:black !important;}
-  .status-green{color:#22c55e !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  .status-red{color:#ef4444 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  .action-buttons{display:none !important;}
-}
-</style></head><body>
-<h1>DAILY SUMMARY REPORT</h1>
-<div class="summary-card"><table class="summary-table">
-  <tr><th>Date</th><td>${new Date().toLocaleDateString()}</td></tr>
-  <tr><th>Plan</th><td>${plan}</td></tr>
-  <tr><th>Actual</th><td>${actual}</td></tr>
-  <tr><th>Difference</th><td>${diffDisplay}</td></tr>
-  <tr><th>Total Downtime</th><td class="${downtime !== '00:00' ? 'status-red' : ''}">${downtime}</td></tr>
-  <tr><th>Total Units Scanned</th><td>${actual}</td></tr>
-</table></div>
-<div class="detail-table-container">
-<table class="detail-table"><thead>
-<tr><th>Date</th><th>Time</th><th>Lot</th><th>Model</th><th>Chassis</th><th>Engine No</th><th>Key No</th><th>Status</th><th>Downtime</th></tr>
-</thead><tbody>${tableRows}</tbody></table></div>
-<div class="action-buttons">
-  <button onclick="window.print()">🖨 Print / Save PDF</button>
-  <button onclick="window.opener.downloadExcel()">📥 Download Excel</button>
-</div></body></html>`;
-
-  const win = window.open();
-  win.document.write(html);
-  win.document.close();
+XLSX.utils.book_append_sheet(wb,ws,"Daily Report");
+XLSX.writeFile(wb,"Daily_Summary_Report.xlsx");
 }
 
-/* ═══════════════════════════════════════════════════════
-   EXCEL DOWNLOAD
-═══════════════════════════════════════════════════════ */
-function downloadExcel() {
-  const wb   = XLSX.utils.book_new();
-  const data = [["Date","Time","Lot","Model","Chassis","Engine No","Key No","Status","Downtime"]];
+/* ===== FULL SCREEN ===== */
 
-  document.querySelectorAll("#scanTable tr").forEach(row => {
-    const cells = row.querySelectorAll("td");
-    if (cells.length) {
-      data.push(Array.from(cells, c => c.innerText));
-    }
-  });
+function toggleFullScreen(){
 
-  const ws = XLSX.utils.aoa_to_sheet(data);
-
-  for (let i = 1; i < data.length; i++) {
-    const cell = "H" + (i + 1);
-    if (ws[cell]) {
-      if (ws[cell].v === "DOWN TIME") ws[cell].s = { font:{ color:{ rgb:"FF0000" }, bold:true } };
-      if (ws[cell].v === "SCANNED")   ws[cell].s = { font:{ color:{ rgb:"00AA00" }, bold:true } };
-    }
-  }
-
-  XLSX.utils.book_append_sheet(wb, ws, "Daily Report");
-  XLSX.writeFile(wb, "Daily_Summary_Report.xlsx");
+if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen();
+}else{
+    document.exitFullscreen();
 }
 
-/* ═══════════════════════════════════════════════════════
-   FULLSCREEN
-═══════════════════════════════════════════════════════ */
-function toggleFullScreen() {
-  if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
-  else document.exitFullscreen();
 }
 
-/* ═══════════════════════════════════════════════════════
-   RAMADHAN TOGGLE
-═══════════════════════════════════════════════════════ */
-function toggleRamadan() {
+/* ===== RAMADHAN TOGGLE ===== */
+
+function toggleRamadan(){
   ramadanMode = !ramadanMode;
+
   const btn = document.getElementById("ramadanToggle");
-  if (ramadanMode) {
-    btn.innerText        = "🌙 Ramadhan : ON";
+
+  if(ramadanMode){
+    btn.innerText = "🌙 Ramadhan : ON";
     btn.style.background = "#16a34a";
-  } else {
-    btn.innerText        = "🌙 Ramadhan : OFF";
+  }else{
+    btn.innerText = " 🌙 Ramadhan : OFF";
     btn.style.background = "#2563eb";
   }
+
   updateDisplay();
 }
 
-/* ═══════════════════════════════════════════════════════
-   GOOGLE SHEETS API
-═══════════════════════════════════════════════════════ */
+/* ================= GOOGLE SHEET MIRROR LAYER ================= */
+
+// 🔴 GANTI DENGAN LINK /exec WEB APP ANDA
 const API_URL = "https://script.google.com/macros/s/AKfycbwwLUYjoT7GH0sfFCGZMJoeLApmPWWKEF5LsdNqvkRpstZjerG9d3zG78bh0RTA1Fu48Q/exec";
 
-/* ═══════════════════════════════════════════════════════
-   LIVE STATE PUSH (every second while running)
-═══════════════════════════════════════════════════════ */
-function updateLiveStateOnly() {
-  if (isMonitor) return;
+// Detect monitor mode (?monitor)
+const isMonitor = window.location.search.includes("monitor");
 
-  const plan   = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+
+function updateLiveStateOnly(){
+
+  if(isMonitor) return;
+
+  const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
   const actual = actualCount;
-  let expected = calculateExpectedOutput();
-  let delay, efficiency;
 
-  if (plan > 0 && actual >= plan) {
-    expected   = plan;
-    delay      = actual - plan;
+  let expected = calculateExpectedOutput();
+  let delay = actual - expected;
+
+  let efficiency = 0;
+
+  // 🔥 FORCE SAME AS MAIN PC WHEN TARGET ACHIEVED
+  if(actual >= plan && plan > 0){
+    expected = plan;
+    delay = actual - plan;
     efficiency = 100;
   } else {
-    delay      = actual - expected;
-    efficiency = expected > 0 ? Math.floor((actual / expected) * 100) : 0;
+    if(expected > 0){
+      efficiency = Math.floor((actual / expected) * 100);
+    }
   }
 
   const balance = actual - plan;
-  const status  = document.getElementById("status").innerText.trim();
+  const status = document.getElementById("status").innerText.trim();
 
-  fetch(API_URL, {
-    method: "POST", mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
+ fetch(API_URL,{
+  method:"POST",
+  mode:"no-cors",   // 🔥 ADD THIS
+  headers:{
+    "Content-Type":"application/json"
+    },
     body: JSON.stringify({
-      liveOnly:true, plan, actual, balance, status,
-      countdown:countdownValue, totalDowntime:downtimeSeconds,
-      expected, delay, efficiency
-    })
+    liveOnly: true,
+    plan: plan,
+    actual: actual,
+    balance: balance,
+    status: status,
+    countdown: countdownValue,
+    totalDowntime: downtimeSeconds,
+    expected: expected,
+    delay: delay,
+    efficiency: efficiency
   })
-  .then(() => setConnectionStatus(true))
-  .catch(() => setConnectionStatus(false));
+});
 }
 
-/* ═══════════════════════════════════════════════════════
-   SEND SCAN ROW TO SHEET
-═══════════════════════════════════════════════════════ */
-function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent) {
-  const plan    = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
-  const balance = actualCount - plan;
+  
+function sendToSheet(chassis, model, engine, key, lot, status, downtimeEvent){
+  
+  const plan = parseInt(document.getElementById("dailyPlanTarget").value) || 0;
+  const actual = actualCount;
+  const balance = actual - plan;
 
-  fetch(API_URL, {
-    method: "POST", mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      lot, model, chassis, engine, key, status,
-      plan, actual:actualCount, balance, downtimeEvent,
-      totalDowntime:downtimeSeconds, countdown:countdownValue
+  fetch(API_URL,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({
+      lot: lot,
+      model: model,
+      chassis: chassis,
+      engine: engine,
+      key: key,
+      status: status,
+      plan: plan,
+      actual: actual,
+      balance: balance,
+      downtimeEvent: downtimeEvent,
+      totalDowntime: downtimeSeconds,
+      countdown: countdownValue
     })
   })
-  .then(() => setConnectionStatus(true))
-  .catch(() => setConnectionStatus(false));
+  .catch(err=>console.log("Sheet error:",err));
+
 }
 
-/* ═══════════════════════════════════════════════════════
-   CLEAN DOWNTIME (monitor data normalisation)
-═══════════════════════════════════════════════════════ */
-function cleanDowntime(raw) {
-  if (!raw) return "";
-  if (typeof raw === "string" && raw.includes("1899")) {
-    const d = new Date(raw);
-    const m = d.getMinutes(), s = d.getSeconds();
-    if (m > 0 && s === 0) return "00:" + String(m).padStart(2, "0");
-    return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+function cleanDowntime(raw){
+
+  if(!raw) return "";
+
+  // 🔥 CASE 1: Google date string (1899 issue)
+  if(typeof raw === "string" && raw.includes("1899")){
+    
+    let date = new Date(raw);
+
+    let m = date.getMinutes();
+    let s = date.getSeconds();
+
+    // 🔥 FIX: swap if wrong format (Google flips sometimes)
+    if(m > 0 && s === 0){
+      return "00:" + String(m).padStart(2,'0');
+    }
+
+    return String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
   }
-  if (/^\d{2}:\d{2}$/.test(raw)) return raw;
-  if (!isNaN(raw)) {
-    const sec = parseInt(raw);
-    return String(Math.floor(sec / 60)).padStart(2, "0") + ":" + String(sec % 60).padStart(2, "0");
+
+  // Already correct
+  if(/^\d{2}:\d{2}$/.test(raw)){
+    return raw;
   }
+
+  // Number case
+  if(!isNaN(raw)){
+    let sec = parseInt(raw);
+    let m = Math.floor(sec / 60);
+    let s = sec % 60;
+
+    return String(m).padStart(2,'0') + ":" + String(s).padStart(2,'0');
+  }
+
   return raw;
 }
+  
+// Ambil data untuk MONITOR PC
+function loadLiveData(){
 
-/* ═══════════════════════════════════════════════════════
-   MONITOR: LOAD LIVE DATA FROM SHEET
-═══════════════════════════════════════════════════════ */
-function loadLiveData() {
   fetch(API_URL)
     .then(res => res.json())
     .then(data => {
-      const now = Date.now();
-      if (now - lastUpdateTime < 900) return;
-      lastUpdateTime = now;
+    const now = Date.now();
+    if(now - lastUpdateTime < 1000) return;
+    lastUpdateTime = now;
 
-      if (!data?.state?.length) return;
+    // ✅ CHECK FIRST (IMPORTANT)
+    if(!data || !data.state || data.state.length === 0) return;
 
-      let newState = data.state[0];
-      if (newState) window.lastValidState = newState;
-      if (!window.lastValidState) return;
+// ✅ THEN ONLY PROCESS
+    let newState = data.state[0];
+      
+    // ✅ ONLY update if valid
+    if(newState){
+    window.lastValidState = newState;
+}
+    
+    // ✅ NEVER allow null overwrite
+    if(!window.lastValidState) return;
+    
+    const state = window.lastValidState;
+    
+    if(!state || state.length < 9){
+    console.log("⚠️ Invalid state skipped");
+    return;
+  }  
+      
+    const scanRows = data.scan.slice(1);
+    const table = document.getElementById("scanTable");
+    
+    // Convert to string for comparison
+    const newTableData = JSON.stringify(scanRows);
+    
+    if(newTableData !== lastTableData){
 
-      const state = window.lastValidState;
-      if (!state || state.length < 9) return;
+  lastTableData = newTableData;
 
-      // Update scan table only when data changes
-      const scanRows    = data.scan?.slice(1) ?? [];
-      const table       = document.getElementById("scanTable");
-      const newTableStr = JSON.stringify(scanRows);
+  table.innerHTML="";
 
-      if (newTableStr !== lastTableData) {
-        lastTableData = newTableStr;
-        table.innerHTML = "";
-        [...scanRows].reverse().forEach(row => {
-          const tr          = table.insertRow();
-          const dt          = new Date(row[0]);
-          tr.insertCell(0).innerText = dt.toLocaleDateString("en-GB");
-          tr.insertCell(1).innerText = dt.toLocaleTimeString("en-GB", { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:true }).toLowerCase();
-          tr.insertCell(2).innerText = row[1] || "-";
-          tr.insertCell(3).innerText = row[2] || "-";
-          tr.insertCell(4).innerText = row[3] || "-";
-          tr.insertCell(5).innerText = row[4] || "-";
-          tr.insertCell(6).innerText = row[5] || "-";
+  scanRows.reverse().forEach(row => {
 
-          const statusCell = tr.insertCell(7);
-          const statusText = row[6] || "";
-          statusCell.innerText = statusText;
-          if (statusText === "SCANNED")   statusCell.className = "status-green";
-          if (statusText === "DOWN TIME") statusCell.className = "status-red";
+    let newRow = table.insertRow();
 
-          const downtimeCell = tr.insertCell(8);
-          if (statusText === "DOWN TIME") {
-            downtimeCell.innerText = cleanDowntime(row[7] || "");
-            downtimeCell.className = "status-red";
-          }
-        });
+    let fullDateTime = new Date(row[0]);
+    newRow.insertCell(0).innerText = fullDateTime.toLocaleDateString("en-GB");
+    newRow.insertCell(1).innerText = fullDateTime.toLocaleTimeString("en-GB", {
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true 
+    }).toLowerCase();
+
+    newRow.insertCell(2).innerText = row[1] || "-";
+    newRow.insertCell(3).innerText = row[2] || "-";
+    newRow.insertCell(4).innerText = row[3] || "-";
+    newRow.insertCell(5).innerText = row[4] || "-";
+    newRow.insertCell(6).innerText = row[5] || "-";
+
+    let statusCell = newRow.insertCell(7);
+    let statusText = row[6] || "";
+    statusCell.innerText = statusText;
+
+    console.log("FULL ROW:", row);
+    console.log("DowntimeEvent (row[10]):", row[7]);
+    console.log("TotalDowntime (row[11]):", row[11]);
+
+    if(statusText === "SCANNED") statusCell.className = "status-green";
+    if(statusText === "DOWN TIME") statusCell.className = "status-red";
+
+    let downtimeCell = newRow.insertCell(8);
+
+// ✅ ONLY show downtime if status is DOWN TIME
+    if(statusText === "DOWN TIME"){
+    let rawDowntime = row[7] || "";
+    downtimeCell.innerText = cleanDowntime(rawDowntime);
+    downtimeCell.className = "status-red";
+    }else{
+    downtimeCell.innerText = ""; // IMPORTANT (no carry over)
+}
+
+    if(statusText === "DOWN TIME") downtimeCell.className = "status-red";
+  });
+
+}
+      
+      const plan = parseInt(state[0]) || 0;
+      const actual = parseInt(state[1]) || 0;
+      const balance = parseInt(state[2]) || 0;
+      const status = state[3] || "READY";
+      const totalDowntime = parseInt(state[4]) || 0;
+      const countdown = parseInt(state[5]) || 0;
+      const expected = parseInt(state[6]) || 0;
+      const delay = parseInt(state[7]) || 0;
+      const efficiency = parseInt(state[8]) || 0;
+
+      let effEl = document.getElementById("efficiency");
+      effEl.innerText = efficiency + "%";
+      
+      if(efficiency < 90){
+        effEl.className = "big-number status-red";
       }
-
-      const [plan, actual, balance, status, totalDowntime, countdown, expected, delay, efficiency] =
-        [state[0], state[1], state[2], state[3], state[4], state[5], state[6], state[7], state[8]].map((v, i) => i === 3 ? v : (parseInt(v) || 0));
-
-      const eff = parseInt(state[8]) || 0;
-      const effEl = document.getElementById("efficiency");
-      effEl.innerText = eff + "%";
-      effEl.className = "big-number " + (eff < 90 ? "status-red" : eff < 100 ? "status-orange" : "status-green");
-
-      document.getElementById("plan").innerText     = parseInt(state[0]) || 0;
-      document.getElementById("actual").innerText   = parseInt(state[1]) || 0;
-      document.getElementById("expected").innerText = parseInt(state[6]) || 0;
-      countdownValue = parseInt(state[5]) || 0;
+      else if(efficiency < 100){
+        effEl.className = "big-number status-orange";
+      }
+      else{
+        effEl.className = "big-number status-green";
+      }
+      
+      // Update dashboard
+      document.getElementById("plan").innerText = plan;
+      document.getElementById("actual").innerText = actual;
+      countdownValue = countdown;
       document.getElementById("countdown").innerText = format(countdownValue);
-      document.getElementById("downtime").innerText  = format(parseInt(state[4]) || 0);
+      document.getElementById("downtime").innerText = format(totalDowntime);
+      document.getElementById("expected").innerText = expected;
 
-      const bal   = parseInt(state[2]) || 0;
-      const balEl = document.getElementById("balance");
-      balEl.className = "big-number " + (bal < 0 ? "status-red" : bal > 0 ? "status-green" : "status-blue");
-      balEl.innerText = bal > 0 ? "+" + bal : bal;
-
-      const del   = parseInt(state[7]) || 0;
-      const delEl = document.getElementById("delay");
-      delEl.className = "big-number " + (del < 0 ? "status-red" : del > 0 ? "status-green" : "status-blue");
-      delEl.innerText = del > 0 ? "+" + del : del;
-
-      const st           = state[3] || "READY";
-      const downtimeCard = document.getElementById("downtimeCard");
-      const downtimeText = document.getElementById("downtime");
-
-      const statusMap = {
-        "DOWN TIME":      ["status-red blink",    true],
-        "RUNNING":        ["status-green pulse",   false],
-        "TARGET ACHIEVED":["status-green",         false],
-        "BREAK TIME":     ["status-orange",        false],
-        "PAUSED":         ["status-orange",        false],
-        "BEHIND SCHEDULE":["status-red blink",     false],
-      };
-
-      const [cls, dtAlert] = statusMap[st] ?? ["status-blue", false];
-      setStatus(st, cls);
-      if (dtAlert) {
-        downtimeCard.classList.add("downtime-alert", "blink");
-        downtimeText.classList.add("status-red", "blink");
-      } else {
-        downtimeCard.classList.remove("downtime-alert", "blink");
-        downtimeText.classList.remove("status-red", "blink");
+      // Balance
+      const balanceEl = document.getElementById("balance");
+      if(balance < 0){
+        balanceEl.className="big-number status-red";
+        balanceEl.innerText = balance;
       }
-      setConnectionStatus(true);
+      else if(balance > 0){
+        balanceEl.className="big-number status-green";
+        balanceEl.innerText = "+" + balance;
+      }
+      else{
+        balanceEl.className="big-number status-blue";
+        balanceEl.innerText = "0";
+      }
+
+      //  ALWAYS APPLY DELAY COLOR (MOVE HERE)
+let delayEl = document.getElementById("delay");
+
+// reset first
+delayEl.className = "big-number";
+
+if(delay < 0){
+    delayEl.classList.add("status-red");
+} 
+else if(delay > 0){
+    delayEl.classList.add("status-green");
+} 
+else{
+    delayEl.classList.add("status-blue");
+}
+
+delayEl.innerText = delay > 0 ? ("+" + delay) : delay;
+
+// Status mirror (FULL SAME AS MAIN PC)
+
+const downtimeCard = document.getElementById("downtimeCard");
+const downtimeText = document.getElementById("downtime");
+
+if(status === "DOWN TIME"){
+    setStatus("DOWN TIME","status-red blink");
+
+    downtimeCard.classList.add("downtime-alert","blink");
+    downtimeText.classList.add("status-red","blink");
+}
+else if(status === "RUNNING"){
+    setStatus("RUNNING","status-green pulse");
+
+    downtimeCard.classList.remove("downtime-alert","blink");
+    downtimeText.classList.remove("status-red","blink");
+}
+else if(status === "TARGET ACHIEVED"){
+    setStatus("TARGET ACHIEVED","status-green");
+
+    downtimeCard.classList.remove("downtime-alert","blink");
+    downtimeText.classList.remove("status-red","blink");
+}
+else if(status === "BEHIND SCHEDULE"){
+    setStatus("BEHIND SCHEDULE","status-red blink");
+}
+else if(status === "BREAK TIME"){
+    setStatus("BREAK TIME","status-orange");
+}
+else if(status === "PAUSED"){
+    setStatus("PAUSED","status-orange");
+}
+else{
+    setStatus(status,"status-blue");
+
+    downtimeCard.classList.remove("downtime-alert","blink");
+    downtimeText.classList.remove("status-red","blink");
+
+}
     })
-    .catch(err => {
-      console.warn("Monitor load error:", err);
-      setConnectionStatus(false);
-    });
+    .catch(err => console.log("Monitor load error:", err));
 }
 
-/* ═══════════════════════════════════════════════════════
-   RESTORE STATE FROM SHEET (on page load / refresh)
-═══════════════════════════════════════════════════════ */
-async function loadLastStateFromSheet() {
-  try {
-    const res  = await fetch(API_URL);
-    const data = await res.json();
-    if (!data?.state?.length) return;
+/* ===== INITIALIZE SYSTEM ===== */
 
-    const state = data.state[0];
-    if (!state) return;
+window.onload = async function(){
 
-    actualCount     = parseInt(state[1]) || 0;
-    downtimeSeconds = parseInt(state[4]) || 0;
-    document.getElementById("dailyPlanTarget").value = state[0] || 0;
-
-    const lastUpdate   = new Date(state[9]);
-    lastScanTime       = lastUpdate;
-    const now          = new Date();
-    const diffSec      = Math.floor((now - lastUpdate) / 1000);
-    const cycleTimeSec = (parseFloat(document.getElementById("cycleTarget").value) || 1) * 60;
-    countdownValue     = Math.max(cycleTimeSec - diffSec, 0);
-
-    if (!startTime) startTime = new Date(state[9]);
-
-    updateDisplay();
-    if (actualCount > 0 && !timer) startProduction();
-
-    setConnectionStatus(true);
-    console.log("✅ State restored from sheet");
-  } catch (err) {
-    console.warn("Load state error:", err);
-    setConnectionStatus(false);
-  }
-}
-
-/* ═══════════════════════════════════════════════════════
-   INITIALIZE
-═══════════════════════════════════════════════════════ */
-async function initSystem() {
-  if (isMonitor) {
-    hideLogin();
-  } else {
-    document.getElementById("loginOverlay").style.display = "flex";
-  }
-
-  const allowed = await checkAccess();
-  if (!allowed) return;
-
-  if (!isMonitor) await loadLastStateFromSheet();
+  // 🔐 MUST WAIT ACCESS CHECK
+  let allowed = await checkAccess();
+  if(!allowed) return;
 
   updateDateTime();
-  setInterval(updateDateTime, 1000);
+  setInterval(updateDateTime,1000);
 
-  if (isMonitor) {
-    // Hide input controls in monitor mode
-    ["chassisInput","modelInput","engineInput","keyInput"].forEach(id => {
-      document.getElementById(id).style.display = "none";
-    });
-    document.querySelector(".controls").style.display = "none";
-    document.getElementById("connectionStatus").style.display = "flex";
+  if(isMonitor){
+
+    document.body.classList.add("monitor-mode");
+
+    document.getElementById("chassisInput").style.display="none";
+    document.getElementById("modelInput").style.display="none";
+    document.getElementById("engineInput").style.display="none";
+    document.getElementById("keyInput").style.display="none";
+
     loadLiveData();
-    setInterval(loadLiveData, 1000);
-  } else {
-    setInterval(updateLiveStateOnly, 1000);
-    document.getElementById("connectionStatus").style.display = "flex";
-    setTimeout(() => document.getElementById("chassisInput").focus(), 300);
-  }
-}
+    setInterval(loadLiveData,1000);
 
-window.onload = initSystem;
+  } else {
+
+    setInterval(updateLiveStateOnly,1000);
+
+  }
+
+};
+  
 </script>
 </body>
 </html>

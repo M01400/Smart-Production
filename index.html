@@ -286,96 +286,117 @@ tr:nth-child(even){background:#0f172a;}
 
 <body>
 
-<div class="header">
-    TF 2 PRODUCTION MONITORING SYSTEM
-    <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
+<div class="top-header">
+  <div class="title">TF 2 PRODUCTION MONITORING SYSTEM</div>
+  <div class="datetime">
+    <div id="dateDisplay"></div>
+    <div id="clock"></div>
+  </div>
 </div>
 
-<div class="datetime">
-<div id="dateDisplay"></div>
-<div id="clock"></div>
+<div class="controls-bar">
+  <div>Cycle Time: <input id="cycleTarget" type="number"></div>
+  <div>Daily Plan: <input id="dailyPlanTarget" type="number"></div>
+  <div>Lot: <input id="lotInput" type="text"></div>
+
+  <button class="btn start" onclick="startProduction()">Start</button>
+  <button class="btn stop" onclick="stopProduction()">Stop</button>
+  <button class="btn reset" onclick="resetProduction()">Reset</button>
+  <button class="btn summary" onclick="openSummary()">Summary</button>
 </div>
 
-<div class="controls">
+<div class="scada">
 
-Cycle Time (min):
-<input type="number" id="cycleTarget" min="1">
+  <!-- LEFT -->
+  <div class="panel left">
 
-Daily Plan:
-<input type="number" id="dailyPlanTarget" min="Daily Plan">
+    <div class="box neon">
+      <div class="box-title">SCAN INPUT</div>
 
-Lot:
-<input type="number" id="lotInput" placeholder="Lot No">
+      <div class="scan">
+        <span>🚗</span><input id="chassisInput" placeholder="Scan Chassis">
+      </div>
+      <div class="scan">
+        <span>📦</span><input id="modelInput" placeholder="Scan Model">
+      </div>
+      <div class="scan">
+        <span>⚙️</span><input id="engineInput" placeholder="Scan Engine No">
+      </div>
+      <div class="scan">
+        <span>🔑</span><input id="keyInput" placeholder="Scan Key No">
+      </div>
+    </div>
 
-<button class="start" onclick="startProduction()">Start</button>
-<button class="stop" onclick="stopProduction()">Stop</button>
-<button class="reset" onclick="resetProduction()">Reset</button>
-<button class="summary" onclick="openSummary()">Daily Summary</button>
+    <div class="box neon">
+      <div class="box-title">LINE STATUS</div>
+      <div id="status" class="status-box">READY</div>
+      <div class="status-sub">Waiting to Start</div>
+    </div>
 
-<button class="summary" id="ramadanToggle" onclick="toggleRamadan()">
-🌙 Ramadhan : OFF
-</button>
+  </div>
+
+  <!-- CENTER -->
+  <div class="panel center">
+
+    <div class="box big">
+      <div class="box-title">COUNTDOWN</div>
+      <div id="countdown" class="countdown">00:00</div>
+    </div>
+
+    <div class="grid">
+
+      <div class="box green">
+        <div class="box-title">ACTUAL</div>
+        <div id="actual" class="num">0</div>
+      </div>
+
+      <div class="box blue">
+        <div class="box-title">EXPECTED</div>
+        <div id="expected" class="num">0</div>
+      </div>
+
+      <div class="box">
+        <div class="box-title">PLAN</div>
+        <div id="plan" class="num">0</div>
+      </div>
+
+      <div class="box yellow">
+        <div class="box-title">BALANCE</div>
+        <div id="balance" class="num">0</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- RIGHT -->
+  <div class="panel right">
+
+    <div class="box red">
+      <div class="box-title">DELAY</div>
+      <div id="delay" class="num">0</div>
+    </div>
+
+    <div class="box red alert" id="downtimeCard">
+      <div class="box-title">DOWNTIME</div>
+      <div id="downtime" class="num">00:00</div>
+    </div>
+
+    <div class="box green">
+      <div class="box-title">EFFICIENCY</div>
+      <div id="efficiency" class="num">0%</div>
+    </div>
+
+  </div>
 
 </div>
 
-<div class="dashboard">
-
-<!-- 🔹 ROW 1 -->
-<div class="card"><h3>COUNTDOWN</h3><div class="big-number" id="countdown">00:00</div></div>
-<div class="card"><h3>ACTUAL OUTPUT</h3><div class="big-number status-green" id="actual">0</div></div>
-<div class="card"><h3>EXPECTED OUTPUT</h3><div class="big-number status-blue" id="expected">0</div></div>
-<div class="card"><h3>DELAY / AHEAD</h3><div class="big-number" id="delay">0</div></div>
-
-<!-- 🔹 ROW 2 -->
-<div class="card"><h3>DAILY PLAN</h3><div class="big-number" id="plan">0</div></div>
-<div class="card"><h3>BALANCE</h3><div class="big-number" id="balance">0</div></div>
-
-<!-- LINE STATUS -->
-<div class="card wide">
-<h3>LINE STATUS</h3>
-<div class="big-number" id="status">READY</div>
-</div>
-</div>
-  
-<div class="bottom-row">
-<!-- LEFT: SCAN -->
-<div class="card wide">
-<h3>SCAN INPUT</h3>
-
-<div class="scan-grid">
-<input type="text" id="chassisInput" class="scan-box" placeholder="Scan Chassis" autofocus>
-<input type="text" id="modelInput" class="scan-box" placeholder="Scan Model">
-<input type="text" id="engineInput" class="scan-box" placeholder="Scan Engine No">
-<input type="text" id="keyInput" class="scan-box" placeholder="Scan Key No">
-</div>
-
-</div>
-
-<!-- RIGHT: DOWNTIME -->
-<div class="card" id="downtimeCard">
-<h3>ACCUMULATED DOWNTIME</h3>
-<div class="big-number" id="downtime">00:00</div>
-</div>
-
-<div class="card">
-<h3>EFFICIENCY</h3>
-<div class="big-number" id="efficiency">0%</div> 
-</div>
-  
-</div>
-  
+<!-- TABLE KEEP SAME -->
 <table>
 <thead>
 <tr>
-<th>Date</th>
-<th>Time</th>
-<th>Lot</th>
-<th>Model</th>
-<th>Chassis</th>
-<th>Engine No</th>
-<th>Key No</th>
-<th>Status</th>
-<th>Downtime</th>
+<th>Date</th><th>Time</th><th>Lot</th><th>Model</th>
+<th>Chassis</th><th>Engine</th><th>Key</th><th>Status</th><th>Downtime</th>
 </tr>
 </thead>
 <tbody id="scanTable"></tbody>
@@ -1094,170 +1115,174 @@ function openSummary() {
 <head>
 <title>Daily Summary Report</title>
 <style>
-/* --- Gaya Asas (Sama seperti Dashboard) --- */
 body{
-margin:0;
-font-family:'Segoe UI',sans-serif;
-background:#0b1220; /* Warna latar belakang gelap */
-color:#e5e7eb;
-padding:40px;
+  margin:0;
+  font-family:Segoe UI;
+  background:#020617;
+  color:white;
 }
 
-h1{
-text-align:center;
-color:#60a5fa; /* Warna biru tajuk */
-margin-bottom:30px;
-font-size:36px;
-font-weight: 800;
+/* HEADER */
+.top-header{
+  text-align:center;
+  padding:15px;
 }
 
-/* --- Gaya Jadual Ringkasan (Atas) --- */
-.summary-card {
-    border-radius: 20px;
-    background: #111827;
-    width: 450px;
-    margin: 0 auto 50px auto;
-    padding: 10px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+.title{
+  font-size:40px;
+  color:#22d3ee;
+  font-weight:900;
 }
 
-.summary-table{
-width:100%;
-border-collapse:collapse;
+.datetime{
+  color:#94a3b8;
 }
 
-.summary-table th,
-.summary-table td{
-padding:14px;
-text-align:center;
+/* CONTROL BAR */
+.controls-bar{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  padding:10px;
+  background:#020617;
 }
 
-.summary-table th{
-background:#1f2937;
-color:#60a5fa;
-font-weight:bold;
-text-align: left;
-width: 50%;
-border-radius: 10px 0 0 10px;
+.controls-bar input{
+  width:80px;
+  background:#0f172a;
+  border:1px solid #334155;
+  color:white;
+  text-align:center;
 }
 
-.summary-table td {
-    font-size: 18px;
-    font-weight: bold;
+/* BUTTONS */
+.btn{
+  padding:6px 15px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
 }
 
-/* --- Gaya Jadual Butiran (Bawah) --- */
-.detail-table-container {
-    background: #111827;
-    border-radius: 15px;
-    padding: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+.start{background:#16a34a;}
+.stop{background:#dc2626;}
+.reset{background:#f59e0b;}
+.summary{background:#2563eb;}
+
+/* MAIN LAYOUT */
+.scada{
+  display:grid;
+  grid-template-columns:1fr 2fr 1fr;
+  gap:20px;
+  padding:20px;
 }
 
-table.detail-table{
-width:100%;
-border-collapse:collapse;
+.panel{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
 }
 
-.detail-table th, .detail-table td{
-padding:12px;
-text-align:center;
-border-bottom: 1px solid #1f2937;
-font-size: 14px;
+/* BOX */
+.box{
+  background:#020617;
+  border-radius:12px;
+  padding:15px;
+  border:1px solid #1e293b;
+  text-align:center;
 }
 
-.detail-table th{
-background:#1f2937;
-color:#60a5fa;
-font-weight:bold;
-text-transform: uppercase;
+.box-title{
+  color:#94a3b8;
+  margin-bottom:10px;
 }
 
-.detail-table tr:last-child td {
-    border-bottom: none;
+/* COLORS */
+.green{border:1px solid #22c55e; box-shadow:0 0 10px #22c55e;}
+.blue{border:1px solid #38bdf8; box-shadow:0 0 10px #38bdf8;}
+.red{border:1px solid #ef4444; box-shadow:0 0 10px #ef4444;}
+.yellow{border:1px solid #facc15; box-shadow:0 0 10px #facc15;}
+.neon{border:1px solid #22d3ee; box-shadow:0 0 10px #22d3ee;}
+
+/* COUNTDOWN */
+.big{
+  height:160px;
 }
 
-.detail-table tr:nth-child(even){
-background:#0f172a;
+.countdown{
+  font-size:70px;
+  color:#22d3ee;
 }
 
-/* --- Gaya Warna Status (SAMA SEPERTI DASHBOARD) --- */
-.status-green{
-color:#22c55e !important; /* Warna hijau */
-font-weight:bold;
+/* NUMBERS */
+.num{
+  font-size:45px;
+  font-weight:bold;
 }
 
-.status-red{
-color:#ef4444 !important; /* Warna merah */
-font-weight:bold;
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
 }
 
-/* --- Gaya Butang Tindakan --- */
-.action-buttons{
-text-align:center;
-margin-top:40px;
+/* STATUS */
+.status-box{
+  font-size:35px;
+  color:#22c55e;
 }
 
-.action-buttons button{
-padding:12px 28px;
-margin:0 12px;
-border:none;
-border-radius:30px;
-font-size:15px;
-font-weight:bold;
-cursor:pointer;
-background:#2563eb;
-color:white;
-transition: background 0.2s;
+.status-sub{
+  font-size:12px;
+  color:#94a3b8;
 }
 
-.action-buttons button:hover{
-background:#1d4ed8;
+/* SCAN */
+.scan{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#020617;
+  padding:8px;
+  border-radius:8px;
+  margin-bottom:10px;
 }
 
-/* --- Gaya MOD CETAK (Memastikan warna kekal dalam PDF) --- */
-@media print{
-body{
-background:white !important;
-color:black !important;
-padding:20px !important;
+.scan input{
+  flex:1;
+  background:none;
+  border:none;
+  color:white;
 }
 
-h1{ color: black !important; }
-
-.summary-card, .detail-table-container {
-background:white !important;
-color:black !important;
-box-shadow:none !important;
-border: 1px solid #ccc;
+/* ALERT */
+.alert{
+  animation:blink 1s infinite;
 }
 
-.summary-table th, .detail-table th {
-background:#f0f0f0 !important;
-color:black !important;
-border: 1px solid #ccc !important;
+@keyframes blink{
+  50%{opacity:0.5;}
 }
 
-.summary-table td, .detail-table td{
-color:black !important;
-border:1px solid #ccc !important;
+/* TABLE */
+table{
+  width:95%;
+  margin:20px auto;
+  border-collapse:collapse;
 }
 
-/* Memaksa cetakan warna untuk status */
-.status-green{
-color:#22c55e !important;
--webkit-print-color-adjust: exact;
-print-color-adjust: exact;
+th,td{
+  padding:10px;
+  text-align:center;
 }
 
-.status-red{
-color:#ef4444 !important;
--webkit-print-color-adjust: exact;
-print-color-adjust: exact;
+th{
+  background:#0f172a;
+  color:#38bdf8;
 }
 
-.action-buttons{ display:none !important; }
+tr:nth-child(even){
+  background:#0f172a;
 }
 
 </style>

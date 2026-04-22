@@ -5,200 +5,280 @@
 <title>TF 2 Production Monitoring</title>
 
 <style>
-/* ===== CLEAN SCADA CSS ===== */
+:root{
+  --big-number-size: 50px;
+  --card-title-size: 25px;
+  --clock-size: 70px;
+  --header-size: 60px;
 
+  --bg:#050b18;
+  --panel:#0f172a;
+  --glass:rgba(255,255,255,0.05);
+  --border:rgba(255,255,255,0.08);
+  --text:#e2e8f0;
+  --blue:#38bdf8;
+  --green:#22c55e;
+  --red:#ef4444;
+  --orange:#f97316;
+}
+
+/* BACKGROUND */
 body{
   margin:0;
-  font-family:Segoe UI;
-  background:#020617;
-  color:white;
+  font-family:'Segoe UI',sans-serif;
+  background: radial-gradient(circle at top, #0b1220, #020617);
+  color:var(--text);
 }
 
 /* HEADER */
-.top-header{
-  text-align:center;
-  padding:15px;
-}
-
-.title{
-  font-size:40px;
-  color:#22d3ee;
+.header{
+  font-size:var(--header-size);
   font-weight:900;
+  text-align:center;
+  padding:20px;
+  color:var(--blue);
+  letter-spacing:2px;
+  text-shadow:none;
 }
 
-.datetime{
+/* CLOCK */
+#clock{
+  font-size:var(--clock-size);
+  font-weight:500;
+  color:#22d3ee;
+  text-shadow:none;
+}
+  
+  /* DATE */
+#dateDisplay{
+  font-size:30px;
   color:#94a3b8;
 }
 
-/* CONTROL BAR */
-.controls-bar{
-  display:flex;
-  justify-content:center;
-  gap:20px;
-  padding:10px;
-}
-
-.controls-bar input{
-  width:80px;
-  background:#0f172a;
-  border:1px solid #334155;
-  color:white;
-  text-align:center;
-}
-
-/* BUTTON */
-.btn{
-  padding:6px 15px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-.start{background:#16a34a;}
-.stop{background:#dc2626;}
-.reset{background:#f59e0b;}
-.summary{background:#2563eb;}
-
-/* ===== MAIN SCADA GRID ===== */
-.scada{
-  display:grid;
-  grid-template-columns: 1.2fr 2.2fr 1fr;
-  gap:25px;
-  padding:25px;
-}
-
-/* PANELS */
-.panel{
+.datetime{
   display:flex;
   flex-direction:column;
-  gap:20px;
-}
-
-.box{
-  background: linear-gradient(180deg,#020617,#020617);
-  border-radius:14px;
-  padding:18px;
-  border:1px solid rgba(255,255,255,0.08);
-  text-align:center;
-
-  box-shadow:
-    inset 0 0 10px rgba(255,255,255,0.03),
-    0 0 20px rgba(0,0,0,0.8);
-}
-
-/* COLORS */
-.green{
-  border:1px solid #22c55e;
-  box-shadow:0 0 25px rgba(34,197,94,0.8);
-}
-
-.blue{
-  border:1px solid #38bdf8;
-  box-shadow:0 0 25px rgba(56,189,248,0.8);
-}
-
-.red{
-  border:1px solid #ef4444;
-  box-shadow:0 0 25px rgba(239,68,68,0.8);
-}
-
-.yellow{
-  border:1px solid #facc15;
-  box-shadow:0 0 25px rgba(250,204,21,0.8);
-}
-
-.neon{
-  border:1px solid #22d3ee;
-  box-shadow:0 0 25px rgba(34,211,238,0.8);
+  align-items:center;   
+  justify-content:center;
+  margin-top:10px;
 }
   
-/* COUNTDOWN */
-.big{
-  height:220px;
+/* CONTROL PANEL */
+.controls{
   display:flex;
-  flex-direction:column;
   justify-content:center;
+  gap:15px;
+  flex-wrap:wrap;
+  padding:15px;
+  background:var(--glass);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--border);
+  border-radius:15px;
+  margin:20px;
 }
 
-.countdown{
-  font-size:110px;
-  font-weight:900;
-  color:#22d3ee;
-  letter-spacing:3px;
+/* 🔥 MAKE LINE STATUS WIDE */
+.wide{
+  grid-column: span 2;
+}
+  
+/* CARD STYLE (SCADA LOOK) */
+.card{
+  background:linear-gradient(145deg,#0f172a,#020617);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:15px;
+  text-align:center;
+  box-shadow:
+  inset 0 0 15px rgba(255,255,255,0.05),
+  0 0 20px rgba(0,0,0,0.8);
+  position:relative;
+  overflow:hidden;
+  display:flex;               
+  flex-direction:column;       
+  justify-content:flex-start;  
+  align-items:center;          
+  min-height:90px;            
 }
 
-/* NUMBERS */
-.num{
-  font-size:50px;
-  font-weight:bold;
+/* GLOW BORDER */
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,0.05);
+  pointer-events:none;
 }
 
-/* GRID */
-.grid{
+/* STATUS COLORS */
+.status-green{color:var(--green);}
+.status-red{color:var(--red);}
+.status-blue{color:var(--blue);}
+.status-orange{color:var(--orange);}
+
+/* RUNNING GLOW */
+.pulse{
+  animation:pulseGlow 1.5s infinite;
+}
+@keyframes pulseGlow{
+  0%{text-shadow:0 0 5px #22c55e;}
+  50%{text-shadow:0 0 25px #22c55e;}
+  100%{text-shadow:0 0 5px #22c55e;}
+}
+
+/* ALERT BLINK */
+.blink{
+  animation:blink 1s infinite;
+}
+@keyframes blink{
+  50%{opacity:0.3;}
+}
+
+/* STATUS BAR (BOTTOM) */
+
+.bottom-row{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:15px;
+  margin:15px;
+}
+
+.scan-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:15px;
 }
 
-/* STATUS */
-.status-box{
-  font-size:35px;
-  color:#22c55e;
-}
-
-.status-sub{
-  font-size:12px;
-  color:#94a3b8;
-}
-
-/* SCAN INPUT */
-.scan{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  background:#020617;
-  padding:10px;
-  border-radius:8px;
-  margin-bottom:10px;
-}
-
-.scan input{
-  flex:1;
-  border:none;
-  background:none;
-  color:white;
-  outline:none;
-}
-
-/* ALERT BLINK */
-.alert{
-  animation:blink 1s infinite;
-}
-
-@keyframes blink{
-  50%{opacity:0.4;}
+/* DOWNTIME ALERT */
+.downtime-alert{
+  box-shadow:0 0 30px rgba(239,68,68,0.7);
+  background:#2a0b0b !important;
 }
 
 /* TABLE */
 table{
-  width:95%;
-  margin:20px auto;
-  border-collapse:collapse;
+  background:#020617;
+  border:1px solid var(--border);
+}
+th{
+  background:#0f172a;
+}
+
+/* ================= CONTROLS SETTINGS ================= */
+
+.controls input{
+padding:6px;
+width:90px;
+font-size:18px;
+font-weight:bold;
+border-radius:10px;
+border:1px solid #334155;background:#0f172a;color:white;text-align:center;
+}
+
+.controls button{
+padding:8px 18px;
+font-size:16px;
+border:none;
+border-radius:50px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.start{background:#16a34a;color:white;}
+.stop{background:#dc2626;color:white;}
+.reset{background:#f59e0b;color:white;}
+.summary{background:#2563eb;color:white;}
+
+.dashboard{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+margin:15px;
+}
+
+.card h3{
+color:#9ca3af;
+margin:0;              
+margin-bottom:4px;    
+font-size:var(--card-title-size);
+}
+
+.big-number
+{font-size:var(--big-number-size);
+font-weight:900;}
+
+.bottom{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+margin:15px;
+}
+
+.fullscreen-btn{
+position:absolute;
+right:20px;
+top:20px;
+padding:5px 10px;
+font-size:14px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+.fullscreen-btn:hover{
+background:#1d4ed8;
+}
+
+.pulse{animation:pulse 1.5s infinite;}
+@keyframes pulse{0%{text-shadow:0 0 5px #22c55e;}50%{text-shadow:0 0 20px #22c55e;}100%{text-shadow:0 0 5px #22c55e;}}
+
+.blink{animation:blink 1.5s infinite;}
+@keyframes blink{0%{opacity:1;}50%{opacity:0.3;}100%{opacity:1;}}
+
+.downtime-alert{background:#3f0d0d !important;box-shadow:0 0 25px rgba(239,68,68,0.8);}
+
+.scan-container{
+display:flex;
+justify-content:center;
+gap:15px;
+margin:15px;
+flex-wrap:wrap;
+}
+
+.scan-box{
+width:300px;
+padding:10px;
+font-size:18px;
+border-radius:40px;
+background:#0f172a;
+border:1px solid #334155;
+color:white;
+text-align:center;
+}
+
+table{
+width:95%;
+margin:30px auto;
+border-collapse:collapse;
+background:#111827;
+border-radius:15px;
+overflow:hidden;
 }
 
 th,td{
-  padding:10px;
-  text-align:center;
+padding:12px;
+text-align:center;
+font-size:14px;
 }
 
 th{
-  background:#0f172a;
-  color:#38bdf8;
+background:#1f2937;
+color:#60a5fa;
 }
-
-tr:nth-child(even){
-  background:#0f172a;
-}
+tr:nth-child(even){background:#0f172a;}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
@@ -206,117 +286,96 @@ tr:nth-child(even){
 
 <body>
 
-<div class="top-header">
-  <div class="title">TF 2 PRODUCTION MONITORING SYSTEM</div>
-  <div class="datetime">
-    <div id="dateDisplay"></div>
-    <div id="clock"></div>
-  </div>
+<div class="header">
+    TF 2 PRODUCTION MONITORING SYSTEM
+    <button class="fullscreen-btn" onclick="toggleFullScreen()">⛶</button>
 </div>
 
-<div class="controls-bar">
-  <div>Cycle Time: <input id="cycleTarget" type="number"></div>
-  <div>Daily Plan: <input id="dailyPlanTarget" type="number"></div>
-  <div>Lot: <input id="lotInput" type="text"></div>
-
-  <button class="btn start" onclick="startProduction()">Start</button>
-  <button class="btn stop" onclick="stopProduction()">Stop</button>
-  <button class="btn reset" onclick="resetProduction()">Reset</button>
-  <button class="btn summary" onclick="openSummary()">Summary</button>
+<div class="datetime">
+<div id="dateDisplay"></div>
+<div id="clock"></div>
 </div>
 
-<div class="scada">
+<div class="controls">
 
-  <!-- LEFT -->
-  <div class="panel left">
+Cycle Time (min):
+<input type="number" id="cycleTarget" min="1">
 
-    <div class="box neon">
-      <div class="box-title">SCAN INPUT</div>
+Daily Plan:
+<input type="number" id="dailyPlanTarget" min="Daily Plan">
 
-      <div class="scan">
-        <span>🚗</span><input id="chassisInput" placeholder="Scan Chassis">
-      </div>
-      <div class="scan">
-        <span>📦</span><input id="modelInput" placeholder="Scan Model">
-      </div>
-      <div class="scan">
-        <span>⚙️</span><input id="engineInput" placeholder="Scan Engine No">
-      </div>
-      <div class="scan">
-        <span>🔑</span><input id="keyInput" placeholder="Scan Key No">
-      </div>
-    </div>
+Lot:
+<input type="number" id="lotInput" placeholder="Lot No">
 
-    <div class="box neon">
-      <div class="box-title">LINE STATUS</div>
-      <div id="status" class="status-box">READY</div>
-      <div class="status-sub">Waiting to Start</div>
-    </div>
+<button class="start" onclick="startProduction()">Start</button>
+<button class="stop" onclick="stopProduction()">Stop</button>
+<button class="reset" onclick="resetProduction()">Reset</button>
+<button class="summary" onclick="openSummary()">Daily Summary</button>
 
-  </div>
-
-  <!-- CENTER -->
-  <div class="panel center">
-
-    <div class="box big">
-      <div class="box-title">COUNTDOWN</div>
-      <div id="countdown" class="countdown">00:00</div>
-    </div>
-
-    <div class="grid">
-
-      <div class="box green">
-        <div class="box-title">ACTUAL</div>
-        <div id="actual" class="num">0</div>
-      </div>
-
-      <div class="box blue">
-        <div class="box-title">EXPECTED</div>
-        <div id="expected" class="num">0</div>
-      </div>
-
-      <div class="box">
-        <div class="box-title">PLAN</div>
-        <div id="plan" class="num">0</div>
-      </div>
-
-      <div class="box yellow">
-        <div class="box-title">BALANCE</div>
-        <div id="balance" class="num">0</div>
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- RIGHT -->
-  <div class="panel right">
-
-    <div class="box red">
-      <div class="box-title">DELAY</div>
-      <div id="delay" class="num">0</div>
-    </div>
-
-    <div class="box red alert" id="downtimeCard">
-      <div class="box-title">DOWNTIME</div>
-      <div id="downtime" class="num">00:00</div>
-    </div>
-
-    <div class="box green">
-      <div class="box-title">EFFICIENCY</div>
-      <div id="efficiency" class="num">0%</div>
-    </div>
-
-  </div>
+<button class="summary" id="ramadanToggle" onclick="toggleRamadan()">
+🌙 Ramadhan : OFF
+</button>
 
 </div>
 
-<!-- TABLE KEEP SAME -->
+<div class="dashboard">
+
+<!-- 🔹 ROW 1 -->
+<div class="card"><h3>COUNTDOWN</h3><div class="big-number" id="countdown">00:00</div></div>
+<div class="card"><h3>ACTUAL OUTPUT</h3><div class="big-number status-green" id="actual">0</div></div>
+<div class="card"><h3>EXPECTED OUTPUT</h3><div class="big-number status-blue" id="expected">0</div></div>
+<div class="card"><h3>DELAY / AHEAD</h3><div class="big-number" id="delay">0</div></div>
+
+<!-- 🔹 ROW 2 -->
+<div class="card"><h3>DAILY PLAN</h3><div class="big-number" id="plan">0</div></div>
+<div class="card"><h3>BALANCE</h3><div class="big-number" id="balance">0</div></div>
+
+<!-- LINE STATUS -->
+<div class="card wide">
+<h3>LINE STATUS</h3>
+<div class="big-number" id="status">READY</div>
+</div>
+</div>
+  
+<div class="bottom-row">
+<!-- LEFT: SCAN -->
+<div class="card wide">
+<h3>SCAN INPUT</h3>
+
+<div class="scan-grid">
+<input type="text" id="chassisInput" class="scan-box" placeholder="Scan Chassis" autofocus>
+<input type="text" id="modelInput" class="scan-box" placeholder="Scan Model">
+<input type="text" id="engineInput" class="scan-box" placeholder="Scan Engine No">
+<input type="text" id="keyInput" class="scan-box" placeholder="Scan Key No">
+</div>
+
+</div>
+
+<!-- RIGHT: DOWNTIME -->
+<div class="card" id="downtimeCard">
+<h3>ACCUMULATED DOWNTIME</h3>
+<div class="big-number" id="downtime">00:00</div>
+</div>
+
+<div class="card">
+<h3>EFFICIENCY</h3>
+<div class="big-number" id="efficiency">0%</div> 
+</div>
+  
+</div>
+  
 <table>
 <thead>
 <tr>
-<th>Date</th><th>Time</th><th>Lot</th><th>Model</th>
-<th>Chassis</th><th>Engine</th><th>Key</th><th>Status</th><th>Downtime</th>
+<th>Date</th>
+<th>Time</th>
+<th>Lot</th>
+<th>Model</th>
+<th>Chassis</th>
+<th>Engine No</th>
+<th>Key No</th>
+<th>Status</th>
+<th>Downtime</th>
 </tr>
 </thead>
 <tbody id="scanTable"></tbody>
@@ -1035,182 +1094,170 @@ function openSummary() {
 <head>
 <title>Daily Summary Report</title>
 <style>
-
-.box:hover{
-  transform:scale(1.01);
-  transition:0.2s;
-}
-
+/* --- Gaya Asas (Sama seperti Dashboard) --- */
 body{
-  margin:0;
-  font-family:Segoe UI;
-  background:#020617;
-  color:white;
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#0b1220; /* Warna latar belakang gelap */
+color:#e5e7eb;
+padding:40px;
 }
 
-/* HEADER */
-.top-header{
-  text-align:center;
-  padding:15px;
+h1{
+text-align:center;
+color:#60a5fa; /* Warna biru tajuk */
+margin-bottom:30px;
+font-size:36px;
+font-weight: 800;
 }
 
-.title{
-  font-size:40px;
-  color:#22d3ee;
-  font-weight:900;
+/* --- Gaya Jadual Ringkasan (Atas) --- */
+.summary-card {
+    border-radius: 20px;
+    background: #111827;
+    width: 450px;
+    margin: 0 auto 50px auto;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
-.datetime{
-  color:#94a3b8;
+.summary-table{
+width:100%;
+border-collapse:collapse;
 }
 
-/* CONTROL BAR */
-.controls-bar{
-  display:flex;
-  justify-content:center;
-  gap:20px;
-  padding:10px;
-  background:#020617;
+.summary-table th,
+.summary-table td{
+padding:14px;
+text-align:center;
 }
 
-.controls-bar input{
-  width:80px;
-  background:#0f172a;
-  border:1px solid #334155;
-  color:white;
-  text-align:center;
+.summary-table th{
+background:#1f2937;
+color:#60a5fa;
+font-weight:bold;
+text-align: left;
+width: 50%;
+border-radius: 10px 0 0 10px;
 }
 
-/* BUTTONS */
-.btn{
-  padding:6px 15px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
+.summary-table td {
+    font-size: 18px;
+    font-weight: bold;
 }
 
-.start{background:#16a34a;}
-.stop{background:#dc2626;}
-.reset{background:#f59e0b;}
-.summary{background:#2563eb;}
-
-/* MAIN LAYOUT */
-.scada{
-  display:grid;
-  grid-template-columns:1fr 2fr 1fr;
-  gap:20px;
-  padding:20px;
+/* --- Gaya Jadual Butiran (Bawah) --- */
+.detail-table-container {
+    background: #111827;
+    border-radius: 15px;
+    padding: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
-.panel{
-  display:flex;
-  flex-direction:column;
-  gap:20px;
+table.detail-table{
+width:100%;
+border-collapse:collapse;
 }
 
-/* BOX */
-.box{
-  background:#020617;
-  border-radius:12px;
-  padding:15px;
-  border:1px solid #1e293b;
-  text-align:center;
+.detail-table th, .detail-table td{
+padding:12px;
+text-align:center;
+border-bottom: 1px solid #1f2937;
+font-size: 14px;
 }
 
-.box-title{
-  color:#9ca3af;
-  font-size:14px;
-  letter-spacing:1px;
-  margin-bottom:10px;
+.detail-table th{
+background:#1f2937;
+color:#60a5fa;
+font-weight:bold;
+text-transform: uppercase;
 }
 
-/* COLORS */
-.green{border:1px solid #22c55e; box-shadow:0 0 10px #22c55e;}
-.blue{border:1px solid #38bdf8; box-shadow:0 0 10px #38bdf8;}
-.red{border:1px solid #ef4444; box-shadow:0 0 10px #ef4444;}
-.yellow{border:1px solid #facc15; box-shadow:0 0 10px #facc15;}
-.neon{border:1px solid #22d3ee; box-shadow:0 0 10px #22d3ee;}
-
-/* COUNTDOWN */
-.big{
-  height:160px;
+.detail-table tr:last-child td {
+    border-bottom: none;
 }
 
-.countdown{
-  font-size:70px;
-  color:#22d3ee;
+.detail-table tr:nth-child(even){
+background:#0f172a;
 }
 
-/* NUMBERS */
-.num{
-  font-size:60px;
-  font-weight:900;
+/* --- Gaya Warna Status (SAMA SEPERTI DASHBOARD) --- */
+.status-green{
+color:#22c55e !important; /* Warna hijau */
+font-weight:bold;
 }
 
-/* GRID */
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:15px;
+.status-red{
+color:#ef4444 !important; /* Warna merah */
+font-weight:bold;
 }
 
-/* STATUS */
-.status-box{
-  font-size:35px;
-  color:#22c55e;
+/* --- Gaya Butang Tindakan --- */
+.action-buttons{
+text-align:center;
+margin-top:40px;
 }
 
-.status-sub{
-  font-size:12px;
-  color:#94a3b8;
+.action-buttons button{
+padding:12px 28px;
+margin:0 12px;
+border:none;
+border-radius:30px;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+background:#2563eb;
+color:white;
+transition: background 0.2s;
 }
 
-/* SCAN */
-.scan{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  background:#020617;
-  padding:8px;
-  border-radius:8px;
-  margin-bottom:10px;
+.action-buttons button:hover{
+background:#1d4ed8;
 }
 
-.scan input{
-  flex:1;
-  background:none;
-  border:none;
-  color:white;
+/* --- Gaya MOD CETAK (Memastikan warna kekal dalam PDF) --- */
+@media print{
+body{
+background:white !important;
+color:black !important;
+padding:20px !important;
 }
 
-/* ALERT */
-.alert{
-  animation:blink 1s infinite;
+h1{ color: black !important; }
+
+.summary-card, .detail-table-container {
+background:white !important;
+color:black !important;
+box-shadow:none !important;
+border: 1px solid #ccc;
 }
 
-@keyframes blink{
-  50%{opacity:0.5;}
+.summary-table th, .detail-table th {
+background:#f0f0f0 !important;
+color:black !important;
+border: 1px solid #ccc !important;
 }
 
-/* TABLE */
-table{
-  width:95%;
-  margin:20px auto;
-  border-collapse:collapse;
+.summary-table td, .detail-table td{
+color:black !important;
+border:1px solid #ccc !important;
 }
 
-th,td{
-  padding:10px;
-  text-align:center;
+/* Memaksa cetakan warna untuk status */
+.status-green{
+color:#22c55e !important;
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
 }
 
-th{
-  background:#0f172a;
-  color:#38bdf8;
+.status-red{
+color:#ef4444 !important;
+-webkit-print-color-adjust: exact;
+print-color-adjust: exact;
 }
 
-tr:nth-child(even){
-  background:#0f172a;
+.action-buttons{ display:none !important; }
 }
 
 </style>
